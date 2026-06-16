@@ -1,0 +1,153 @@
+# CI quality gate — ADR 0008. Runs the same commands as the local gate, so
+# green-local means green-CI. Deployment is not CI's job: Vercel owns preview
+# and production deploys (ADR 0007). Action versions are pinned to commit SHAs
+# per the ADR 0042 pinning posture (reaffirmed by ADR 0055 for the scanner).
+name: CI
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    # `labeled` / `unlabeled` re-run the gate when the `hotfix` label is
+    # toggled, so the ADR 0031 coverage bypass is re-evaluated immediately.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+# Least-privilege default: every job reads the repo, nothing more.
+permissions:
+  contents: read
+
+# Note: toggling the `hotfix` label cancels the in-flight PR run and starts a
+# fresh one — required checks are satisfied by the latest run, by design.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  quality:
+    name: Quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # ADR 0031: only a `hotfix/*` branch or a `hotfix`-labeled PR bypasses
+      # the coverage threshold — and nothing else of the gate. Tests still run.
+      HOTFIX: ${{ github.event_name == 'pull_request' && (startsWith(github.head_ref, 'hotfix/') || contains(github.event.pull_request.labels.*.name, 'hotfix')) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Set up Node 24 from .nvmrc (ADR 0004)
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ADR 0034→0057/0036/0040: the Storybook stories-as-tests project runs in Vitest
+      # browser mode, so `test:coverage` needs a Playwright browser. (This is the only
+      # engine the coverage gate depends on; the test-runner SMOKE job stays local-only
+      # during bootstrap — see the note at the foot of this file.)
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Component stories exist (ADR 0041)
+        run: npm run check:stories
+
+      - name: Module boundaries — dependency-cruiser (ADR 0060)
+        run: npm run check:boundaries
+
+      - name: Composition graph ↔ import reconciliation (ADR 0059/0060)
+        run: npm run check:graph
+
+      - name: design-intent fitness functions — api↔props, state coverage, states↔stories (ADR 0062)
+        run: npm run check:design-intent
+
+      - name: Figma drift seals — shape + presence (ADR 0063; inert until a Figma file is wired)
+        run: npm run check:seals
+
+      - name: i18n key parity + ICU (ADR 0054)
+        run: npm run check:i18n
+
+      - name: Gate self-test — each custom rule rejects its violator (ADR 0058/0060/0059/0054, P6)
+        run: npm run check:gates
+
+      - name: Token drift — gen:tokens output matches globals.css (ADR 0058)
+        run: |
+          npm run gen:tokens
+          git diff --exit-code -- src/design-system/tokens.generated.ts src/design-system/tokens.allowlist.json src/design-system/tokens.agent-rules.md
+
+      - name: Build
+        run: npm run build
+
+      - name: Test with coverage gate (≥80%, ADR 0031)
+        if: env.HOTFIX != 'true'
+        run: npm run test:coverage
+
+      - name: Test without coverage threshold (hotfix bypass, ADR 0031)
+        if: env.HOTFIX == 'true'
+        run: npm run test
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # gitleaks-action lists the PR's commits via the API on pull_request
+      # events; still read-only — no write path anywhere in this job.
+      pull-requests: read
+    steps:
+      - name: Checkout full history (incoming commits are scanned, ADR 0055)
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: gitleaks — blocking secret scan (ADR 0055 Layer 1)
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Committed, human-reviewed allowlist (ADR 0055, 0046).
+          GITLEAKS_CONFIG: .gitleaks.toml
+          # Least-privilege: no PR-comment write path — the red check plus the
+          # job summary are the signal.
+          GITLEAKS_ENABLE_COMMENTS: "false"
+
+  # ── e2e job: temporarily removed during bootstrap (2026-06-11) ──────────────
+  # ADR 0006/0008 put the Playwright e2e in the CI gate, and a full working job
+  # existed here (Supabase stack startup → migration replay → gen:types drift
+  # check → auth/RLS e2e). It was removed for now because the Supabase image
+  # pulls (~3–4 min/run) dominate CI turnaround during bootstrap while there are
+  # no real feature components yet. This is a deliberate, temporary deviation
+  # tracked in docs/bootstrap-plan.md, NOT an ADR change — e2e-in-CI remains the
+  # target end-state.
+  #
+  # The specs still run locally on every change: `npm run test:e2e` (needs a
+  # local Supabase stack: `npx supabase start`).
+  #
+  # Re-enable before the first dev→main production promotion (ADR 0008): recover
+  # the exact job from this PR's git history (feat/phase-7-supabase, the commits
+  # before this removal) — it is correct and CI-verified up to the e2e step.
+
+  # ── Storybook test-runner smoke: local-only during bootstrap (Phase 10) ─────
+  # ADR 0036 puts a `@storybook/test-runner` smoke pass over the *statically built*
+  # Storybook in CI (storybook build → serve → render + play, no axe, no coverage).
+  # It is deferred from CI for now — same lean-bootstrap rationale as the e2e job:
+  # it adds a Storybook build + serve + a second browser run, while the Vitest addon
+  # (browser-mode story tests + a11y + merged coverage, ADR 0038/0040) already runs in
+  # the quality gate above and is the load-bearing engine. This is a deliberate,
+  # temporary deviation tracked in docs/bootstrap-plan.md, NOT an ADR change.
+  #
+  # It runs LOCALLY on demand: `npm run build-storybook`, serve `storybook-static`
+  # (or `npm run storybook`), then `npm run test:storybook`.
+  #
+  # Re-enable with the e2e job before the first dev→main production promotion.

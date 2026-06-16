@@ -1,0 +1,41 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# Local environment — secrets never enter version control (ADR 0020, 0042)
+.env
+.env.*
+!.env.example
+
+# Per-developer local overrides (ADR 0042)
+.claude/settings.local.json
+
+# Next.js
+/.next/
+/out/
+/build
+next-env.d.ts
+*.tsbuildinfo
+
+# Testing
+/coverage
+/playwright-report
+/test-results
+/blob-report
+/playwright/.cache
+
+# Storybook (ADR 0034 → 0057)
+/storybook-static
+*storybook.log
+
+# Vercel
+.vercel
+
+# Debug
+npm-debug.log*
+
+# IDE / OS
+.idea/
+.DS_Store
+*.pem

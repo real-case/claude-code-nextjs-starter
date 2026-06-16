@@ -1,0 +1,137 @@
+#!/usr/bin/env node
+// scripts/hooks/guard-protected-files.mjs
+//
+// PreToolUse guard (Claude Code hook). Turns CLAUDE.md's "human-only" / "never edit
+// in place" rules from honor-system prose into a DETERMINISTIC block — the same posture
+// the design-system `check:*` gates take for component rules (ADR 0058–0064), applied
+// here to the agent's own Edit/Write.
+//
+// Blocks an Edit / Write / NotebookEdit when the target is:
+//   • an ACCEPTED ADR (docs/decisions/NNNN-*.md, status: accepted) — accepted records
+//     change only via a superseding record, never in place (ADR 0001); use adr-supersede.
+//   • docs/decisions/constraints.md — editing the constraints registry is human-only
+//     (ADR 0045).
+//   • a real secrets file (.env, .env.<x>) except the committed .env.example — secrets
+//     are human-provisioned and never tracked (ADR 0020 / 0045).
+//   • tailwind.config.* — Tailwind is configured CSS-first via @theme; there is no
+//     config file (ADR 0024).
+//   • a DOM-snapshot baseline (__snapshots__/, *.snap) — baselines update only as a
+//     REVIEWED action (ADR 0039), never as a silent side effect of an agent edit.
+//
+// Also blocks a Bash `vitest -u` / `--update` run for the same ADR 0039 reason — a
+// baseline regeneration is the command-line spelling of the same unreviewed update.
+//
+// Contract: read the hook payload on stdin; exit 2 with the reason on stderr to BLOCK
+// (Claude is shown the reason and picks another path); exit 0 to allow. Fails OPEN on
+// any unexpected error — a guard must never brick every edit because its own input
+// shape changed.
+
+import { readFileSync } from "node:fs";
+import { basename, resolve, relative, sep } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const repoRoot = resolve(fileURLToPath(import.meta.url), "..", "..", "..");
+
+function block(reason) {
+  process.stderr.write(
+    `⛔ Blocked by guard-protected-files (CLAUDE.md): ${reason}\n`,
+  );
+  process.exit(2);
+}
+
+function readStdin() {
+  try {
+    return readFileSync(0, "utf8");
+  } catch {
+    return "";
+  }
+}
+
+let payload;
+try {
+  payload = JSON.parse(readStdin() || "{}");
+} catch {
+  process.exit(0); // unparseable payload → fail open
+}
+
+const input = payload.tool_input ?? {};
+
+// 0. Bash branch: a `vitest -u` / `--update` run regenerates snapshot baselines —
+//    a reviewed action (ADR 0039), so the agent must ask a human first. The regex is
+//    deliberately narrow (a vitest token followed by a -u/--update flag on the SAME
+//    line — a real invocation never splits them, and the line bound stops commit-
+//    message heredocs that merely mention the phrase across lines from false-firing).
+//    Anything else falls through and the guard stays fail-open.
+if (payload.tool_name === "Bash" && typeof input.command === "string") {
+  if (/\bvitest\b[^|;&\n]*\s--?u(pdate)?\b/.test(input.command)) {
+    block(
+      "`vitest -u` regenerates DOM-snapshot baselines, which update only as a " +
+        "REVIEWED action (ADR 0039) — the hook cannot verify an approval, so the " +
+        "update is human-run. Show the human the failing snapshot diff and ask them " +
+        "to run `npx vitest -u` themselves (e.g. via `! npx vitest -u`).",
+    );
+  }
+  process.exit(0); // other Bash commands are not this guard's concern
+}
+
+const filePath = input.file_path ?? input.notebook_path ?? input.path;
+if (!filePath || typeof filePath !== "string") process.exit(0);
+
+const abs = resolve(filePath);
+const relPosix = relative(repoRoot, abs).split(sep).join("/");
+const base = basename(relPosix);
+
+// 1. Secrets file — .env, .env.local, … but NOT the committed .env.example template.
+if (/^\.env(\..+)?$/.test(base) && base !== ".env.example") {
+  block(
+    `${relPosix} is a secrets file — values are human-provisioned and never tracked ` +
+      `(ADR 0020 / 0045). Edit .env by hand; add placeholders to .env.example instead.`,
+  );
+}
+
+// 2. The constraints registry — human-only (ADR 0045).
+if (relPosix === "docs/decisions/constraints.md") {
+  block(
+    "docs/decisions/constraints.md is human-only — externally-fixed client mandates " +
+      "(CON-00x) are edited by a person, not the agent (ADR 0045).",
+  );
+}
+
+// 3. No Tailwind config — CSS-first only (ADR 0024). Match the basename anywhere.
+if (/^tailwind\.config\.(c|m)?[jt]s$/.test(base)) {
+  block(
+    `${base} is banned — Tailwind is configured CSS-first via @theme in ` +
+      `src/app/globals.css; there is no config file (ADR 0024).`,
+  );
+}
+
+// 4. Snapshot baselines change only as a reviewed action (ADR 0039).
+if (relPosix.includes("/__snapshots__/") || relPosix.endsWith(".snap")) {
+  block(
+    `${relPosix} is a DOM-snapshot baseline — baselines update only as a REVIEWED ` +
+      `action (ADR 0039), never as an agent edit. Show the human the snapshot diff ` +
+      `and ask them to run \`npx vitest -u\` themselves.`,
+  );
+}
+
+// 5. Accepted ADRs are immutable — supersede, never edit in place (ADR 0001).
+if (/^docs\/decisions\/\d{4}-.+\.md$/.test(relPosix)) {
+  let text;
+  try {
+    text = readFileSync(abs, "utf8");
+  } catch {
+    process.exit(0); // file doesn't exist yet → a NEW ADR is being created → allow
+  }
+  const fm = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  const status = fm
+    ? (fm[1].match(/^\s*status:\s*["']?([a-z]+)["']?/im)?.[1] ?? null)
+    : null;
+  if (status === "accepted") {
+    block(
+      `${relPosix} is an ACCEPTED ADR — accepted records are never edited in place. ` +
+        `Record a superseding ADR instead (adr-supersede / \`adr.py supersede\`), per ADR 0001.`,
+    );
+  }
+}
+
+process.exit(0);

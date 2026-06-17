@@ -10,14 +10,14 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   test: {
-    // ADR 0040: a SINGLE Vitest workspace with TWO projects measuring the same
-    // `src/**` — the unit/RTL project (jsdom, ADR 0006) and the Storybook
-    // stories-as-tests project (browser mode, ADR 0034→0057/0036). One V8 coverage
+    // ADR 0041: a SINGLE Vitest workspace with TWO projects measuring the same
+    // `src/**` — the unit/RTL project (jsdom, ADR 0007) and the Storybook
+    // stories-as-tests project (browser mode, ADR 0035→0035/0037). One V8 coverage
     // provider with one include/exclude set merges both into the single ≥80% gate
-    // (ADR 0031): a line covered by a story-test OR a unit test counts once.
+    // (ADR 0008): a line covered by a story-test OR a unit test counts once.
     projects: [
       {
-        // ADR 0006: unit / component (RTL) tests, colocated, under jsdom.
+        // ADR 0007: unit / component (RTL) tests, colocated, under jsdom.
         plugins: [react()],
         resolve: {
           // Honor the `@/*` alias from tsconfig.json.
@@ -34,12 +34,12 @@ export default defineConfig({
           // next-intl's pre-built ESM imports `next/navigation` as a bare, extension-
           // less specifier; Next 16 ships no `exports` map, so Vitest's externalized
           // (Node-strict) resolver can't resolve it. Inlining next-intl routes its
-          // internal imports through Vite's lenient resolver (ADR 0027 testability).
+          // internal imports through Vite's lenient resolver (ADR 0030 testability).
           server: { deps: { inline: ["next-intl"] } },
         },
       },
       {
-        // ADR 0034 (superseded by 0057) / 0036: stories run as browser-mode component
+        // ADR 0035 (superseded by 0035) / 0037: stories run as browser-mode component
         // tests via the Storybook Vitest addon. `storybookTest` discovers stories from
         // .storybook/main.ts and loads the nextjs-vite Vite plugin itself (which also
         // resolves the `@/*` tsconfig paths), so this project does NOT add
@@ -54,7 +54,7 @@ export default defineConfig({
           name: "storybook",
           browser: {
             enabled: true,
-            // Reuse the Playwright browser stack already in the project (ADR 0006).
+            // Reuse the Playwright browser stack already in the project (ADR 0007).
             // Vitest 4 split providers into packages: `provider` is the playwright()
             // instance from `@vitest/browser-playwright`, not the legacy string.
             provider: playwright(),
@@ -62,17 +62,17 @@ export default defineConfig({
             instances: [{ browser: "chromium" }],
           },
           // No setupFiles: since Storybook 10.3, `@storybook/addon-vitest` auto-applies
-          // the .storybook/preview annotations and the addon-a11y gate (ADR 0038), so a
+          // the .storybook/preview annotations and the addon-a11y gate (ADR 0039), so a
           // hand-written setProjectAnnotations file would only be skipped with a warning.
         },
       },
     ],
     coverage: {
-      // ADR 0040: one V8 provider, one include/exclude set for all projects.
+      // ADR 0041: one V8 provider, one include/exclude set for all projects.
       provider: "v8",
       include: ["src/**/*.{ts,tsx}"],
       exclude: [
-        // ADR 0031: tests, stories, generated types, and pure scaffolding are
+        // ADR 0008: tests, stories, generated types, and pure scaffolding are
         // excluded so the denominator reflects meaningful application code.
         "src/**/*.test.{ts,tsx}",
         "src/**/*.stories.tsx",
@@ -87,12 +87,12 @@ export default defineConfig({
         // single sources of truth — controlled vocabularies, state registries, and
         // the generated token union — with no executable logic. They are verified
         // by `tsc --noEmit` (a broken role/archetype/token reference fails typecheck)
-        // and `gen:tokens` drift (ADR 0012-style), not by runtime coverage.
+        // and `gen:tokens` drift (ADR 0015-style), not by runtime coverage.
         "src/design-system/**",
         // next/font wiring cannot execute outside the Next.js compiler; the
         // root layout is exercised by `next build` and the e2e smoke.
         "src/app/[locale]/layout.tsx",
-        // ADR 0027 request-pipeline wiring: these only run inside Next's
+        // ADR 0030 request-pipeline wiring: these only run inside Next's
         // request lifecycle (locale params, middleware, getRequestConfig), so
         // they can't execute under jsdom; `next build` + the i18n e2e spec
         // exercise them. Their pure helpers (metadata, sitemap, robots) are
@@ -103,14 +103,14 @@ export default defineConfig({
         // `server-only` throws outside a React Server context, so unit tests
         // cannot import this module; it is pure schema declaration whose
         // logic (parseEnv) is tested via env.ts, and the fence itself is
-        // exercised by `next build` (ADR 0020 confirmation experiment).
+        // exercised by `next build` (ADR 0018 confirmation experiment).
         "src/lib/env.server.ts",
-        // ADR 0010/0013 request-pipeline wiring: the Supabase client factories
+        // ADR 0013/0016 request-pipeline wiring: the Supabase client factories
         // run only inside Next's request lifecycle (cookies, getUser,
         // server-only). They can't execute under jsdom and are exercised by
         // `next build` + e2e once feature routes land.
         "src/lib/supabase/**",
-        // ADR 0021/0022/0032 Next-runtime wiring: the global error boundary
+        // ADR 0019/0025/0027 Next-runtime wiring: the global error boundary
         // renders its own <html>, the localized not-found and catch-all use the
         // router/Next request lifecycle, and the provider tree mounts
         // QueryClient + NuqsAdapter — none execute under jsdom. They are
@@ -125,7 +125,7 @@ export default defineConfig({
         // POSIX collating-symbol opener and never match.
         "src/app/[locale]/[[]...rest]/page.tsx",
       ],
-      // ADR 0031: global ≥80% on statements/lines gates the merge; branch
+      // ADR 0008: global ≥80% on statements/lines gates the merge; branch
       // coverage is tracked in reports and may be tightened later.
       thresholds: {
         statements: 80,

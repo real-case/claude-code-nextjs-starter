@@ -7,7 +7,7 @@
  *
  * THE bottleneck artifact of the whole design-system plan: it CANNOT be generated —
  * it encodes which categories of intent the product recognises, and is 👤
- * human-authored (ADR 0045).
+ * human-authored (ADR 0046).
  *
  * **Ratified baseline (2026-06-11).** This seed set is ratified as the working
  * vocabulary; the product's real intent roles are filled in here as they emerge.

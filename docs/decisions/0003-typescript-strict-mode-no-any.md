@@ -43,7 +43,7 @@ because it maximizes the compiler's ability to catch errors at authoring time â€
 highest-value feedback loop for agent-written code â€” and a greenfield project pays no
 migration cost to start at the strictest setting. The configuration enables `strict: true`
 together with `noUncheckedIndexedAccess` and `noImplicitOverride`; the
-`@typescript-eslint/no-explicit-any` rule (wired in the linting decision **0005**) forbids
+`@typescript-eslint/no-explicit-any` rule (wired in the linting decision **0006**) forbids
 `any`, steering toward `unknown` with narrowing instead.
 
 ### Consequences
@@ -99,4 +99,4 @@ testing/CI decisions). The `no-explicit-any` lint rule fails the lint step on vi
 
 Builds on **0001** (ADR practice) and **0002** (the App Router / RSC model whose
 boundaries benefit from precise types). The `any` prohibition is enforced by the linting
-configuration decided in **0005**.
+configuration decided in **0006**.

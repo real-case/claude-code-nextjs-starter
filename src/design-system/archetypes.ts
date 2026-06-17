@@ -3,7 +3,7 @@
  * *classes* a component can belong to — the anchor for state-coverage acceptance
  * (each archetype maps to a mandatory state set in `states.ts`).
  *
- * 👤 Human-authored (ADR 0045): the agent never adds a class on its own. A
+ * 👤 Human-authored (ADR 0046): the agent never adds a class on its own. A
  * component fitting no archetype is a human escalation (a new archetype is a
  * design-system decision), never an agent default. A story or `design-intent.ts`
  * (ADR 0062) referencing an unknown archetype fails `tsc --noEmit` — the typed-

@@ -6,7 +6,7 @@ import { updateSession } from "@/lib/supabase/middleware";
 
 /**
  * Request-time middleware (Next 16's `proxy` convention). Two concerns run per
- * request and must compose, not replace each other (ADR 0027 + 0010/0013):
+ * request and must compose, not replace each other (ADR 0030 + 0013/0016):
  *
  *   1. next-intl negotiates the locale and shapes the response — with the
  *      "always" prefix policy that means redirecting `/` to the locale and

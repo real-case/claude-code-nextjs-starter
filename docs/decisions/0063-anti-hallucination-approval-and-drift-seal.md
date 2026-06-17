@@ -8,7 +8,7 @@ decision-makers: Yurii Anichkin
 
 ## Context and Problem Statement
 
-When a component's contract is approved against its design (**0062** authored the spec; **0044** made
+When a component's contract is approved against its design (**0062** authored the spec; **0045** made
 Figma the read-only design context), the obvious approval flow has a subtle, dangerous flaw: if the
 approver is shown *the agent's own rendering or code* beside the spec, the proof closes onto the
 agent's hallucination — the agent says "here is what I built and here is the design" and the human
@@ -17,14 +17,14 @@ regression: an agent approving its own Chromatic baseline (**0043**) is approvin
 truth. And once a variant *is* approved, nothing detects that the underlying Figma frame later changed
 — the approval silently goes stale (problem P9). This record defines an approval protocol whose proof
 the agent cannot author, and a lightweight **drift seal** that detects when an approval has gone stale.
-It extends **0043** (visual regression), **0044** (Figma read-only handoff), and **0046** (human review).
+It extends **0043** (visual regression), **0045** (Figma read-only handoff), and **0047** (human review).
 
 ## Decision Drivers
 
 * **Proof the agent does not control** — the comparison must be the *real Figma frame* (pixels from the
   design tool) beside the spec, never the agent's implementation or the agent's code, or approval
   validates the hallucination instead of catching it (P4).
-* **Read-only Figma, image not code** — consistent with **0044**'s least-privilege posture, use the
+* **Read-only Figma, image not code** — consistent with **0045**'s least-privilege posture, use the
   figma server's *rendered-image* capability, never its code-generation capability (the plan's
   `get_image`-not-`get_code` rule; on this server's toolset that is `get_screenshot`, not the
   code-generation / Code-Connect tools).
@@ -33,7 +33,7 @@ It extends **0043** (visual regression), **0044** (Figma read-only handoff), and
 * **Ephemeral artifact, durable seal** — the side-by-side reconciliation artifact is a review aid,
   discarded after approval; only the seal persists in the intent file.
 * **Baseline approval is human-only** — the agent never approves its own visual baseline, the same
-  closure-onto-output as showing its implementation (**0046**).
+  closure-onto-output as showing its implementation (**0047**).
 
 ## Considered Options
 
@@ -79,8 +79,8 @@ A sampled component's approval artifact shows Figma frames (server image capabil
 **not** the agent's implementation or code; after approval the artifact is gone and `design-intent.ts` carries
 an `ApprovalSeal` (`renderHash` + `figmaFileVersion`) per approved variant. A fitness function re-renders by
 node ID and re-opens variants on a hash mismatch. Visual-regression baselines are approved only in the
-Chromatic UI by a human (**0043**/**0046**), never by the agent. The figma server remains read-only and the
-code-generation capability is not used in this flow (**0044**). Subject to the **0053** drift audit once
+Chromatic UI by a human (**0043**/**0047**), never by the agent. The figma server remains read-only and the
+code-generation capability is not used in this flow (**0045**). Subject to the **0054** drift audit once
 accepted.
 
 ## Pros and Cons of the Options
@@ -106,11 +106,11 @@ accepted.
 
 ## More Information
 
-Extends **0043** (visual regression — baselines stay human-approved), **0044** (Figma read-only, image not
-code), and **0046** (human review of agent output). Consumes the `variants`/`seal` fields of **0062** and
-operates within the read-only figma posture of **0044**/**0042**; the plan's `get_image`/`get_code`
-distinction maps to this server's screenshot vs. code-generation tools. Complements **0052**, which deferred
+Extends **0043** (visual regression — baselines stay human-approved), **0045** (Figma read-only, image not
+code), and **0047** (human review of agent output). Consumes the `variants`/`seal` fields of **0062** and
+operates within the read-only figma posture of **0045**/**0044**; the plan's `get_image`/`get_code`
+distinction maps to this server's screenshot vs. code-generation tools. Complements **0053**, which deferred
 AI pre-classification of visual diffs — this record adds no diff-classification machinery, only the seal.
 Figma image rate limits and an image-generation provider for showcase artifacts are open questions the plan
 carries. Confirms problems P4 (API hallucination) and P9 (post-approval drift). Drafted `proposed`; acceptance,
-and all baseline/variant approvals, are human actions (**0045**/**0046**).
+and all baseline/variant approvals, are human actions (**0046**/**0047**).

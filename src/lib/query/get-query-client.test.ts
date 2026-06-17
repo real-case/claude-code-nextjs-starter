@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { getQueryClient } from "./get-query-client";
 
 // jsdom defines `window`, so this exercises the browser branch: one stable
-// client reused across calls (ADR 0022). The fresh-per-request server branch
+// client reused across calls (ADR 0025). The fresh-per-request server branch
 // runs under `next build` / RSC, where there is no `window`.
 describe("getQueryClient (browser)", () => {
   it("returns a QueryClient", () => {

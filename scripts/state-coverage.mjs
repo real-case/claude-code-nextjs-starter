@@ -66,7 +66,7 @@ function printChecklist(archetype) {
   console.log(
     `\nBuild coverage by SUBTRACTION (ADR 0062): in design-intent.ts mark each state` +
       `\napplicable true/false — a \`false\` REQUIRES a rationale. Each applicable state` +
-      `\nneeds a story case (ADR 0035/0041) run through axe + Chromatic (ADR 0038/0043).` +
+      `\nneeds a story case (ADR 0036/0042) run through axe + Chromatic (ADR 0039/0043).` +
       `\nSimultaneity (disabled+loading, …) resolves via state-precedence.ts, not here.`,
   );
 }
@@ -84,7 +84,7 @@ if (argv[0] === "--id") {
   if (node.archetype === null) {
     console.log(
       `node "${id}" has archetype: null — out of archetype scope (e.g. a presentational` +
-        `\nlabel, ADR 0041). No mandatory state set. A component fitting NO archetype is a` +
+        `\nlabel, ADR 0042). No mandatory state set. A component fitting NO archetype is a` +
         `\n👤 human escalation (a new archetype is a design-system decision, ADR 0061), never` +
         `\nan agent default.`,
     );

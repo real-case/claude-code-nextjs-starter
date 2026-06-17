@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 
 /**
- * Catch-all under `[locale]` (ADR 0021, 0027). Any path that matches no real
+ * Catch-all under `[locale]` (ADR 0019, 0030). Any path that matches no real
  * route lands here and becomes a localized 404 via `notFound()` (→
  * `not-found.tsx`). The request locale is set first so the not-found catalog
  * resolves for the matched locale even under static rendering.

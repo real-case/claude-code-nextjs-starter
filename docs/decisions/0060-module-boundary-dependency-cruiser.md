@@ -39,7 +39,7 @@ that answers "who keeps the graph honest."
 * **Adopt dependency-cruiser** as a CI gate (`depcruise --validate`) for boundary rules *and* run the
   composition↔import reconciliation against the **0059** graph
 * **ESLint `no-restricted-imports`** — express boundaries as import-path lint rules, no graph tool
-* **Convention + review** — document the boundaries and rely on review and the **0053** audit
+* **Convention + review** — document the boundaries and rely on review and the **0054** audit
 
 ## Decision Outcome
 
@@ -56,11 +56,11 @@ expressed as rules:
 * **`no-orphans`** — a module with no inbound edge (no `usedIn`) is flagged as suspect (dead or
   un-deduplicated).
 
-`depcruise --validate` runs in the existing quality gate (**0008**) beside the **0058** lints. Separately,
+`depcruise --validate` runs in the existing quality gate (**0010**) beside the **0058** lints. Separately,
 a **reconciliation step** compares the **0059** composition graph to the derived import graph; a mismatch
 (a `composedOf` edge with no corresponding import, or an import with no design edge) fails CI and forces
 an update of either the graph or the code — the same generate-then-assert-no-drift discipline as
-`gen:types` (**0012**). Honoring the bootstrap-lean posture (**0008**), if `depcruise` proves heavy it may
+`gen:types` (**0015**). Honoring the bootstrap-lean posture (**0010**), if `depcruise` proves heavy it may
 run inert/local until justified, mirroring the Phase-7 e2e and Phase-10 smoke deferrals — but the rules
 and config land now.
 
@@ -80,10 +80,10 @@ and config land now.
 ### Confirmation
 
 `dependency-cruiser` is a committed devDependency with a repo-specific config; `depcruise --validate` runs
-in CI (**0008**). A planted primitive→composite import, a deep internal import bypassing `index.ts`, an
+in CI (**0010**). A planted primitive→composite import, a deep internal import bypassing `index.ts`, an
 introduced cycle, and an orphan module each fail the gate; removing the violation turns it green. A
 hand-edited divergence between the **0059** composition graph and the code's imports fails the
-reconciliation step (a `database.types`-style drift, **0012** precedent). Subject to the **0053** drift
+reconciliation step (a `database.types`-style drift, **0015** precedent). Subject to the **0054** drift
 audit once accepted.
 
 ## Pros and Cons of the Options
@@ -106,15 +106,15 @@ audit once accepted.
 
 * Good, because zero tooling.
 * Bad, because boundary violations and intent/code drift are exactly what review misses at scale; the
-  **0053** audit is a periodic backstop, not a per-PR gate.
+  **0054** audit is a periodic backstop, not a per-PR gate.
 
 ## More Information
 
 New decision; adopts the dependency-cruiser devDependency the plan's §2 notes is absent. Verifies the
 *code* against the *intent* graph of **0059** — the two graphs are deliberately distinct (plan §4): this
 record builds the import graph and the reconciliation; **0059** owns the composition graph. Runs in the
-**0008** CI gate beside the **0058** token lints; mirrors **0012**'s drift-check discipline; couples to
+**0010** CI gate beside the **0058** token lints; mirrors **0015**'s drift-check discipline; couples to
 **0064** for graph/deprecation hygiene. The primitive-vs-composite glob expression for a non-FSD Next
 layout is an open question carried in the plan. Confirms problems P5 (composition leaking into a
 primitive), P2 (orphans/duplication), and P9 (artifact↔code drift). Drafted `proposed`; acceptance is the
-human gate (**0045**).
+human gate (**0046**).

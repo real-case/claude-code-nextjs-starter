@@ -4,7 +4,7 @@
 // ADR 0059/0060 — the code side of the anti-drift reconciliation (problem P9). The
 // composition graph is the top-down *intent* model; this script verifies the
 // *implementation* has not diverged from it, the same generate-then-assert-no-drift
-// discipline as gen:types (ADR 0012). It checks, with no third-party dependency:
+// discipline as gen:types (ADR 0015). It checks, with no third-party dependency:
 //   1. structural integrity of composition-graph.json (required fields, kind enum,
 //      archetype in the controlled vocabulary or null);
 //   2. every src/components/ui component module appears as a node;

@@ -8,7 +8,7 @@ decision-makers: Yurii Anichkin
 
 ## Context and Problem Statement
 
-The deterministic gates (**0058**/**0060**), the structural skills (**0050**-class), and the registries
+The deterministic gates (**0058**/**0060**), the structural skills (**0051**-class), and the registries
 (**0061**) are written up front against the failures we *anticipate*. But the failures that actually
 hurt are the ones the rules **did not anticipate**: a rule that was never written, a rule that exists in
 CI but never reached the agent, a rule too ambiguous to apply, or a real violation no automated check
@@ -19,7 +19,7 @@ undefined fate, so the graph accretes dead nodes and the **0060** reconciliation
 P9). And in batch passes, context is lost returning to a component across waves (problem P7). This record
 defines the **feedback loop** that keeps the rules current — a Defect Log of *missing or ambiguous rules*
 and a reactive process that graduates them into checks — and the graph-hygiene the loop depends on. It
-extends **0048** (flaky-test quarantine discipline) and **0053** (the drift audit), reusing their
+extends **0049** (flaky-test quarantine discipline) and **0054** (the drift audit), reusing their
 mechanisms rather than duplicating them.
 
 ## Decision Drivers
@@ -29,7 +29,7 @@ mechanisms rather than duplicating them.
 * **Root-cause determines the fix** — classifying each entry (rule absent / didn't reach the agent /
   ambiguous / not auto-caught) is what turns a defect into the *right* kind of remediation.
 * **Reactive, not speculative growth** — a new invariant starts as an ADR Confirmation enforced by review;
-  it earns an executable check only on its **first real violation**, which is exactly **0053**'s
+  it earns an executable check only on its **first real violation**, which is exactly **0054**'s
   "mechanical predicates graduate into CI" mechanism — so the gate set grows from evidence, not guesswork.
 * **Close the loop organizationally** — filling the log must be a *mandatory* step of the review/escalation
   phase, and "defect → rule/skill/registry" must be an *owned* action, or the loop is theatre (P7).
@@ -41,7 +41,7 @@ mechanisms rather than duplicating them.
 * **A Defect Log of missing/ambiguous rules + reactive fitness-function growth + graph-deprecation hygiene**,
   reviewed per wave with an assigned owner
 * **A general bug tracker** — log every defect and triage later, no rule-gap focus
-* **No explicit loop** — rely on **0053**'s scheduled drift audit alone to surface rule decay
+* **No explicit loop** — rely on **0054**'s scheduled drift audit alone to surface rule decay
 
 ## Decision Outcome
 
@@ -52,7 +52,7 @@ entry classified by root cause: **rule absent** (write the rule), **didn't reach
 the agent rules/skill), **ambiguous** (sharpen the registry/ADR), or **not auto-caught** (the rule exists but
 nothing enforces it). Filling the log is a **mandatory action of the review/escalation phase**, not optional.
 **Reactive growth**: a new invariant begins as an ADR Confirmation enforced *by review*; on the first
-violation it gets an executable check and rises into the Stage-1 deterministic layer — the **0053** graduation
+violation it gets an executable check and rises into the Stage-1 deterministic layer — the **0054** graduation
 mechanism, applied to design-system rules. **Closing the loop is organizational**: each wave *begins* with a
 review of the accumulated log, and "defect → rule/skill/registry" is an assigned, owned step, never "someday".
 Two hygiene obligations ride along: **dictionary governance** (a **0061** rename/merge/split is a migration of
@@ -79,17 +79,17 @@ ADR only if it grows enforcement teeth.
 
 A Defect Log exists and records missing/ambiguous rules (not every error), each with a root-cause class; it
 has at least one entry *converted* into a rule/skill/registry change; a graduated invariant appears as a new
-Stage-1 check (the **0053** mechanism). Per-wave reviews of the log are evidenced, with an owner. A dictionary
+Stage-1 check (the **0054** mechanism). Per-wave reviews of the log are evidenced, with an owner. A dictionary
 rename/merge/split procedure and a component-deprecation procedure (node + `usedIn` edge fate) are recorded
-before the first such event. Reuses **0048**'s quarantine discipline for flaky checks and **0053**'s
-graduation path. Subject to the **0053** drift audit once accepted.
+before the first such event. Reuses **0049**'s quarantine discipline for flaky checks and **0054**'s
+graduation path. Subject to the **0054** drift audit once accepted.
 
 ## Pros and Cons of the Options
 
 ### Defect Log + reactive growth + graph hygiene (chosen)
 
 * Good, because it tracks rule decay as a first-class artifact and routes each gap back into the gates.
-* Good, because it reuses **0048**/**0053** rather than inventing parallel machinery.
+* Good, because it reuses **0049**/**0054** rather than inventing parallel machinery.
 * Neutral, because reactive growth accepts that the first instance of a new failure is review-caught.
 * Bad, because it is process that depends on ownership to not erode.
 
@@ -99,19 +99,19 @@ graduation path. Subject to the **0053** drift audit once accepted.
 * Bad, because mixing rule-gaps into ordinary defects buries the signal this loop needs; the rule-decay view
   (P6) never emerges from a flat bug list.
 
-### No explicit loop, rely on 0053
+### No explicit loop, rely on 0054
 
-* Good, because **0053** already audits code against Confirmations on a schedule.
-* Bad, because **0053** finds *drift from existing decisions*; it does not surface *missing* decisions or the
+* Good, because **0054** already audits code against Confirmations on a schedule.
+* Bad, because **0054** finds *drift from existing decisions*; it does not surface *missing* decisions or the
   agent-reach/ambiguity classes — the gaps the Defect Log is specifically for (P6/P7).
 
 ## More Information
 
-Extends **0048** (flaky-test quarantine: annotated skip + tracked issue + time-box) and **0053** (the drift
+Extends **0049** (flaky-test quarantine: annotated skip + tracked issue + time-box) and **0054** (the drift
 audit and its "mechanical predicates graduate into CI" mechanism), applying both to the design-system rule
 set. Owns the dictionary-governance procedure that **0061** renames require and the component-deprecation
 hygiene that keeps the **0059** graph and **0060** reconciliation honest. The batch-wave (L1) methodology is
 the Stage-6 convention, not an ADR unless it gains enforcement. Confirms problems P6 (rules diverging from
 reality / knowledge laundering), P7 (context loss across batch passes), and P9 (artifact drift after
 approval). Drafted `proposed`; acceptance, and the assignment of the governance/loop owner, are human actions
-(**0045**).
+(**0046**).

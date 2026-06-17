@@ -40,7 +40,7 @@ drift-checked in CI. **Do not** retype the token list in prose, in a component, 
 a story — point at the generated reference. Re-listing tokens by hand is the
 "knowledge laundering" failure (problem P6): the copy drifts from what CI enforces.
 
-## What it enforces (ADR 0058 / 0025), in `src/components/**`
+## What it enforces (ADR 0058 / 0033), in `src/components/**`
 
 - Only semantic tokens, via their Tailwind utilities (`bg-primary`,
   `text-muted-foreground`, `rounded-lg`) or `var(--color-*)`.
@@ -49,5 +49,5 @@ a story — point at the generated reference. Re-listing tokens by hand is the
 - A primitive owns **no external margin** — spacing is the composing parent's job.
 
 If a needed token is missing, that is a token-layer decision: add it in `globals.css`
-and re-run `npm run gen:tokens` (ADR 0025) — never hard-code the value to route around
+and re-run `npm run gen:tokens` (ADR 0033) — never hard-code the value to route around
 the gate.

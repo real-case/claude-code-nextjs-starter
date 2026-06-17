@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // scripts/check-gates.mjs
 //
-// ADR 0058/0059/0060/0054, problem P6 — "test the test". The custom design-system
+// ADR 0058/0059/0060/0055, problem P6 — "test the test". The custom design-system
 // gates are tested by no one upstream, so a rule that silently stops firing (a bad
 // refactor, a dependency bump) would let real violations through behind a green gate.
 // This harness plants a known violator for each custom gate, runs the gate, and
@@ -215,7 +215,7 @@ check("design-intent demo coverage (states↔stories)", () =>
   }),
 );
 
-// 6. interactive play coverage (ADR 0037): rename the only `play:` away so an
+// 6. interactive play coverage (ADR 0038): rename the only `play:` away so an
 //    interactive-archetype stories file ships zero play functions.
 check("design-intent interactive play coverage", () =>
   withGateCheck(() => {

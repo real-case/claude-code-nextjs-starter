@@ -2,20 +2,20 @@
 name: create-migration
 description: >-
   Scaffold a new Supabase SQL migration through the full row-security ceremony — generate
-  the timestamped file with the Supabase CLI (ADR 0011), author schema + deny-by-default RLS
+  the timestamped file with the Supabase CLI (ADR 0014), author schema + deny-by-default RLS
   from the proven create_notes template (RLS enabled, owner-scoped select/insert/update/delete,
   `to authenticated`, table GRANTs, search_path-pinned functions), apply it locally with
-  db:reset, regenerate the typed client with gen:types (ADR 0012), and leave the auth/RLS
-  critical path with a test (ADR 0006). Use when asked to "create/add a migration", "new
+  db:reset, regenerate the typed client with gen:types (ADR 0015), and leave the auth/RLS
+  critical path with a test (ADR 0007). Use when asked to "create/add a migration", "new
   table", "add a column", "write a Supabase migration", or "/create-migration <name>".
 disable-model-invocation: true
 ---
 
 # Scaffold a governed Supabase migration (row-security ceremony)
 
-A migration here is a **security change versioned with the schema** (ADR 0011), not just a
+A migration here is a **security change versioned with the schema** (ADR 0014), not just a
 DDL file: every user-reachable table ships its RLS in the same migration, isolation is
-**deny-by-default**, and the typed client is regenerated so the app stays in sync (ADR 0012).
+**deny-by-default**, and the typed client is regenerated so the app stays in sync (ADR 0015).
 This skill walks that path and ends with the local DB rebuilt, types regenerated, and the
 isolation model proven. It has side effects (writes SQL, resets the local DB, regenerates
 types), so it is **user-invoked only**.
@@ -30,12 +30,12 @@ correctly-isolated per-user table. Mirror its structure. Run the steps **in orde
 ## 0. Decide the change
 - **Name:** a verb-first slug — `create_<table>`, `add_<col>_to_<table>`, `add_rls_to_<table>`.
 - **Scope check (👤 boundary):** the Supabase baseline is **Postgres + RLS + Auth only**
-  (ADR 0009). **Storage, Realtime, Edge Functions each need their own ADR first** — if the
+  (ADR 0012). **Storage, Realtime, Edge Functions each need their own ADR first** — if the
   change reaches for one, **stop and escalate to a human**; do not scaffold it here.
 - **Ownership model:** who may see a row? Per-user (`user_id = auth.uid()`), per-tenant (a
   membership join), or service-only (no client access). This decides the policy predicates.
 
-## 1. Generate the timestamped file with the CLI (ADR 0011)
+## 1. Generate the timestamped file with the CLI (ADR 0014)
 Never hand-roll the timestamp — the Supabase CLI is the source of the migration ordering:
 
 ```bash
@@ -52,7 +52,7 @@ apply to any policy you add or any column that changes who can see a row.
 
 ```sql
 -- <Phase / ADR refs>: <one line — what this table is and the isolation it proves>.
--- RLS is written here so the security model is versioned with the schema (ADR 0011).
+-- RLS is written here so the security model is versioned with the schema (ADR 0014).
 
 create table public.<table> (
   id uuid primary key default gen_random_uuid(),
@@ -65,7 +65,7 @@ create table public.<table> (
 );
 
 comment on table public.<table> is
-  'User-owned <table>; RLS restricts every row to its owner (ADR 0010, 0011, 0013).';
+  'User-owned <table>; RLS restricts every row to its owner (ADR 0013, 0014, 0016).';
 
 -- Owner lookups (the only access path under RLS) hit this index.
 create index <table>_user_id_idx on public.<table> (user_id);
@@ -73,7 +73,7 @@ create index <table>_user_id_idx on public.<table> (user_id);
 -- Table privileges are SEPARATE from RLS: this GRANT decides whether the role may touch
 -- the table at all; RLS then decides which rows. This Supabase version does not auto-grant
 -- the API roles, so without it `authenticated` gets "permission denied" before any policy
--- runs. Anon stays ungranted — an authenticated-only resource (ADR 0013).
+-- runs. Anon stays ungranted — an authenticated-only resource (ADR 0016).
 grant select, insert, update, delete on public.<table> to authenticated;
 
 -- Deny-by-default: RLS on + no policy = every row invisible. Policies grant access back.
@@ -124,7 +124,7 @@ create trigger <table>_set_updated_at
 For a **per-tenant** model, swap the predicate for a membership check (a sub-select that
 constrains to the caller's tenant and cannot be widened by a forged id), keep everything else.
 
-## 3. RLS self-check — do not skip (ADR 0009/0010/0011/0013)
+## 3. RLS self-check — do not skip (ADR 0012/0013/0014/0016)
 Before applying, walk every user-reachable table you touched against this list. A miss here
 is a row reaching the wrong user — the highest-severity bug this project can ship.
 
@@ -145,7 +145,7 @@ npm run db:reset      # drops + replays ALL migrations from supabase/ (needs the
 A failure here is a SQL error in your migration — fix it at the source and re-run. `db:reset`
 replaying cleanly is the proof the migration is self-contained and ordered correctly.
 
-## 5. Regenerate the typed client (ADR 0012)
+## 5. Regenerate the typed client (ADR 0015)
 ```bash
 npm run gen:types     # → src/lib/supabase/database.types.ts (then prettier)
 ```
@@ -153,7 +153,7 @@ Stage the regenerated types **with** the migration — they are one change. (The
 `post-edit-checks` hook also nudges this on any migration edit; CI's type-drift replay is
 deferred during bootstrap, so regenerating here is the real guarantee.)
 
-## 6. Prove the isolation (ADR 0006 — auth/RLS is risk-weighted, e2e first)
+## 6. Prove the isolation (ADR 0007 — auth/RLS is risk-weighted, e2e first)
 A new user-owned table is the critical path. Add or extend an **e2e** spec under `e2e/` that
 asserts a user reads/writes **only** their own rows and is denied another user's (the e2e
 job is removed from CI during bootstrap but the specs run locally — `npm run test:e2e`).
@@ -161,7 +161,7 @@ For pure data-shape logic a colocated unit test may suffice, but isolation itsel
 
 ## 7. The human gates that remain (👤 — do not perform)
 - **Merging** the migration into `dev` / `main` and any **production** apply is human-only
-  (ADR 0045) — production schema changes are promoted by a person.
+  (ADR 0046) — production schema changes are promoted by a person.
 - A change that needs **Storage / Realtime / Edge Functions**, or any decision **no ADR
   covers**, is **record-the-ADR-first** (step 0) — escalate, don't scaffold.
 

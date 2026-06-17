@@ -47,7 +47,7 @@ default; Client Components are used only at interactive leaves (marked `"use cli
 Mutations use Server Actions where they fit, falling back to route handlers for
 webhook-style or external-caller endpoints. App code lives under `src/app/`. React 19 is the
 pinned major version (`react` / `react-dom` at `^19`), required by the App Router's RSC and
-Server Actions model and relied on by the React Compiler (**0033**).
+Server Actions model and relied on by the React Compiler (**0029**).
 
 ### Consequences
 

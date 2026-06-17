@@ -24,7 +24,7 @@ const geistMono = Geist_Mono({
 
 type LocaleParams = { locale: string };
 
-// Pre-render every configured locale at build time (ADR 0027). One param
+// Pre-render every configured locale at build time (ADR 0030). One param
 // today; adding a locale needs no change here.
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -43,14 +43,14 @@ export async function generateMetadata({
 
   return {
     // Absolute base for every relative URL below — validated at build time by
-    // the ADR 0020 env module. Canonical/`hreflang` paths resolve against it.
+    // the ADR 0018 env module. Canonical/`hreflang` paths resolve against it.
     metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
     title: { default: t("title"), template: `%s · ${t("title")}` },
     description: t("description"),
-    // Canonical + per-locale alternates derived from the locale config (0028).
+    // Canonical + per-locale alternates derived from the locale config (0031).
     alternates,
     // Shared social-card defaults live in the root layout and are overridden
-    // per route as pages add their own metadata (ADR 0028).
+    // per route as pages add their own metadata (ADR 0031).
     openGraph: {
       type: "website",
       siteName: t("title"),
@@ -86,9 +86,9 @@ export default async function LocaleLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {/* v4 inherits locale + messages from the request config (0027).
+        {/* v4 inherits locale + messages from the request config (0030).
             Providers adds the client state buckets — TanStack Query + nuqs
-            (0022, 0032) — inside the intl provider. */}
+            (0025, 0027) — inside the intl provider. */}
         <NextIntlClientProvider>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>

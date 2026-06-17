@@ -9,8 +9,8 @@ import type { Database } from "./database.types";
 
 /**
  * Service-role client — **bypasses RLS** and runs with full privileges, so it
- * is confined to trusted server-only code (ADR 0010). The `server-only` import
- * plus the `env.server` fence (ADR 0020) keep the key out of client bundles: a
+ * is confined to trusted server-only code (ADR 0013). The `server-only` import
+ * plus the `env.server` fence (ADR 0018) keep the key out of client bundles: a
  * client import of this module fails `next build`.
  *
  * No admin operation exists yet; this establishes the fence for when one does.

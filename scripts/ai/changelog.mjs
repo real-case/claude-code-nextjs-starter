@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// scripts/ai/changelog.mjs — ADR 0049 (changelog drafting at the dev→main release).
+// scripts/ai/changelog.mjs — ADR 0050 (changelog drafting at the dev→main release).
 // Drafts categorized entries from the commit range; the human EDITS them in the release
 // PR (this never auto-commits CHANGELOG.md). Output is written to CHANGELOG.draft.md (a
 // build artifact / PR comment), not to the committed changelog.
@@ -40,14 +40,14 @@ const draft = await advise({
     "Draft release-changelog entries from these commit subjects. Group under the Keep-a-Changelog " +
     "headings (Added / Changed / Fixed / Removed / Security) and write user-facing, plain-language " +
     "lines — not raw commit subjects. Cite an ADR number only where a change implements a specific " +
-    "decision. This is a DRAFT a human will edit in the release PR (ADR 0049); do not invent entries " +
+    "decision. This is a DRAFT a human will edit in the release PR (ADR 0050); do not invent entries " +
     "for commits that aren't there.",
   payload: `Commits in ${range}:\n${commits}`,
 });
 
 writeFileSync("CHANGELOG.draft.md", `${draft}\n`);
-const body = `### 🤖 Advisory changelog draft (ADR 0049 — a human edits this in the release PR; not auto-committed)\n\n${draft}`;
+const body = `### 🤖 Advisory changelog draft (ADR 0050 — a human edits this in the release PR; not auto-committed)\n\n${draft}`;
 postPrComment(process.env.PR_NUMBER, body);
 console.log(
-  "ai-changelog: draft written to CHANGELOG.draft.md and posted (human edits in the release PR, ADR 0049).",
+  "ai-changelog: draft written to CHANGELOG.draft.md and posted (human edits in the release PR, ADR 0050).",
 );

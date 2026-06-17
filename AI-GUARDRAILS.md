@@ -5,7 +5,7 @@
 > flows, and what every rule is grounded in.
 
 This project is built **decisions-first** with an **AI agent as the primary
-implementer** ([ADR 0045](docs/decisions/0045-ai-agent-role-and-attribution.md)). An
+implementer** ([ADR 0046](docs/decisions/0046-ai-agent-role-and-attribution.md)). An
 agent's output is only trustworthy when the rules it works under are
 **machine-checkable, generated from a single source, and proven to enforce
 themselves** — prose conventions rot, gates don't. This document explains that
@@ -150,10 +150,9 @@ What makes this deterministic rather than honor-system:
 - **Acceptance is human-only.** An agent may _draft_ and _review_ an ADR; it may never
   set `status: accepted`. That transition is the first human gate.
 
-**Current corpus:** 66 ADRs (0001–0066, gap-free), 63 accepted, 2 superseded
-(0025→0065 token architecture, 0034→0057 Storybook 10), and 1 proposed (0066, the
-template's neutral token baseline, superseding 0065 pending acceptance), plus 3
-client-mandate constraints (CON-001 React, CON-002 Next.js, CON-003 the MCP toolchain).
+**Current corpus:** 64 ADRs (0001–0064, gap-free), 63 accepted and 1 proposed (0033, the
+template's neutral token baseline, pending acceptance), plus 3 client-mandate constraints
+(CON-001 React, CON-002 Next.js, CON-003 the MCP toolchain).
 
 ---
 
@@ -169,10 +168,10 @@ Matches `Write | Edit | NotebookEdit | Bash`. Exits `2` (block, with reason) or 
 
 | What it blocks                                         | Why                                          | Grounded in                                                                |
 | ------------------------------------------------------ | -------------------------------------------- | -------------------------------------------------------------------------- |
-| `vitest -u` / `--update` snapshot regen                | Baselines update only as a reviewed action   | [ADR 0039](docs/decisions/0039-snapshot-testing-policy.md)                 |
-| Writes to `.env`, `.env.local`, … (not `.env.example`) | Secrets are human-provisioned, never tracked | [ADR 0020](docs/decisions/0020-secrets-and-environment-variables.md), 0045 |
-| Edits to `docs/decisions/constraints.md`               | Client-mandate registry is human-only        | [ADR 0045](docs/decisions/0045-ai-agent-role-and-attribution.md)           |
-| Writes to `tailwind.config.*`                          | CSS-first `@theme` only, no config file      | [ADR 0024](docs/decisions/0024-styling-tailwind-css.md)                    |
+| `vitest -u` / `--update` snapshot regen                | Baselines update only as a reviewed action   | [ADR 0040](docs/decisions/0040-snapshot-testing-policy.md)                 |
+| Writes to `.env`, `.env.local`, … (not `.env.example`) | Secrets are human-provisioned, never tracked | [ADR 0018](docs/decisions/0018-secrets-and-environment-variables.md), 0046 |
+| Edits to `docs/decisions/constraints.md`               | Client-mandate registry is human-only        | [ADR 0046](docs/decisions/0046-ai-agent-role-and-attribution.md)           |
+| Writes to `tailwind.config.*`                          | CSS-first `@theme` only, no config file      | [ADR 0032](docs/decisions/0032-styling-tailwind-css.md)                    |
 | In-place edits to an `accepted` ADR                    | Records are immutable; supersede instead     | [ADR 0001](docs/decisions/0001-record-decisions-as-madr-adrs.md)           |
 
 ### PostToolUse — `scripts/hooks/post-edit-checks.mjs`
@@ -206,14 +205,14 @@ subset.
 
 | Gate                  | Script                        | What it deterministically rejects                                                        | ADR                                                                        |
 | --------------------- | ----------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `check:stories`       | `check-component-stories.mjs` | A `src/components/**` module with no colocated stories                                   | [0041](docs/decisions/0041-component-story-coverage-policy.md)             |
+| `check:stories`       | `check-component-stories.mjs` | A `src/components/**` module with no colocated stories                                   | [0042](docs/decisions/0042-component-story-coverage-policy.md)             |
 | `check:boundaries`    | `depcruise src`               | primitive→composite imports · non-`index.ts` cross-imports · cycles · orphans            | [0060](docs/decisions/0060-module-boundary-dependency-cruiser.md)          |
 | `check:graph`         | `check-composition-graph.mjs` | Composition graph (`composedOf`/`usedIn`) diverging from the real import graph           | [0059](docs/decisions/0059-component-composition-dependency-graph.md)/0060 |
 | `check:design-intent` | `check-design-intent.mjs`     | API↔props mismatch · uncovered archetype states · states↔stories drift · missing play fn | [0062](docs/decisions/0062-design-intent-spec-and-api-derivation.md)       |
 | `check:seals`         | `check-figma-seals.mjs`       | Malformed/absent Figma approval seals (inert until a Figma file is wired)                | [0063](docs/decisions/0063-anti-hallucination-approval-and-drift-seal.md)  |
-| `check:i18n`          | `check-i18n-parity.mjs`       | Missing locale keys · broken ICU syntax                                                  | [0054](docs/decisions/0054-localization-ai-first-translation.md)           |
+| `check:i18n`          | `check-i18n-parity.mjs`       | Missing locale keys · broken ICU syntax                                                  | [0055](docs/decisions/0055-localization-ai-first-translation.md)           |
 | `check:tokens`        | `eslint src/components`       | Raw hex/CSS-color · inline-style raw values · raw SVG fill/stroke · numbered Tailwind    | [0058](docs/decisions/0058-token-usage-enforcement-and-codegen.md)         |
-| `check:gates`         | `check-gates.mjs`             | **A gate that fails to reject its own planted violator** (see §7)                        | 0058/0059/0060/0054                                                        |
+| `check:gates`         | `check-gates.mjs`             | **A gate that fails to reject its own planted violator** (see §7)                        | 0058/0059/0060/0055                                                        |
 
 ---
 
@@ -242,7 +241,7 @@ _same_ `gen:tokens` pass over the _same_ `@theme` block, the rules the agent rea
 the rules CI enforces **cannot silently diverge**. CI runs `gen:tokens` / `gen:types`
 and fails on any `git diff` — the generated artifacts are never hand-edited
 ([ADR 0058](docs/decisions/0058-token-usage-enforcement-and-codegen.md),
-[0012](docs/decisions/0012-type-generation-from-schema.md)).
+[0015](docs/decisions/0015-type-generation-from-schema.md)).
 
 ### Gates that test themselves (P6)
 
@@ -302,17 +301,17 @@ flowchart TD
         q11 --> q12["build"] --> q13["test:coverage (≥80%)"]
     end
     subgraph scan["job: secret-scan (required)"]
-        sc["gitleaks — blocking secret scan (ADR 0055 L1)"]
+        sc["gitleaks — blocking secret scan (ADR 0056 L1)"]
     end
 ```
 
 - **All 13 steps block.** Any red fails the PR.
-- **Coverage ≥ 80%** ([ADR 0031](docs/decisions/0031-test-coverage-threshold-gate.md));
+- **Coverage ≥ 80%** ([ADR 0008](docs/decisions/0008-test-coverage-threshold-gate.md));
   only `hotfix/*` / `hotfix`-labeled PRs bypass the _threshold_ — tests still run, and
   nothing else of the gate is bypassed.
 - **No global retries.** A flaky test is quarantined explicitly (annotated skip +
   tracked issue, time-boxed), never papered over with retries
-  ([ADR 0048](docs/decisions/0048-ci-failure-triage-and-flaky-test-policy.md)). Required
+  ([ADR 0049](docs/decisions/0049-ci-failure-triage-and-flaky-test-policy.md)). Required
   status checks are deterministic-only.
 
 ---
@@ -333,7 +332,7 @@ flowchart LR
     graduate --> det["check:* / lint / fitness function"]
     det -.guards future PRs.-> fail
 
-    audit["Scheduled drift audit (ADR 0053)\nwalks every accepted ADR's Confirmation"] --> report["Report: confirmed / drifted / unverifiable"]
+    audit["Scheduled drift audit (ADR 0054)\nwalks every accepted ADR's Confirmation"] --> report["Report: confirmed / drifted / unverifiable"]
     report --> human2["👤 Human disposition:\nfix code OR open superseding ADR"]
 ```
 
@@ -350,7 +349,7 @@ Three distinct feedback mechanisms:
 3. **Drift audit (scheduled).** An AI audit walks every accepted ADR's _Confirmation_
    section against repo reality and reports `confirmed / drifted / unverifiable`.
    Disposition is human — fix the code or open a superseding ADR, never silently edit an
-   accepted decision ([ADR 0053](docs/decisions/0053-adr-code-drift-audit.md)).
+   accepted decision ([ADR 0054](docs/decisions/0054-adr-code-drift-audit.md)).
 
 ---
 
@@ -364,9 +363,9 @@ they never substitute for approval. All are inert until a human provisions
 
 ```mermaid
 flowchart TD
-    pr["Agent opens a PR (labeled agent-authored, ADR 0045)"] --> advisory["Advisory AI (non-blocking):\nPR review (0047) · security L2 (0055)\nCI triage (0048) · changelog (0049)"]
+    pr["Agent opens a PR (labeled agent-authored, ADR 0046)"] --> advisory["Advisory AI (non-blocking):\nPR review (0048) · security L2 (0056)\nCI triage (0049) · changelog (0050)"]
     advisory --> deterministic["Required deterministic checks (ci.yml)"]
-    deterministic --> humangate["👤 Exactly ONE human approval\n(distinct from author, ADR 0046)"]
+    deterministic --> humangate["👤 Exactly ONE human approval\n(distinct from author, ADR 0047)"]
     humangate --> merge["Merge into dev"]
 ```
 
@@ -378,7 +377,7 @@ provisioning/rotating/revealing secrets · editing `constraints.md` · merging i
 its own implementation during API approval** — the proof is Figma pixels it does not
 control, sealed by `renderHash` + `figmaFileVersion` as a drift detector
 ([ADR 0063](docs/decisions/0063-anti-hallucination-approval-and-drift-seal.md),
-[0046](docs/decisions/0046-human-review-of-agent-authored-prs.md)).
+[0047](docs/decisions/0047-human-review-of-agent-authored-prs.md)).
 
 ---
 
@@ -386,12 +385,12 @@ control, sealed by `renderHash` + `figmaFileVersion` as a drift detector
 
 Every guardrail traces to one of four grounded sources — none is invented by the agent:
 
-| Source                                                                                                             | What it fixes                                                                        | Authority                                   |
-| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------- |
-| **ADRs** (`docs/decisions/`, MADR full template)                                                                   | Every deliberated architectural decision                                             | Human-accepted; immutable once accepted     |
-| **Constraints** (`constraints.md`, CON-00x)                                                                        | Externally fixed client mandates (React, Next.js, MCP toolchain)                     | Human-only file; cited by ADRs              |
-| **Controlled vocabularies** (`src/design-system/`)                                                                 | Closed lists: usage-roles, archetypes, states, precedence                            | Human-authored; unknown refs fail typecheck |
-| **Design tokens** (`globals.css @theme`, [ADR 0065](docs/decisions/0065-guile-figma-design-token-architecture.md)) | Token _values_ — code-canonical (a neutral baseline here; a Figma export once wired) | Read-only MCP; Figma conforms to code       |
+| Source                                                                                     | What it fixes                                                                        | Authority                                   |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------- |
+| **ADRs** (`docs/decisions/`, MADR full template)                                           | Every deliberated architectural decision                                             | Human-accepted; immutable once accepted     |
+| **Constraints** (`constraints.md`, CON-00x)                                                | Externally fixed client mandates (React, Next.js, MCP toolchain)                     | Human-only file; cited by ADRs              |
+| **Controlled vocabularies** (`src/design-system/`)                                         | Closed lists: usage-roles, archetypes, states, precedence                            | Human-authored; unknown refs fail typecheck |
+| **Design tokens** (`globals.css @theme`, [ADR 0033](docs/decisions/0033-design-tokens.md)) | Token _values_ — code-canonical (a neutral baseline here; a Figma export once wired) | Read-only MCP; Figma conforms to code       |
 
 The chain is always: **human decision → recorded artifact → generated rule → mechanical
 gate → agent obeys**. The agent never authors the rule it is judged by.
@@ -425,24 +424,24 @@ independent mechanical filters, one source of truth.
 
 ## 14. Mechanism → ADR index
 
-| Mechanism                                    | Primary ADR(s) |
-| -------------------------------------------- | -------------- |
-| ADR process, immutability, `adr.py lint`     | 0001           |
-| AI agent role, attribution, human-only gates | 0045           |
-| Human review of agent PRs (single gate)      | 0046           |
-| Advisory AI PR review (cites ADR numbers)    | 0047           |
-| CI-failure triage, no-retry flaky policy     | 0048           |
-| Scheduled ADR↔code drift audit               | 0053           |
-| Token-usage gate + single-source codegen     | 0058           |
-| Composition graph (top-down intent)          | 0059           |
-| Module boundaries via dependency-cruiser     | 0060           |
-| Controlled vocabularies & state registries   | 0061           |
-| `design-intent.ts` + usage-driven API        | 0062           |
-| Anti-hallucination approval + drift seal     | 0063           |
-| Defect Log + reactive fitness growth         | 0064           |
-| Snapshot-update guard (hook)                 | 0039           |
-| Coverage threshold gate                      | 0031           |
-| Secret scan (blocking) + AI security L2      | 0055           |
+| Mechanism                                  | Primary ADR(s) |
+| ------------------------------------------ | -------------- |
+| ADR process, immutability, `adr.py lint`   | 0001           |
+| AI agent role, human-only gates            | 0046           |
+| Human review of agent PRs (single gate)    | 0047           |
+| Advisory AI PR review (cites ADR numbers)  | 0048           |
+| CI-failure triage, no-retry flaky policy   | 0049           |
+| Scheduled ADR↔code drift audit             | 0054           |
+| Token-usage gate + single-source codegen   | 0058           |
+| Composition graph (top-down intent)        | 0059           |
+| Module boundaries via dependency-cruiser   | 0060           |
+| Controlled vocabularies & state registries | 0061           |
+| `design-intent.ts` + usage-driven API      | 0062           |
+| Anti-hallucination approval + drift seal   | 0063           |
+| Defect Log + reactive fitness growth       | 0064           |
+| Snapshot-update guard (hook)               | 0040           |
+| Coverage threshold gate                    | 0008           |
+| Secret scan (blocking) + AI security L2    | 0056           |
 
 ---
 

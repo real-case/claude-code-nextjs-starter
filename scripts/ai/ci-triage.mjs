@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// scripts/ai/ci-triage.mjs — ADR 0048 (CI-failure triage, advisory). Classifies a
+// scripts/ai/ci-triage.mjs — ADR 0049 (CI-failure triage, advisory). Classifies a
 // failed CI run as real regression / flaky / infra, WITH evidence. There is NO global
-// retry policy (ADR 0048): a flake is quarantined explicitly (annotated skip + tracked
+// retry policy (ADR 0049): a flake is quarantined explicitly (annotated skip + tracked
 // issue + time-box), never papered over. This job only advises the classification; the
 // quarantine action stays human.
 
@@ -28,12 +28,12 @@ const triage = await advise({
   task:
     "A CI run failed. Triage the failure into exactly one class — REAL REGRESSION, FLAKY, or " +
     "INFRA — and justify it with specific evidence from the log (the failing step, the assertion, " +
-    "the error). If FLAKY, recommend the ADR-0048 quarantine (annotated skip + a tracked issue + a " +
+    "the error). If FLAKY, recommend the ADR-0049 quarantine (annotated skip + a tracked issue + a " +
     "time-box) and name the test — do NOT recommend a retry (there is no global retry policy). If " +
     "REAL, point at the likely cause. Keep it to a short, evidence-bearing summary.",
   payload: `Failing CI log (tail):\n\`\`\`\n${log.slice(-120000)}\n\`\`\``,
 });
 
-const body = `### 🤖 Advisory CI-failure triage (ADR 0048 — advisory; no auto-retry, no auto-quarantine)\n\n${triage}`;
+const body = `### 🤖 Advisory CI-failure triage (ADR 0049 — advisory; no auto-retry, no auto-quarantine)\n\n${triage}`;
 postPrComment(process.env.PR_NUMBER, body);
 console.log("ai-ci-triage: advisory posted.");

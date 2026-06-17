@@ -83,7 +83,7 @@ describe("logError", () => {
   });
 });
 
-// classifyError is the ADR 0021 author-owned policy. These pin the placeholder
+// classifyError is the ADR 0019 author-owned policy. These pin the placeholder
 // contract; update them when you encode the real classification.
 describe("classifyError (default policy)", () => {
   it("treats ExpectedError as expected", () => {

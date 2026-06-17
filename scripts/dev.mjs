@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /**
- * Dev environment orchestrator — the implementation behind `npm run dev` (ADR 0017).
+ * Dev environment orchestrator — the implementation behind `npm run dev` (ADR 0024).
  *
  * One command brings up a production-faithful local environment in a deterministic
  * order, so nothing ever starts against a missing or stale dependency
- * (ADR 0014, 0015, 0016):
+ * (ADR 0021, 0023, 0022):
  *
- *   [1] Supabase local stack  — Postgres + Auth + API via the Supabase CLI (ADR 0016)
- *   [2] Generated DB types    — regenerate database.types.ts from the live schema (ADR 0012)
+ *   [1] Supabase local stack  — Postgres + Auth + API via the Supabase CLI (ADR 0022)
+ *   [2] Generated DB types    — regenerate database.types.ts from the live schema (ADR 0015)
  *   [3] Environment variables — `vercel env pull` when linked, else a documented
- *                               manual / local-defaults fallback (ADR 0015, 0020)
- *   [4] Next.js dev server    — `next dev` (ADR 0015)
+ *                               manual / local-defaults fallback (ADR 0023, 0018)
+ *   [4] Next.js dev server    — `next dev` (ADR 0023)
  *
- * Official platform CLIs only — there is no bespoke docker-compose here (ADR 0014).
+ * Official platform CLIs only — there is no bespoke docker-compose here (ADR 0021).
  */
 
 import { spawn, spawnSync } from "node:child_process";
@@ -83,7 +83,7 @@ function capture(cmd, args) {
   return { code: res.status ?? 1, stdout: res.stdout ?? "" };
 }
 
-// ── [1] local Supabase stack (ADR 0016) ─────────────────────────────────────────
+// ── [1] local Supabase stack (ADR 0022) ─────────────────────────────────────────
 function ensureSupabase() {
   step(1, "Supabase local stack");
   // `supabase status` exits 0 only when the stack is already up — a cheap idempotency
@@ -104,14 +104,14 @@ function ensureSupabase() {
   }
 }
 
-// ── [2] generated DB types (ADR 0012) ───────────────────────────────────────────
+// ── [2] generated DB types (ADR 0015) ───────────────────────────────────────────
 function genTypes() {
   step(2, "Generate database types");
   run("npm", ["run", "gen:types"]);
   info(dim("src/lib/supabase/database.types.ts is in sync with the schema"));
 }
 
-// ── [3] environment variables (ADR 0015, 0020) ──────────────────────────────────
+// ── [3] environment variables (ADR 0023, 0018) ──────────────────────────────────
 /**
  * Resolve environment variables before the app boots.
  *
@@ -126,7 +126,7 @@ function genTypes() {
  *   • UNLINKED — no Vercel linkage. The app still runs: src/lib/env.ts ships local
  *     defaults (local Supabase URL/key, localhost origin), and a contributor may
  *     hand-author `.env.local` from .env.example. Env sync is a CONVENIENCE here,
- *     not a hard prerequisite — ADR 0015 explicitly preserves the unlinked path.
+ *     not a hard prerequisite — ADR 0023 explicitly preserves the unlinked path.
  *
  * ┌─ YOUR DECISION ──────────────────────────────────────────────────────────────┐
  * │ Implement the policy for both branches. The real judgement call is the         │
@@ -155,7 +155,7 @@ function syncEnv() {
   );
 }
 
-// ── [4] Next.js dev server (ADR 0015) ────────────────────────────────────────────
+// ── [4] Next.js dev server (ADR 0023) ────────────────────────────────────────────
 function startNext() {
   step(4, "Next.js dev server");
   info(dim("handing off to `next dev` — Ctrl-C to stop\n"));
@@ -174,7 +174,7 @@ function startNext() {
 
 console.log(
   bold("\n▸ claude-code-next-starter — local dev environment") +
-    dim("\n  (ADR 0017: Supabase → types → env → next dev)"),
+    dim("\n  (ADR 0024: Supabase → types → env → next dev)"),
 );
 ensureSupabase();
 genTypes();

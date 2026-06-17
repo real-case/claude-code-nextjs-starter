@@ -22,7 +22,7 @@
 //      (coverage direction; both at once is a contradictory record); a set
 //      `demoStory` must exist in the colocated stories file (no stale link); a story
 //      `tags: ["state:X"]` for an undeclared X is contract expansion → fail.
-//   5. interactive play coverage (ADR 0037) — a component whose
+//   5. interactive play coverage (ADR 0038) — a component whose
 //      archetype mandates the `interaction` axis (derived from ARCHETYPE_STATES at
 //      runtime, single-source) must ship at least one `play` function in its stories.
 //      Conditional interaction axes (e.g. categorical-indicator's "interactive
@@ -364,8 +364,8 @@ for (const id of intentIds) {
         `story tag "state:${tag}" references a state not declared in the design-intent (contract expansion).`,
       );
 
-  // 5. interactive play coverage (ADR 0037): an interactive archetype must
-  //    drive its UI in at least one play function (ADR 0037).
+  // 5. interactive play coverage (ADR 0038): an interactive archetype must
+  //    drive its UI in at least one play function (ADR 0038).
   if (
     node.archetype !== null &&
     interactiveArchetypes.has(node.archetype) &&
@@ -374,7 +374,7 @@ for (const id of intentIds) {
   )
     fail(
       id,
-      `archetype "${node.archetype}" mandates the interaction axis but ${id}.stories.tsx has no play function (ADR 0037).`,
+      `archetype "${node.archetype}" mandates the interaction axis but ${id}.stories.tsx has no play function (ADR 0038).`,
     );
 }
 

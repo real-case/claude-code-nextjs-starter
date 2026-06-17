@@ -17,7 +17,7 @@ const renderError = (error: Error & { digest?: string }, reset = vi.fn()) => {
 };
 
 describe("LocaleError", () => {
-  it("shows generic copy and never leaks the internal error detail (ADR 0021)", () => {
+  it("shows generic copy and never leaks the internal error detail (ADR 0019)", () => {
     renderError(new Error("DB connection string leaked"));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Root error boundary (ADR 0021, 0002). It replaces the root layout when that
+ * Root error boundary (ADR 0019, 0002). It replaces the root layout when that
  * layout itself throws (`[locale]/layout.tsx` is the de-facto root here), so it
  * must render its own <html>/<body>. The provider that supplies translations is
  * exactly what failed in this path, so copy is intentionally **generic English**

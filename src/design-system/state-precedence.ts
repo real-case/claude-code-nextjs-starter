@@ -10,7 +10,7 @@
 
 /** Ordered precedence — when states co-occur, the earlier entry's treatment wins. */
 export const STATE_PRECEDENCE = [
-  "focus-visible", // visible focus must never be hidden — always wins (ADR 0038)
+  "focus-visible", // visible focus must never be hidden — always wins (ADR 0039)
   "disabled", // suppresses hover / active affordances
   "loading", // in-flight async; blocks input but keeps its own affordance
   "invalid", // validation error
@@ -37,7 +37,7 @@ export const SIMULTANEITY_RULES: readonly SimultaneityRule[] = [
     when: ["focus-visible", "disabled"],
     resolve: "focus-visible",
     rationale:
-      "Visible focus must survive every other state for keyboard a11y (ADR 0038).",
+      "Visible focus must survive every other state for keyboard a11y (ADR 0039).",
     ratified: true,
   },
   {

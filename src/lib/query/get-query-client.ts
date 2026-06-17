@@ -8,7 +8,7 @@ import {
 const isServer = typeof window === "undefined";
 
 /**
- * Server-aware QueryClient (ADR 0022) — the canonical TanStack App-Router
+ * Server-aware QueryClient (ADR 0025) — the canonical TanStack App-Router
  * pattern. The **browser** keeps one stable client for the whole session; the
  * **server** builds a fresh client per request so one user's cache never leaks
  * into another's render.
@@ -17,7 +17,7 @@ function makeQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        // Initial/server-rendered data comes from RSC (ADR 0002/0010); a short
+        // Initial/server-rendered data comes from RSC (ADR 0002/0013); a short
         // staleTime stops the client from immediately refetching what the
         // server just sent on hydration.
         staleTime: 60 * 1000,

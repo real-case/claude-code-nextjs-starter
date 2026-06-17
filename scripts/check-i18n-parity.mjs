@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // scripts/check-i18n-parity.mjs
 //
-// ADR 0054 — localization key parity + ICU syntax, the blocking half of the
+// ADR 0055 — localization key parity + ICU syntax, the blocking half of the
 // AI-first translation workflow. Non-source catalogs are drafted from the canonical
 // source locale; this gate fails the build if any catalog drifts in keys or ships
-// malformed ICU. With a single locale today (ADR 0027) the parity check is vacuous
+// malformed ICU. With a single locale today (ADR 0030) the parity check is vacuous
 // but the ICU check runs over the source — and the machinery is ready the moment a
 // second locale lands. No third-party dependency.
 //
@@ -20,7 +20,7 @@ const ROUTING_TS = "src/i18n/routing.ts";
 
 const errors = [];
 
-/** The canonical source locale (defaultLocale, ADR 0027) — falls back to "en". */
+/** The canonical source locale (defaultLocale, ADR 0030) — falls back to "en". */
 function canonicalLocale() {
   const m = readFileSync(ROUTING_TS, "utf8").match(
     /defaultLocale:\s*"([^"]+)"/,
@@ -93,7 +93,7 @@ for (const file of catalogs) {
   for (const k of keys)
     if (!sourceKeys.has(k))
       errors.push(
-        `${file}: extra key "${k}" (not in ${canonicalFile}; edit the source, ADR 0054)`,
+        `${file}: extra key "${k}" (not in ${canonicalFile}; edit the source, ADR 0055)`,
       );
   for (const [key, value] of Object.entries(flat)) {
     for (const p of icuProblems(value))
@@ -103,7 +103,7 @@ for (const file of catalogs) {
 
 if (errors.length) {
   console.error(
-    `check-i18n: ${errors.length} problem(s) (ADR 0054 key parity / ICU):`,
+    `check-i18n: ${errors.length} problem(s) (ADR 0055 key parity / ICU):`,
   );
   for (const e of errors) console.error(`  • ${e}`);
   process.exit(1);

@@ -5,7 +5,7 @@ import { routing } from "@/i18n/routing";
 import { env } from "@/lib/env";
 
 /**
- * Locale-free routes that exist for every locale (ADR 0028). Add entries as
+ * Locale-free routes that exist for every locale (ADR 0031). Add entries as
  * pages land; each is emitted once per locale with `hreflang` alternates, so
  * the sitemap scales with both the route list and the locale config.
  */

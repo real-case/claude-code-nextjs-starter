@@ -28,6 +28,14 @@ Run the steps **in order** — each gates the next.
 - **Name:** PascalCase export (`Badge`), kebab module (`badge.tsx`).
 - **Location:** `src/components/ui/<name>.tsx` for a reusable catalogue component. (One-off
   page compositions live in `src/app/**` and are out of this catalogue — ADR 0007/0042.)
+- **Scope — this skill is the `src/components/ui` kit ONLY.** That kit is the shadcn primitive
+  catalogue, governed by dependency-cruiser and the design-system gates (ADR 0034 / 0058–0064)
+  and is deliberately **outside** the Feature-Sliced Design model (ADR 0065). **Slice-specific,
+  domain-aware UI** (a feature's `ui` segment, a widget, an entity's presentational pieces)
+  does **not** belong here — it goes through the **`new-slice`** skill into
+  `src/{features,widgets,entities}`, where it *composes* these primitives via
+  `src/components/ui/index.ts`. If what you are building knows about the domain, stop and use
+  `new-slice` instead.
 - **Kind:** `primitive` (no other component inside it) or `composite` (composed of other
   primitives). A composite imports primitives **through `src/components/ui/index.ts`**, never
   deep — and a primitive never imports a composite (ADR 0060).

@@ -20,8 +20,8 @@ This skill walks that path and ends with the local DB rebuilt, types regenerated
 isolation model proven. It has side effects (writes SQL, resets the local DB, regenerates
 types), so it is **user-invoked only**.
 
-> Node 24 is required (`engines.node >=24 <25`). If `node -v` is not v24.x, prepend the
-> project's Node 24 to `PATH` (`~/.nvm/versions/node/v24.16.0/bin`) before any `npm run`.
+> Node 24 is required (`engines.node >=24 <25`). If `node -v` is not v24.x, prepend your
+> Node 24 (the newest `~/.nvm/versions/node/v24.*/bin`) to `PATH` before any `npm run`.
 > The local stack needs **Docker** running and **`npx supabase start`** up.
 
 The canonical reference is `supabase/migrations/20260611141953_create_notes.sql` — a

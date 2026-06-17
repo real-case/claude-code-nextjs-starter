@@ -40,6 +40,23 @@ drift-checked in CI. **Do not** retype the token list in prose, in a component, 
 a story — point at the generated reference. Re-listing tokens by hand is the
 "knowledge laundering" failure (problem P6): the copy drifts from what CI enforces.
 
+## Changed a token? Regenerate — the codegen half of ADR 0058
+
+The lint above is only the *enforcement* half. When the **token layer itself changes** — a
+token added/removed/renamed in the `@theme`/`:root` block of `src/app/globals.css` (ADR
+0033) — the three generated artifacts must be **regenerated from that single source**, never
+hand-edited:
+
+```bash
+npm run gen:tokens     # parses @theme/:root → regenerates the union + allowlist + agent-rules
+```
+
+This rewrites `tokens.generated.ts`, `tokens.allowlist.json`, and `tokens.agent-rules.md`
+(then Prettier-formats them). Commit the regenerated files **with** the `globals.css` change:
+CI drift-checks them exactly like `gen:types` — a stale artifact fails the build. The order is
+always **edit `globals.css` → `gen:tokens` → `check:tokens`**; never hand-edit a generated
+file and never hard-code a value to route around a missing token.
+
 ## What it enforces (ADR 0058 / 0033), in `src/components/**`
 
 - Only semantic tokens, via their Tailwind utilities (`bg-primary`,

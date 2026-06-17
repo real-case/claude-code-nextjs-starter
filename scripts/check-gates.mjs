@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // scripts/check-gates.mjs
 //
-// ADR 0058/0059/0060/0055, problem P6 — "test the test". The custom design-system
+// ADR 0058/0059/0060/0055/0065/0066, problem P6 — "test the test". The custom design-system
 // gates are tested by no one upstream, so a rule that silently stops firing (a bad
 // refactor, a dependency bump) would let real violations through behind a green gate.
 // This harness plants a known violator for each custom gate, runs the gate, and
@@ -28,6 +28,23 @@ function rejects(cmd) {
     return false; // exit 0 → the gate did NOT catch the planted violator
   } catch {
     return true; // non-zero → caught
+  }
+}
+
+/**
+ * Run `cmd`; true iff it exited NON-zero AND its combined output matches `re`.
+ * Stronger than `rejects` for a gate that can fail for several reasons at once
+ * (Steiger reports every violation it finds): it confirms the SPECIFIC rule we
+ * planted a violator for actually fired — not merely that the tool exited
+ * non-zero — which is the real P6 guarantee.
+ */
+function rejectsWith(cmd, re) {
+  try {
+    execSync(cmd, { stdio: ["ignore", "pipe", "pipe"] });
+    return false; // exit 0 → the gate did NOT catch the planted violator
+  } catch (e) {
+    const out = `${e.stdout ?? ""}${e.stderr ?? ""}`;
+    return re.test(out);
   }
 }
 
@@ -262,6 +279,41 @@ check("i18n parity / ICU", () => {
   }
 });
 
+// 9. FSD layer boundaries (ADR 0065/0066): a `features` slice importing a
+//    `widgets` slice is an upward cross-layer import Steiger must reject. The
+//    assertion checks that `fsd/forbidden-imports` fired BY NAME, not merely
+//    that Steiger exited non-zero — Steiger can flag several things at once, and
+//    P6 is about the specific boundary rule still working.
+check("steiger FSD forbidden-imports", () => {
+  const widget = "src/widgets/__gatecheck_widget";
+  const feature = "src/features/__gatecheck_feature";
+  mkdirSync(`${widget}/ui`, { recursive: true });
+  mkdirSync(`${feature}/ui`, { recursive: true });
+  writeFileSync(
+    `${widget}/ui/widget.tsx`,
+    "export function GcWidget() {\n  return null;\n}\n",
+  );
+  writeFileSync(
+    `${widget}/index.ts`,
+    'export { GcWidget } from "./ui/widget";\n',
+  );
+  // A feature importing a widget inverts the FSD layer direction.
+  writeFileSync(
+    `${feature}/ui/feature.tsx`,
+    'import { GcWidget } from "@/widgets/__gatecheck_widget";\nexport function GcFeature() {\n  return GcWidget();\n}\n',
+  );
+  writeFileSync(
+    `${feature}/index.ts`,
+    'export { GcFeature } from "./ui/feature";\n',
+  );
+  try {
+    return rejectsWith("npx steiger ./src", /fsd\/forbidden-imports/);
+  } finally {
+    rmSync(widget, { recursive: true, force: true });
+    rmSync(feature, { recursive: true, force: true });
+  }
+});
+
 if (failures.length) {
   console.error(
     `\ncheck-gates: ${failures.length} gate(s) failed to reject their violator — a guarantee is broken (P6).`,
@@ -269,5 +321,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `\ncheck-gates: OK — all ${passed} custom design-system gates correctly reject their violators (P6).`,
+  `\ncheck-gates: OK — all ${passed} custom design-system / architecture gates correctly reject their violators (P6).`,
 );

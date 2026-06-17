@@ -2,7 +2,8 @@
 name: pre-pr-gate
 description: >-
   Run the full local quality sweep before opening a PR — the CI gate (typecheck, lint,
-  format, stories, design-system bundle, gate self-test, token drift, build, coverage) plus
+  format, stories, design-system bundle, FSD boundaries, gate self-test, token drift, build,
+  coverage) plus
   the jobs deferred to local-only during bootstrap (Playwright e2e, Storybook test-runner
   smoke). Reports a pass/fail checklist and maps each failure to its fix, so review starts
   green. Use before "open a PR", "is this PR-ready", "run the gates", "pre-PR check", or
@@ -40,6 +41,7 @@ npm run lint                     # ESLint incl. the component token gate (ADR 00
 npm run format:check             # Prettier (ADR 0006)
 npm run check:stories            # every src/components/** has colocated stories (ADR 0042)
 npm run check:design-system      # tokens + boundaries + graph + design-intent + seals + i18n (ADR 0058–0064)
+npm run check:fsd                # FSD layer boundaries — Steiger (ADR 0065/0066)
 npm run check:gates              # gate self-test — each custom rule still rejects its violator (P6)
 ```
 

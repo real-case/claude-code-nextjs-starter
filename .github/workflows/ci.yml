@@ -66,6 +66,9 @@ jobs:
       - name: Module boundaries — dependency-cruiser (ADR 0060)
         run: npm run check:boundaries
 
+      - name: FSD layer boundaries — Steiger (ADR 0065/0066)
+        run: npm run check:fsd
+
       - name: Composition graph ↔ import reconciliation (ADR 0059/0060)
         run: npm run check:graph
 

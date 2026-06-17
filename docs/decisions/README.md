@@ -68,3 +68,5 @@ Architecture Decision Records for this project, in [MADR](https://adr.github.io/
 | [0062](0062-design-intent-spec-and-api-derivation.md) | `design-intent.ts` as component specification and usage-driven API derivation | accepted | 2026-06-11 |
 | [0063](0063-anti-hallucination-approval-and-drift-seal.md) | Anti-hallucination component approval and the Figma drift seal | accepted | 2026-06-11 |
 | [0064](0064-defect-log-and-reactive-fitness-growth.md) | Defect Log and reactive growth of design-system fitness functions | accepted | 2026-06-11 |
+| [0065](0065-feature-sliced-design-architecture.md) | Adopt Feature-Sliced Design for application architecture | proposed | 2026-06-17 |
+| [0066](0066-fsd-boundary-enforcement-steiger.md) | Enforce Feature-Sliced Design boundaries with Steiger | proposed | 2026-06-17 |

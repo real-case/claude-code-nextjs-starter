@@ -125,6 +125,41 @@ jobs:
           # job summary are the signal.
           GITLEAKS_ENABLE_COMMENTS: "false"
 
+  # ── Claude-infrastructure integrity ─────────────────────────────────────────
+  # Applies the project's own drift-prevention discipline (single source + gates
+  # that test themselves, AI-GUARDRAILS.md §7) to the `.claude/` tree, which had
+  # no upstream guard despite hard-coding ~200 ADR numbers and dozens of npm-script
+  # / scripts/* references. Dependency-free Node scripts — no node_modules needed —
+  # so this job skips `npm ci` and runs in parallel with the quality gate.
+  #
+  # GOVERNANCE: these gates do not yet have their own ratifying ADR. They extend the
+  # ADR 0054 drift-audit posture; record a dedicated ADR before treating this as a
+  # permanent required check (marking it required is a 👤 branch-protection setting).
+  claude-infra:
+    name: Claude-infra integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Set up Node 24 from .nvmrc (ADR 0004)
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Gate self-test — check:claude rejects its own violators (P6, the check:gates pattern)
+        run: npm run check:claude -- --self-test
+
+      - name: Skill/agent/command references resolve — skill-drift gate (extends ADR 0054)
+        run: npm run check:claude
+
+      - name: CLAUDE.md ↔ accepted-ADR citation reconciliation (ADR 0001 accepted-only rule)
+        run: npm run check:claude-md
+
+      - name: Technical-debt escape-hatch inventory (ADR 0003/0029/0039/0049/0062/0064)
+        run: npm run debt:scan
+
   # ── e2e job: temporarily removed during bootstrap (2026-06-11) ──────────────
   # ADR 0006/0008 put the Playwright e2e in the CI gate, and a full working job
   # existed here (Supabase stack startup → migration replay → gen:types drift

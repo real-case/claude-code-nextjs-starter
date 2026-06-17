@@ -1,11 +1,11 @@
 /* ============================================================
    DESIGN TOKENS (Tailwind CSS v4) — neutral template baseline.
 
-   This file is the canonical token source (ADR 0024/0065). `npm run gen:tokens`
+   This file is the canonical token source (ADR 0032/0033). `npm run gen:tokens`
    parses it into the typed union, the lint allowlist, and the agent rules
    (`src/design-system/tokens.*`) — never hand-edit those; edit here and regenerate.
 
-   Layered per ADR 0065 so a real design system can drop in by replacing the
+   Layered per ADR 0033 so a real design system can drop in by replacing the
    values, not the structure:
      1) Value layer    — the raw semantic variables in `:root` + `.dark` overrides.
      2) Spacing / radius / type scale (`@theme`).
@@ -14,7 +14,7 @@
 
    The neutral palette below is the stock shadcn (Tailwind v4) set. When you wire
    a Figma export, reintroduce a primitive layer and point the value layer at it
-   (the layered architecture in ADR 0065) — the bridge and `gen:tokens` stay unchanged.
+   (the layered architecture in ADR 0033) — the bridge and `gen:tokens` stay unchanged.
    ============================================================ */
 
 @import "tailwindcss";
@@ -134,7 +134,7 @@
   --text-button--line-height: 150%;
 }
 
-/* ============= LAYER 3 — shadcn COMPATIBILITY BRIDGE (ADR 0065) ============= */
+/* ============= LAYER 3 — shadcn COMPATIBILITY BRIDGE (ADR 0033) ============= */
 /* `@theme inline` aliases each shadcn semantic name onto a value-layer variable via
    `var()`; because the reference is INLINED, every utility (e.g. `bg-primary`) emits
    the value-layer `var()` directly and therefore inherits its `.dark` swap — no

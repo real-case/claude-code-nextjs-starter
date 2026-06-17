@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 
 /**
- * Placeholder home route. A Server Component rendering localized copy (ADR 0027)
+ * Placeholder home route. A Server Component rendering localized copy (ADR 0030)
  * — the minimal "the app builds and serves" page. Replace it with the first real
  * screen; the i18n/SEO/error-boundary scaffolding around it stays.
  */
@@ -15,7 +15,7 @@ export default async function Home({
 }) {
   const { locale } = await params;
   // The [locale] layout already 404s unknown locales; narrow before enabling
-  // static rendering so next-intl hooks read against a valid locale (ADR 0027).
+  // static rendering so next-intl hooks read against a valid locale (ADR 0030).
   if (hasLocale(routing.locales, locale)) setRequestLocale(locale);
 
   const t = await getTranslations("HomePage");

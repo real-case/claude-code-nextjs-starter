@@ -13,7 +13,7 @@ type LocaleAlternates = {
 
 /**
  * Canonical + `hreflang` alternates for a route, derived from the locale
- * config (ADR 0028). Given an internal `pathname` (locale-free, e.g. `"/"`),
+ * config (ADR 0031). Given an internal `pathname` (locale-free, e.g. `"/"`),
  * it returns the current locale's canonical URL plus one alternate per locale,
  * including `x-default` pointing at the default locale.
  *

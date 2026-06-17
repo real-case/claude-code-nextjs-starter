@@ -8,8 +8,8 @@ decision-makers: Yurii Anichkin
 
 ## Context and Problem Statement
 
-**0050** lets the agent draft state matrices and `play` functions from strict types, under the
-unchanged **0041** human judgment. But it presupposes a component already exists to draft *for*.
+**0051** lets the agent draft state matrices and `play` functions from strict types, under the
+unchanged **0042** human judgment. But it presupposes a component already exists to draft *for*.
 The earlier and riskier step is **designing the contract itself**: when the agent invents a
 primitive's props, it hallucinates an API — guessing variants and slots that no caller needs, or
 missing ones every caller does (problem P4), and folding a composition-specific requirement into a
@@ -17,7 +17,7 @@ primitive so reuse is lost (problem P5). There is no artifact that states a comp
 contract *before* it is implemented, which means Definition-of-Ready collapses into
 Definition-of-Done (the API is "designed" only once it is coded). This record introduces
 **`design-intent.ts`** — a typed specification authored beside the component at DoR — and fixes how
-the API is *derived from usage* rather than guessed. It extends **0050**: that record drafts tests
+the API is *derived from usage* rather than guessed. It extends **0051**: that record drafts tests
 for a built component; this one specifies the component before it is built.
 
 ## Decision Drivers
@@ -40,7 +40,7 @@ for a built component; this one specifies the component before it is built.
 * **A typed `design-intent.ts` beside each component**, authored at DoR, deriving the API from the
   `usedIn` union and state coverage by subtraction from the archetype set
 * **Document intent in the PR description / Storybook docs** — prose, not typed source
-* **Skip a spec** — design the API while implementing, rely on **0050** drafts and review afterward
+* **Skip a spec** — design the API while implementing, rely on **0051** drafts and review afterward
 
 ## Decision Outcome
 
@@ -66,7 +66,7 @@ The **API is derived, not guessed**: the union of all `usedIn` requirements is t
 is by subtraction**: classify by archetype (**0061**), take the mandatory set, mark each `applicable`;
 `applicable:false` without a `rationale` is a masked omission and is rejected (P8). Verification mapping:
 token fields → **0058** lints; `compositionSignature` → **0059** graph check; the applicable-state list →
-the **0041**/Stage-4 human gate + the coverage skill; `variants[].figmaNodeId` → the **0063** approval
+the **0042**/Stage-4 human gate + the coverage skill; `variants[].figmaNodeId` → the **0063** approval
 artifact; `api` ↔ actual props and `seal` ↔ live render → the Stage-1 fitness functions.
 
 ### Consequences
@@ -76,7 +76,7 @@ artifact; `api` ↔ actual props and `seal` ↔ live render → the Stage-1 fitn
 * Good, because the slot-vs-flag boundary is an explicit, rationale-bearing field, so composition
   requirements stop leaking into primitives (P5).
 * Good, because state-by-subtraction makes every omission a justified, reviewable `applicable:false`
-  rather than an invisible gap (P8); **0050** then drafts the matrix against this spec.
+  rather than an invisible gap (P8); **0051** then drafts the matrix against this spec.
 * Bad, because authoring a typed spec per component is upfront work and a learning curve; for trivial
   components it can feel heavier than just writing the component.
 * Bad, because the intent file is a second artifact that can drift from the implementation — which is
@@ -88,8 +88,8 @@ A sampled component has a `design-intent.ts` whose `api` is derived from its `us
 invented; every `states` entry marked `applicable:false` carries a `rationale`; `ownsExternalMargin` is
 `false`; token fields reference the **0058** registry rather than literals; the slot-vs-variant choices
 carry rationales. The fitness functions (Stage 1) compare `api` to actual props and `states` to stories
-bidirectionally. The **0050** draft and the **0041** judgment operate on top of this spec. Subject to the
-**0053** drift audit once accepted.
+bidirectionally. The **0051** draft and the **0042** judgment operate on top of this spec. Subject to the
+**0054** drift audit once accepted.
 
 ## Pros and Cons of the Options
 
@@ -110,14 +110,14 @@ bidirectionally. The **0050** draft and the **0041** judgment operate on top of 
 
 * Good, because it is the least process.
 * Bad, because the API is then designed while coding — DoR collapses into DoD, hallucinated props (P4) and
-  leaked composition (P5) land in the implementation, and **0050**/**0041** only inspect after the fact.
+  leaked composition (P5) land in the implementation, and **0051**/**0042** only inspect after the fact.
 
 ## More Information
 
-Extends **0050** (which drafts tests for built components) by specifying the component *before* it is built;
+Extends **0051** (which drafts tests for built components) by specifying the component *before* it is built;
 derives the API from the **0059** `usedIn` graph; classifies states against the **0061** archetype set;
 references the **0058** token registry and the **0061** vocabularies rather than inlining them. The Figma
-`variants`/`seal` fields are owned by **0063**; `behavior` is engineering-built, never from Figma (**0044**).
+`variants`/`seal` fields are owned by **0063**; `behavior` is engineering-built, never from Figma (**0045**).
 The field map is the plan's Appendix A2. Confirms problems P4 (API hallucination), P5 (composition leaking
 into a primitive), and P8 (incomplete state coverage). Drafted `proposed`; acceptance is the human gate
-(**0045**).
+(**0046**).

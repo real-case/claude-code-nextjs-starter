@@ -2,7 +2,7 @@
 name: story-matrix
 description: >-
   Derive a component's Storybook story matrix from its design-intent.ts and the
-  archetype state registry (ADR 0050) — which story exports must exist, which state each
+  archetype state registry (ADR 0051) — which story exports must exist, which state each
   one demos (the demoStory links), which play functions the archetype requires, plus the
   standing rows (Variants/Overview, Dark, data-edge). Use when authoring or extending
   stories for a component, drafting its stories at new-component step 4b, or when asked
@@ -10,10 +10,10 @@ description: >-
   "/story-matrix <id>".
 ---
 
-# Story matrix (ADR 0050 — AI-drafted, human-judged)
+# Story matrix (ADR 0051 — AI-drafted, human-judged)
 
-ADR 0050 commissions the agent to draft **story matrices and play functions**, with the
-meaningfulness judgment staying human (ADR 0041). This skill derives the matrix from the
+ADR 0051 commissions the agent to draft **story matrices and play functions**, with the
+meaningfulness judgment staying human (ADR 0042). This skill derives the matrix from the
 **spec**, not from imagination: every row traces to `design-intent.ts`, the ratified
 state registry, or a standing convention — so a story is never invented and a state is
 never silently skipped (P8). The deterministic halves are enforced by
@@ -47,9 +47,9 @@ spec** (ADR 0062 DoR); run the `new-component` ceremony first.
 | --- | --- |
 | **Default** | Always. The unstyled baseline; usually the `default` state's `demoStory`. |
 | **One per `applicable:true` state** | From `states[]`. The story export name **must equal** the state's `demoStory` (the gate checks the link). States carrying a `demoRationale` instead get a row marked *"no static story — <the rationale>"*; do **not** force a story for them. |
-| **Variants / Overview** | If `api.variants` is non-empty: a single-canvas story rendering every value of each closed axis (the `Variants`/`Overview` pattern), so the a11y gate (ADR 0038) checks them together. |
-| **Play row(s)** | If the archetype's mandatory axes include `interaction` (`ds:states` shows this), at least one story **must** carry a `play` (ADR 0037). Pick the recipe for the interaction class from [assets/play-recipes.md](assets/play-recipes.md). |
-| **Dark** | Always: a story with `globals: { theme: "dark" }` re-rendering the key states under the dark token overrides (ADR 0041 theme axis). |
+| **Variants / Overview** | If `api.variants` is non-empty: a single-canvas story rendering every value of each closed axis (the `Variants`/`Overview` pattern), so the a11y gate (ADR 0039) checks them together. |
+| **Play row(s)** | If the archetype's mandatory axes include `interaction` (`ds:states` shows this), at least one story **must** carry a `play` (ADR 0038). Pick the recipe for the interaction class from [assets/play-recipes.md](assets/play-recipes.md). |
+| **Dark** | Always: a story with `globals: { theme: "dark" }` re-rendering the key states under the dark token overrides (ADR 0042 theme axis). |
 | **Data-edge** | At least one long/overflow-content story (`LongName`/`LongLabel`/`LongContent` pattern), normally the state marked `worstCaseForOverflow`. |
 | **Viewport** *(optional, composites)* | For a responsive composite (e.g. a booking-flow component with a mobile CTA), a `parameters.viewport` story per breakpoint where it renders differently. Advisory — no gate. |
 
@@ -71,7 +71,7 @@ Then author the missing stories following the convention references: CSF 3
 `satisfies Meta`, `fn()` spies on callback props, role/aria queries, frozen
 `Date`/`Math.random()` per the `preview.tsx` standing rule (ADR 0043 determinism), and
 a11y opt-outs only as explicit per-story `a11y` parameters with a stated reason
-(ADR 0038).
+(ADR 0039).
 
 ## 4. Reconcile and verify
 
@@ -89,7 +89,7 @@ node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-design-intent.
 - **States come only from the registry** (`src/design-system/states.ts`, ADR 0061) and
   the component's spec — never invent one. A story tagged for an undeclared state is
   contract expansion and fails the gate.
-- **Meaningfulness is a human judgment** (ADR 0050/0041): the matrix is a draft; the PR
+- **Meaningfulness is a human judgment** (ADR 0051/0042): the matrix is a draft; the PR
   reviewer (and the `storybook-reviewer` agent as a pre-pass) judges whether the covered
   states are the *right* ones and whether a `demoRationale` is a real reason.
 - **Visual baselines are 👤** (ADR 0063/0043): never approve a Chromatic baseline or

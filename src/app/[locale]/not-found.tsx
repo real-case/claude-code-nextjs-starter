@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 /**
- * Localized 404 (ADR 0021, 0027). Renders when `notFound()` is called inside a
+ * Localized 404 (ADR 0019, 0030). Renders when `notFound()` is called inside a
  * valid locale — the catch-all route (`[...rest]`) routes unknown paths here,
  * and the locale layout calls `notFound()` for an invalid locale. A Server
  * Component: `useTranslations` reads the request catalog and `Link` keeps the

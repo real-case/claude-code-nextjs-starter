@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 /**
- * Public environment — client-safe configuration only (ADR 0020).
+ * Public environment — client-safe configuration only (ADR 0018).
  *
- * Conventions (ADR 0018, 0020):
+ * Conventions (ADR 0017, 0018):
  * - Only `NEXT_PUBLIC_*` variables live here; anything secret belongs in
  *   `env.server.ts` behind the `server-only` fence.
  * - Types are derived with `z.infer` — never hand-written next to a schema.
@@ -15,9 +15,9 @@ import { z } from "zod";
 export const publicEnvSchema = z.object({
   /**
    * Absolute origin the app is served from — consumed by `metadataBase` now
-   * and by canonical/hreflang URLs when SEO lands (ADR 0028). The localhost
+   * and by canonical/hreflang URLs when SEO lands (ADR 0031). The localhost
    * default keeps local and preview builds working until per-environment
-   * values are provisioned in Vercel (ADR 0007, 0020).
+   * values are provisioned in Vercel (ADR 0009, 0018).
    */
   NEXT_PUBLIC_SITE_URL: z
     .url({
@@ -29,9 +29,9 @@ export const publicEnvSchema = z.object({
     .default("http://localhost:3000"),
 
   /**
-   * Supabase API origin (ADR 0010). Defaults to the local stack so builds,
+   * Supabase API origin (ADR 0013). Defaults to the local stack so builds,
    * tests, and previews work before per-environment values are provisioned in
-   * Vercel (ADR 0007); the cloud URL is set per environment there.
+   * Vercel (ADR 0009); the cloud URL is set per environment there.
    */
   NEXT_PUBLIC_SUPABASE_URL: z
     .url({
@@ -41,7 +41,7 @@ export const publicEnvSchema = z.object({
     .default("http://127.0.0.1:54321"),
 
   /**
-   * Supabase publishable key (ADR 0010). Public by design — it ships to the
+   * Supabase publishable key (ADR 0013). Public by design — it ships to the
    * browser and all access is RLS-gated, so it is not a secret. Defaults to
    * the universal local-dev key (the stack's shared default, identical on
    * every local install); the real per-environment key is set in Vercel.
@@ -57,7 +57,7 @@ export type PublicEnv = z.infer<typeof publicEnvSchema>;
 
 /**
  * Validate env input against a schema, failing fast with an `[env]`-marked,
- * human-readable error (ADR 0018 origin marker; ADR 0020 fail-fast). Shared
+ * human-readable error (ADR 0017 origin marker; ADR 0018 fail-fast). Shared
  * by both env modules: throwing at module scope turns a misconfiguration into
  * a build/boot failure instead of a mid-request surprise.
  */

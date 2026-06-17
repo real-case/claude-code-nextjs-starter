@@ -8,7 +8,7 @@ import { routing } from "./routing";
  * by `NextIntlClientProvider` (which inherits `locale`/`messages` from here in
  * next-intl v4). The `[locale]` segment supplies `requestLocale`; an unknown
  * value (the segment also catches stray paths) falls back to the default so a
- * request never renders without messages (ADR 0027).
+ * request never renders without messages (ADR 0030).
  */
 export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;

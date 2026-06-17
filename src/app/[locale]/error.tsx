@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 
 /**
- * Segment error boundary for the locale tree (ADR 0021, 0002). The App Router
+ * Segment error boundary for the locale tree (ADR 0019, 0002). The App Router
  * requires this to be a Client Component. Copy stays **generic** — the actual
  * error detail is recorded server-side by `src/lib/logger.ts` and never shown
  * here. `digest` is a safe correlation hash (not internal detail), surfaced so

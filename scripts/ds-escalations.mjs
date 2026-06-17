@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // scripts/ds-escalations.mjs
 //
-// ADR 0061/0062/0045 — the Stage-4 ESCALATION SURFACER (problems P3/P8). Human gates
+// ADR 0061/0062/0046 — the Stage-4 ESCALATION SURFACER (problems P3/P8). Human gates
 // are the irreducible layer (intent collisions, state-set deviations); this advisory
 // tool finds exactly what needs a 👤 decision and nothing else, so the human reviews
 // deviations rather than rubber-stamping 40 identical lists. It NEVER approves — it
@@ -132,6 +132,6 @@ console.log(
     `Reduce the rate only by moving FALSE judgment into the deterministic/structural layers.`,
 );
 console.log(
-  `\nThis is advisory (ADR 0045): the agent presents these; the 👤 human approves. ` +
+  `\nThis is advisory (ADR 0046): the agent presents these; the 👤 human approves. ` +
     `Nothing here blocks a merge.`,
 );

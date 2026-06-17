@@ -1,5 +1,5 @@
 /**
- * Query-key convention (ADR 0022). Keys are **hierarchical** and built from one
+ * Query-key convention (ADR 0025). Keys are **hierarchical** and built from one
  * factory so invalidation is predictable: invalidating a broad key cascades to
  * everything nested under it. Calling
  * `queryClient.invalidateQueries({ queryKey: queryKeys.notes.all })` clears
@@ -19,7 +19,7 @@
  *   detail(id) → one entity by id                ["notes","detail",id]
  */
 
-// TODO(you — ADR 0022 decision point): flesh out the `notes` key factory.
+// TODO(you — ADR 0025 decision point): flesh out the `notes` key factory.
 // The `all` root is here as the anchor; add `lists()`, `list(filters)`,
 // `details()`, and `detail(id)` following the documented shape. Type the
 // params to your real query inputs (e.g. a `NoteFilters` type for `list`), and

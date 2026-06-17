@@ -2,7 +2,7 @@
 
 Two hygiene obligations ride along with the feedback loop (ADR 0064). Both are recorded
 **before** the first such event, so the change is a governed migration rather than an
-ad-hoc edit that fragments the artifacts. Both are 👤 **human-owned** (ADR 0045): the
+ad-hoc edit that fragments the artifacts. Both are 👤 **human-owned** (ADR 0046): the
 agent prepares the migration and runs the mechanical checks; a human decides and signs
 off.
 

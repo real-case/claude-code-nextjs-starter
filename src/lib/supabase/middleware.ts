@@ -8,7 +8,7 @@ import type { Database } from "./database.types";
 /**
  * Refreshes the Supabase auth session and writes any rotated cookies onto the
  * `response` produced upstream (next-intl), so locale negotiation and session
- * refresh both run per request (ADR 0010, 0013, 0027). Called from `proxy.ts`.
+ * refresh both run per request (ADR 0013, 0016, 0030). Called from `proxy.ts`.
  *
  * `getUser()` revalidates the token with the Auth server (unlike `getSession`,
  * which only reads the cookie); per Supabase guidance, run no code between

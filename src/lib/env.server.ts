@@ -1,4 +1,4 @@
-// Build-time fence (ADR 0020): importing this module from any client-bundled
+// Build-time fence (ADR 0018): importing this module from any client-bundled
 // code fails `next build` — secrets cannot leak into the browser bundle.
 import "server-only";
 
@@ -7,7 +7,7 @@ import { z } from "zod";
 import { parseEnv } from "./env";
 
 /**
- * Server-only environment — secrets and server-side configuration (ADR 0020).
+ * Server-only environment — secrets and server-side configuration (ADR 0018).
  *
  * Every entry is Zod-validated like the public module and unreachable from
  * client code; the input object below must list each key explicitly.
@@ -16,7 +16,7 @@ export const serverEnvSchema = z.object({
   /**
    * Supabase secret key (the service-role key in the new key format) —
    * **bypasses RLS**, so it is confined to trusted server-only modules and
-   * never reaches the browser (ADR 0010, 0020). Optional: no admin
+   * never reaches the browser (ADR 0013, 0018). Optional: no admin
    * (RLS-bypassing) operation exists yet, and a required secret would fail
    * every `next build` until the value is provisioned in Vercel (Phase 7 human
    * task). `createAdminClient` validates presence at use.

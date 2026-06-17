@@ -23,7 +23,7 @@
  *
  * The file REFERENCES the controlled vocabularies and token registry (ADR 0061/0058);
  * it never re-declares them, or the single-source guarantee breaks (ADR 0058, P6).
- * `behavior` is engineering-built, never derived from Figma (ADR 0044/0062).
+ * `behavior` is engineering-built, never derived from Figma (ADR 0045/0062).
  */
 import type { Archetype } from "./archetypes";
 import type { UsageRole } from "./usage-roles";
@@ -37,7 +37,7 @@ export type ComponentKind = "primitive" | "composite" | "pattern";
  * seal is a DRIFT DETECTOR, not a snapshot: `check:figma-seals` re-renders the node by
  * id and compares `renderHash`; a mismatch re-opens the variant for re-approval (P9).
  * `null` everywhere in this repo today — no Figma file is wired yet, and baseline/
- * variant approval is human-only (ADR 0045/0046).
+ * variant approval is human-only (ADR 0046/0047).
  */
 export interface ApprovalSeal {
   /** Figma file version at approval time (the `figmaFileVersion` half of the seal). */
@@ -53,7 +53,7 @@ export interface VariantEntry {
   readonly name: string;
   /** The axis this variant belongs to (e.g. `variant`, `size`, `severity`). */
   readonly axis: string;
-  /** Figma node id — `null` until a Figma frame is wired (👤, ADR 0044/0063). */
+  /** Figma node id — `null` until a Figma frame is wired (👤, ADR 0045/0063). */
   readonly figmaNodeId: string | null;
   readonly figmaDeepLink: string | null;
   /** `null` = awaiting 👤 approval; set only post-approval (ADR 0063). */
@@ -131,7 +131,7 @@ export interface Combinations {
   readonly forbidden: readonly (readonly string[])[];
 }
 
-/** Engineering-built behavior contract — NEVER derived from Figma (ADR 0044/0062). */
+/** Engineering-built behavior contract — NEVER derived from Figma (ADR 0045/0062). */
 export interface Behavior {
   readonly refForwarding: boolean;
   readonly controlled: "controlled" | "uncontrolled" | "both" | "n/a";

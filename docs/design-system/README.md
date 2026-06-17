@@ -24,7 +24,7 @@ decisions in ADRs **0058–0064** ([`docs/decisions/`](../decisions/)).
    in the agent loop; never the guarantee. `ds:signature`, `ds:states`,
    `ds:escalations`, `ds:tokens-table`, and the `check-tokens` / `component-signature` /
    `state-coverage` skills.
-3. **Judgment** (human gates, ADR 0045) — _the irreducible_. `usageRole` collisions,
+3. **Judgment** (human gates, ADR 0046) — _the irreducible_. `usageRole` collisions,
    state-set deviations, slot/flag boundaries, visual-baseline + Figma-drift approval.
    The agent _prepares_ (e.g. `ds:escalations`); the 👤 human _decides_.
 

@@ -62,7 +62,7 @@ if (errors.length) {
 if (sealed === 0) {
   console.log(
     `figma-seals: OK — 0 seals present (inert until a 👤 approves variants against real ` +
-      `Figma frames, ADR 0063/0045). The live re-render hash compare runs in the approval ` +
+      `Figma frames, ADR 0063/0046). The live re-render hash compare runs in the approval ` +
       `step that holds the figma server, not in this Node gate.`,
   );
 } else {

@@ -27,7 +27,7 @@ Run the steps **in order** — each gates the next.
 ## 0. Decide the name, kind, and where it lives
 - **Name:** PascalCase export (`Badge`), kebab module (`badge.tsx`).
 - **Location:** `src/components/ui/<name>.tsx` for a reusable catalogue component. (One-off
-  page compositions live in `src/app/**` and are out of this catalogue — ADR 0006/0041.)
+  page compositions live in `src/app/**` and are out of this catalogue — ADR 0007/0042.)
 - **Kind:** `primitive` (no other component inside it) or `composite` (composed of other
   primitives). A composite imports primitives **through `src/components/ui/index.ts`**, never
   deep — and a primitive never imports a composite (ADR 0060).
@@ -118,12 +118,12 @@ export function Badge({
 export { badgeVariants };
 ```
 
-### 4b. `src/components/ui/<name>.stories.tsx` (CSF 3, ADR 0035/0041)
+### 4b. `src/components/ui/<name>.stories.tsx` (CSF 3, ADR 0036/0042)
 Derive the story set with the **`story-matrix`** skill — it reads the spec + registry and
 lists the required exports (one per `applicable:true` state, Variants/Overview, Dark,
 data-edge). An archetype whose **mandatory axes include `interaction`** (`ds:states`
-shows this) **requires a `play`** with `storybook/test` (ADR 0037 — gate-enforced,
-ADR 0037); play patterns live in `story-matrix/assets/play-recipes.md`. Wire each story
+shows this) **requires a `play`** with `storybook/test` (ADR 0038 — gate-enforced,
+ADR 0038); play patterns live in `story-matrix/assets/play-recipes.md`. Wire each story
 back as the state's `demoStory` in step 4d, and verify with the **`story-verify`** skill.
 ```tsx
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
@@ -143,7 +143,7 @@ export const Secondary: Story = { args: { variant: "secondary", children: "Beta"
 export const Destructive: Story = { args: { variant: "destructive", children: "Down" } };
 export const Outline: Story = { args: { variant: "outline", children: "Draft" } };
 
-// Data-edge: a long label must truncate, not blow out layout (ADR 0041).
+// Data-edge: a long label must truncate, not blow out layout (ADR 0042).
 export const LongLabel: Story = {
   args: { children: "a-deliberately-long-unbroken-status-token" },
 };
@@ -154,7 +154,7 @@ export const Dark: Story = {
 };
 ```
 
-### 4c. `src/components/ui/<name>.test.tsx` (colocated unit, ADR 0006/0031)
+### 4c. `src/components/ui/<name>.test.tsx` (colocated unit, ADR 0007/0008)
 ```tsx
 import { render, screen } from "@testing-library/react";
 import { expect, test } from "vitest";
@@ -196,7 +196,7 @@ export const badgeIntent = {
     items: [],
     traversalComplete: false,
     notes:
-      "Figma frames not wired (👤, ADR 0044/0063). Closed axes live in api.variants; per-variant frames + ApprovalSeals are added at the 👤 API-approval step.",
+      "Figma frames not wired (👤, ADR 0045/0063). Closed axes live in api.variants; per-variant frames + ApprovalSeals are added at the 👤 API-approval step.",
   },
   states: [
     // From `npm run ds:states -- categorical-indicator`. Mark each applicable
@@ -258,7 +258,7 @@ them. A composite's `composedOf`/`compositionSignature` must list its primitive 
 
 ## 6. Run the gates — green before done
 ```bash
-npm run check:stories          # colocated story exists (ADR 0041)
+npm run check:stories          # colocated story exists (ADR 0042)
 npm run check:tokens           # semantic-token gate over the new file (ADR 0058)
 npm run check:boundaries       # import boundaries (ADR 0060)
 npm run check:graph            # composition ↔ import reconciliation (ADR 0059/0060)
@@ -272,7 +272,7 @@ state → add the story + intent entry). A clean `check:design-system` + `tsc` m
 component is at Definition-of-Ready.
 
 ## 7. The human gates that remain (👤 — do not perform)
-These stay human-owned (ADR 0045/0046/0061/0063), so **surface them and stop**:
+These stay human-owned (ADR 0046/0047/0061/0063), so **surface them and stop**:
 - A new **archetype or usage role** (step 2 had no fit).
 - **API approval** against real **Figma** pixels and the resulting **drift seal** — the agent
   is never shown its own render for this (ADR 0063).

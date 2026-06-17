@@ -6,11 +6,11 @@
 > machine-checked rules from the first commit.
 
 A Next.js 16 (App Router, React 19) + Supabase application bootstrapped **decisions-first**,
-with an AI agent as the primary implementer (ADR 0045) working under deterministic
+with an AI agent as the primary implementer (ADR 0046) working under deterministic
 governance. Every architectural decision is an ADR under
-[`docs/decisions/`](docs/decisions/) — 66 records, 63 accepted (2 superseded: 0025 by
-0065, 0034 by 0057) plus ADR 0066 `proposed` (the template's neutral token baseline,
-superseding 0065 — pending the human acceptance gate), and the client-mandate registry
+[`docs/decisions/`](docs/decisions/) — 64 records, 63 accepted plus ADR 0033 `proposed`
+(the template's neutral token baseline, pending the human acceptance gate), and the
+client-mandate registry
 [`constraints.md`](docs/decisions/constraints.md); see
 [`docs/decisions/README.md`](docs/decisions/README.md) for the index.
 
@@ -66,7 +66,7 @@ single-source codegen flow, and the feedback loops. The mechanisms in brief:
    - **Judgment** (human gates) — the irreducible: intent collisions, baseline approval,
      anything irreversible.
 
-3. **Generated artifacts, never prose (anti-"knowledge laundering", ADR 0058, 0012).**
+3. **Generated artifacts, never prose (anti-"knowledge laundering", ADR 0058, 0015).**
    Anything the agent must obey is _generated_ from the canonical source and
    **drift-checked in CI**: DB types from the live schema (`gen:types`), the design-token
    union + ESLint allowlist + the agent-rules reference from the CSS `@theme` layer
@@ -86,10 +86,10 @@ single-source codegen flow, and the feedback loops. The mechanisms in brief:
 
 6. **Determinism in the checks themselves.** No global CI retries — a flaky test is
    quarantined explicitly (annotated skip + tracked issue, time-boxed), never papered
-   over (ADR 0048). Visual snapshots freeze animations/time so a diff means a real
+   over (ADR 0049). Visual snapshots freeze animations/time so a diff means a real
    change (ADR 0043). Required status checks are **deterministic-only**.
 
-7. **AI is advisory; humans gate (ADR 0045, 0046, 0047).** Every AI process job (review,
+7. **AI is advisory; humans gate (ADR 0046, 0047, 0048).** Every AI process job (review,
    triage, changelog, security L2) posts comments citing ADR numbers and is **never a
    required check**. Human-only actions are enumerated and lived: accepting ADRs, repo
    settings, production promotion, secrets, `constraints.md`, merges into `dev`/`main`.
@@ -106,7 +106,7 @@ single-source codegen flow, and the feedback loops. The mechanisms in brief:
    deterministic Stage-1 check on its first violation**. The rule set grows from observed
    failures, not speculation.
 
-## Agent / MCP toolchain (ADR 0042, CON-003)
+## Agent / MCP toolchain (ADR 0044, CON-003)
 
 The mandated MCP servers are declared in the committed [`.mcp.json`](.mcp.json):
 official/first-party implementations only, npm-run servers pinned to exact versions,
@@ -122,15 +122,15 @@ or overrides belong in your untracked user-scoped MCP config, layered over this 
 | `chromatic` | `https://<app-id>.chromatic.com/mcp` (first-party, the published Storybook's `/mcp` route) | Chromatic sign-in                   |
 
 The `figma` server is consulted **read-only** for design context; design tokens are
-code-canonical and never imported from Figma (ADR 0044).
+code-canonical and never imported from Figma (ADR 0045).
 
 ### Required environment variables
 
 Copy [`.env.example`](.env.example) to `.env` (gitignored) and fill in the values. The
 `${...}` references in `.mcp.json` are expanded from the environment that launches the
 MCP client, so load the file before starting it (e.g. `set -a; source .env; set +a`, or
-direnv). Tokens are scoped least-privilege (ADR 0042); provisioning and rotation are
-human-only actions (ADR 0045).
+direnv). Tokens are scoped least-privilege (ADR 0044); provisioning and rotation are
+human-only actions (ADR 0046).
 
 | Variable                  | Used by                    | Notes                                                                                                                                                                      |
 | ------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -138,15 +138,15 @@ human-only actions (ADR 0045).
 | `SUPABASE_PROJECT_REF`    | `supabase` MCP server      | Set once the cloud project exists (bootstrap Phase 7)                                                                                                                      |
 | `CHROMATIC_APP_ID`        | `chromatic` MCP server URL | Set once the Chromatic project exists (bootstrap Phase 11)                                                                                                                 |
 | `CHROMATIC_PROJECT_TOKEN` | Chromatic CI builds        | Needed from bootstrap Phase 11, referenced from CI as env/secret                                                                                                           |
-| `ANTHROPIC_API_KEY`       | Phase-12 advisory AI jobs  | Inert placeholder — provisions the advisory AI-process jobs (0047–0056); referenced from CI as a secret, never a literal (0042); least-privilege, human-provisioned (0045) |
+| `ANTHROPIC_API_KEY`       | Phase-12 advisory AI jobs  | Inert placeholder — provisions the advisory AI-process jobs (0048–0057); referenced from CI as a secret, never a literal (0044); least-privilege, human-provisioned (0046) |
 
 The `vercel` and `figma` servers authenticate via first-party OAuth flows, so —
 improving on the illustrative `${VERCEL_TOKEN}` / `${FIGMA_TOKEN}` examples in ADR
-0042 — no stored credential exists for them at all. The `supabase` and `chromatic`
+0044 — no stored credential exists for them at all. The `supabase` and `chromatic`
 entries stay inert until their environment variables are provisioned; the committed
 config is complete and identical for every clone either way.
 
-## Validation & environment (ADR 0018, 0020)
+## Validation & environment (ADR 0017, 0018)
 
 **Zod is the single validation authority.** Data crossing a trust boundary — env, form
 input, request bodies, external APIs — is validated by a Zod schema, and the TypeScript
@@ -165,10 +165,10 @@ lint outside these two files):
 
 Both validate eagerly at import, so a missing or malformed variable fails `next build`
 with an `[env]`-marked error instead of failing mid-request. Values are stored per
-environment in Vercel (ADR 0007); local overrides go in `.env.local` (see
+environment in Vercel (ADR 0009); local overrides go in `.env.local` (see
 [`.env.example`](.env.example)).
 
-## Internationalization & SEO (ADR 0027, 0028)
+## Internationalization & SEO (ADR 0030, 0031)
 
 **Locales are configured in one place** — [`src/i18n/routing.ts`](src/i18n/routing.ts).
 Everything locale-aware (the `[locale]` route segment, the `proxy.ts` negotiation, the
@@ -187,7 +187,7 @@ adding a locale is a two-step change: add the code to `locales` and drop a
 | Sitemap / robots       | [`src/app/sitemap.ts`](src/app/sitemap.ts), [`robots.ts`](src/app/robots.ts) |
 
 Current config: a single locale, `en`, which is the **canonical source locale** — all copy
-is authored here and the ADR 0054 agent-translation workflow (Phase 12) drafts other
+is authored here and the ADR 0055 agent-translation workflow (Phase 12) drafts other
 catalogs from it. The prefix policy is **`always`**: every locale is prefixed (`/en/…`,
 including the default) and `/` redirects to the negotiated locale, which keeps one
 canonical URL per locale so the `hreflang`/canonical alternates need no default-locale
@@ -203,9 +203,9 @@ and canonical/`hreflang` alternates. Adding a route means adding it to the `rout
 
 > Next 16 renamed the `middleware` file convention to `proxy`; `src/proxy.ts` is the
 > request interception the ADRs call "middleware". Phase 7 composes the Supabase session
-> refresh around it (ADR 0010, 0013) — both run per request.
+> refresh around it (ADR 0013, 0016) — both run per request.
 
-## Data & auth — Supabase (ADR 0009, 0010, 0011, 0012, 0013)
+## Data & auth — Supabase (ADR 0012, 0013, 0014, 0015, 0016)
 
 **Local stack.** `npx supabase start` brings up Postgres + Auth + the API on the
 standard ports (needs Docker). `npm run db:reset` rebuilds the database from the SQL
@@ -222,7 +222,7 @@ table also needs explicit `GRANT`s for the
 `authenticated` role — grants decide _whether_ a role may touch a table, RLS decides _which
 rows_.
 
-**Clients** (typed with the generated `Database`, ADR 0010, 0012):
+**Clients** (typed with the generated `Database`, ADR 0013, 0015):
 
 | Module                                                     | Runs as                   | Used in                              |
 | ---------------------------------------------------------- | ------------------------- | ------------------------------------ |
@@ -231,29 +231,29 @@ rows_.
 | [`supabase/middleware.ts`](src/lib/supabase/middleware.ts) | session refresh           | `proxy.ts` (per request)             |
 | [`supabase/admin.ts`](src/lib/supabase/admin.ts)           | service role (bypass RLS) | server-only, behind the secret fence |
 
-**Auth.** Email/password sign-up / sign-in / sign-out (ADR 0013) with React Hook Form +
-`zodResolver` (ADR 0019); the **same Zod schema re-validates inside the Server Action**,
+**Auth.** Email/password sign-up / sign-in / sign-out (ADR 0016) with React Hook Form +
+`zodResolver` (ADR 0020); the **same Zod schema re-validates inside the Server Action**,
 because the action endpoint is reachable without the form. The `proxy.ts` middleware
 refreshes the session on every request, composed around the next-intl locale handling.
 
-**Keys (ADR 0010, 0020).** The public vars (`NEXT_PUBLIC_SUPABASE_URL`,
+**Keys (ADR 0013, 0018).** The public vars (`NEXT_PUBLIC_SUPABASE_URL`,
 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`) default to the local stack in
 [`src/lib/env.ts`](src/lib/env.ts) — the publishable key is public by design and ships to
 the browser, so it is committed and allowlisted in `.gitleaks.toml`. The **secret key**
 (`SUPABASE_SECRET_KEY`, bypasses RLS) lives only in [`env.server.ts`](src/lib/env.server.ts)
 behind the `server-only` fence, never committed; set it in `.env.local` / Vercel. Real
-per-environment values are provisioned in Vercel (human-only, ADR 0045).
+per-environment values are provisioned in Vercel (human-only, ADR 0046).
 
-## State & error architecture (ADR 0021, 0022, 0023, 0030, 0032)
+## State & error architecture (ADR 0019, 0025, 0026, 0028, 0027)
 
 **Three state buckets, no overlap.** Every piece of client state has exactly one home;
 putting it in the wrong one is the bug this model exists to prevent.
 
 | Bucket           | Home                       | Holds                                                                                                 | Not for                                 |
 | ---------------- | -------------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| **Server state** | TanStack Query (0022)      | anything fetched from / persisted to the DB — entities, lists, anything stale-able                    | UI toggles, URL-owned state             |
-| **URL state**    | nuqs + typed routes (0032) | shareable/bookmarkable state surviving reload + back/forward — search, filters, sort, pagination, tab | secrets, large blobs, ephemeral toggles |
-| **Ephemeral UI** | Zustand (0023)             | client-only transient UI — drawers/dialogs open state, wizard step, transient interaction             | anything server-derived or URL-owned    |
+| **Server state** | TanStack Query (0025)      | anything fetched from / persisted to the DB — entities, lists, anything stale-able                    | UI toggles, URL-owned state             |
+| **URL state**    | nuqs + typed routes (0027) | shareable/bookmarkable state surviving reload + back/forward — search, filters, sort, pagination, tab | secrets, large blobs, ephemeral toggles |
+| **Ephemeral UI** | Zustand (0026)             | client-only transient UI — drawers/dialogs open state, wizard step, transient interaction             | anything server-derived or URL-owned    |
 
 Hard rules: **server data is never mirrored into Zustand** (if it can go stale, it is
 Query's); **optimistic state lives in the Query cache, not Zustand**; **Server Components
@@ -261,8 +261,8 @@ never import a store** — stores are `"use client"` modules
 ([`src/lib/stores/ui-store.ts`](src/lib/stores/ui-store.ts)), so the bundler enforces the
 boundary.
 
-**Server state — TanStack Query (0022).** RSC still fetches initial/server-rendered data
-(0002/0010); Query is additive, for interactive post-hydration needs (live search,
+**Server state — TanStack Query (0025).** RSC still fetches initial/server-rendered data
+(0002/0013); Query is additive, for interactive post-hydration needs (live search,
 background refresh, mutations). [`providers.tsx`](src/app/providers.tsx) mounts a
 server-aware client from
 [`get-query-client.ts`](src/lib/query/get-query-client.ts) — **fresh per request on the
@@ -276,26 +276,26 @@ mutation needs an objective reason stated in review — irreversible/high-stakes
 server-generated results the client cannot predict, or input that server-only validation
 could plausibly reject.
 
-**URL state — typed routes + nuqs (0032).** `typedRoutes: true` ([`next.config.ts`](next.config.ts))
+**URL state — typed routes + nuqs (0027).** `typedRoutes: true` ([`next.config.ts`](next.config.ts))
 type-checks `next/link` / `next/navigation` against real routes, so a malformed `href` fails
 the build. Read/write URL state with nuqs `useQueryState(s)` over a parser map under
 `src/lib/search-params/`; where a param needs validation beyond a primitive, back the
-parser with a Zod schema carrying its `[url:…]` origin marker (0018).
+parser with a Zod schema carrying its `[url:…]` origin marker (0017).
 
-> **Catch-all interaction (0021 × 0032).** Because the localized-404 catch-all
+> **Catch-all interaction (0019 × 0027).** Because the localized-404 catch-all
 > `[locale]/[...rest]` legitimately matches any path under a locale, a path-shaped route
 > typo resolves to the localized 404 at runtime rather than failing the build; typedRoutes
 > still rejects structurally-malformed hrefs and is the safety net for raw `next/link`.
 > Internal navigation uses the locale-aware helpers from
 > [`@/i18n/navigation`](src/i18n/navigation.ts) (`Link`, `redirect`), typed by next-intl.
 
-**Responsiveness — React concurrency first (0030).** For render-scheduling jank (typing that
+**Responsiveness — React concurrency first (0028).** For render-scheduling jank (typing that
 filters a big list, switching to a heavy tab), reach first for `useTransition` (surface
 `isPending`) / `useDeferredValue` — built into React, no dependency. Debounce/throttle only
 when the cost is **network** latency; virtualize only when the cost is **DOM size**.
-Memoization is the React Compiler's job (0033), not hand-applied.
+Memoization is the React Compiler's job (0029), not hand-applied.
 
-**Errors & logging (0021).** App Router boundaries present failures; a structured logger
+**Errors & logging (0019).** App Router boundaries present failures; a structured logger
 records them. Client copy stays **generic** — the internal detail (message, stack) is
 recorded server-side by [`src/lib/logger.ts`](src/lib/logger.ts), which emits one structured
 JSON line per event to stdout/stderr (captured as logs on Vercel) and tags errors
@@ -310,7 +310,7 @@ failure modes. External error tracking (e.g. Sentry) is deferred to its own ADR.
 | `[locale]/not-found.tsx`      | localized 404                                  | localized                                  |
 | `[locale]/[...rest]/page.tsx` | catch-all → `notFound()`                       | —                                          |
 
-## Component workbench — Storybook (ADR 0034 → 0057, 0035–0041)
+## Component workbench — Storybook (ADR 0035, 0036–0042)
 
 Reusable components in [`src/components/**`](src/components) are developed and tested in
 **Storybook 10** on the Next.js Vite builder. Stories are the primary component-test
@@ -321,11 +321,10 @@ surface — they double as tests, so a story is documentation _and_ a test at on
 > structural duplication, complete testing, and full UI-state coverage (the component
 > quartet, the state registry, coverage by subtraction, the states↔stories contract).
 
-> **Storybook 10, not 9 (ADR 0057).** ADRs 0034–0041 targeted the "Storybook 9 line," but
-> SB9's `nextjs-vite` builder caps at Vite 7 while this repo runs **Vite 8 / Vitest 4**
-> (ADR 0006). ADR 0057 (proposed) supersedes 0034 to adopt the **10 line** — a clean
-> drop-in with the same architecture. Acceptance + the supersede link-flip are a human
-> gate.
+> **Storybook 10, not 9 (ADR 0035).** SB9's `nextjs-vite` builder caps at Vite 7 while this
+> repo runs **Vite 8 / Vitest 4** (ADR 0007), so the workbench targets the **Storybook 10
+> line** — the line that supports Vite 8 — with the same Vite-builder, stories-as-tests
+> architecture (ADRs 0035–0042).
 
 | Script                    | What it does                                                                                      |
 | ------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -334,12 +333,12 @@ surface — they double as tests, so a story is documentation _and_ a test at on
 | `npm run test:coverage`   | runs **both** Vitest projects (`unit` jsdom + `storybook` browser-mode) merged to one ≥80% number |
 | `npm run test:unit`       | fast jsdom-only inner loop                                                                        |
 | `npm run test:storybook`  | test-runner build-integrity smoke (local; needs a served Storybook)                               |
-| `npm run check:stories`   | asserts every `src/components/**` module has colocated stories (ADR 0041)                         |
+| `npm run check:stories`   | asserts every `src/components/**` module has colocated stories (ADR 0042)                         |
 
-**Two engines, non-overlapping roles (ADR 0036).** The **Vitest addon** is authoritative:
+**Two engines, non-overlapping roles (ADR 0037).** The **Vitest addon** is authoritative:
 it runs every story as a browser-mode test (`@vitest/browser-playwright`, chromium), hosts
-the `play` interactions (ADR 0037) and the axe accessibility gate (ADR 0038), and its
-coverage merges into the single ≥80% gate (ADR 0040/0031). The **`@storybook/test-runner`**
+the `play` interactions (ADR 0038) and the axe accessibility gate (ADR 0039), and its
+coverage merges into the single ≥80% gate (ADR 0041/0008). The **`@storybook/test-runner`**
 is a build-integrity _smoke_ over the statically built Storybook — render + `play` only,
 **no axe, no coverage** — so nothing is double-asserted. The smoke runs locally during
 bootstrap; its CI job is deferred (lean), like the Phase-7 e2e.
@@ -348,40 +347,40 @@ bootstrap; its CI job is deferred (lean), like the Phase-7 e2e.
 
 - **CSF 3 only** — `eslint-plugin-storybook` `flat/csf-strict` + `meta-satisfies-type`,
   and a `no-restricted-syntax` ban on `Template.bind` make CSF 2 / `storiesOf` fail lint
-  (ADR 0035). MDX is for autodocs only, never to define stories.
+  (ADR 0036). MDX is for autodocs only, never to define stories.
 - **Meaningful states** — every component ships stories for its real states (default,
   variants/sizes, interactive, data-edge, theme/locale where they differ). The
   `check:stories` gate proves a stories file _exists_; the PR template carries the
-  state-completeness checklist that is a review judgment (ADR 0041).
+  state-completeness checklist that is a review judgment (ADR 0042).
 - **`play` for interactive components** — drive the UI with `userEvent` and assert via
-  `expect`/`within` + `fn()` spies (ADR 0037). Purely presentational components are
+  `expect`/`within` + `fn()` spies (ADR 0038). Purely presentational components are
   exempt.
 - **a11y is a gate, not advice** — axe fails the run on any WCAG 2.2 AA violation. The
   _only_ opt-out is an explicit per-story `a11y` parameter with a stated reason (e.g. a
   destructive variant disabling just `color-contrast` for a known token-contrast issue,
-  tracked at the token layer). Never a silent global disable (ADR 0038).
+  tracked at the token layer). Never a silent global disable (ADR 0039).
 - **Snapshots** — one small, focused serialized-DOM snapshot on a stable structural
   component; baseline updates are reviewed diffs (`vitest -u` in a PR). No `addon-storyshots`;
   _pixel/visual_ regression is a separate concern handled by Chromatic (ADR 0043), below.
 
-## Visual regression — Chromatic (ADR 0043, 0052)
+## Visual regression — Chromatic (ADR 0043, 0053)
 
-The story modalities above — interaction (0037), a11y (0038), DOM snapshot (0039), line
-coverage (0040) — all pass while a component renders with the **wrong** spacing, color,
-font, or layout, which is exactly the regression a design-token change (ADR 0025) can
+The story modalities above — interaction (0038), a11y (0039), DOM snapshot (0040), line
+coverage (0041) — all pass while a component renders with the **wrong** spacing, color,
+font, or layout, which is exactly the regression a design-token change (ADR 0033) can
 introduce. [Chromatic](https://www.chromatic.com) closes that gap: it publishes the built
 Storybook and snapshots every story across browsers/viewports, with diffs reviewed and
-approved by a human in the Chromatic UI (ADR 0043/0046). It reuses the existing CSF 3
-stories and the ADR-0041 state matrix as baselines — there is **no** separate visual
+approved by a human in the Chromatic UI (ADR 0043/0047). It reuses the existing CSF 3
+stories and the ADR-0042 state matrix as baselines — there is **no** separate visual
 fixture set.
 
 - **Workflow:** [`.github/workflows/chromatic.yml`](.github/workflows/chromatic.yml) — a
-  publish-and-snapshot pass separate from the quality gate (ADR 0036), running on PRs and
+  publish-and-snapshot pass separate from the quality gate (ADR 0037), running on PRs and
   on pushes to `dev`/`main` (the base-branch builds that accept baselines).
 - **TurboSnap** (`onlyChanged`) limits snapshots to the stories affected by the changed
   files, bounding snapshot cost and CI time (ADR 0043); it diffs against the git baseline,
   so the job checks out with `fetch-depth: 0`.
-- **Token by env-reference** (ADR 0042): `CHROMATIC_PROJECT_TOKEN` is a CI secret, never
+- **Token by env-reference** (ADR 0044): `CHROMATIC_PROJECT_TOKEN` is a CI secret, never
   committed. The Chromatic GitHub-App status check is the gating signal — the workflow
   itself exits zero on visual changes (`exitZeroOnChanges`) because approval lives in the
   Chromatic UI, not in a red CI job.
@@ -395,35 +394,35 @@ fixture set.
 - **Local run:** `CHROMATIC_PROJECT_TOKEN=… npm run chromatic` (TurboSnap on).
 
 **Bootstrap posture.** The Chromatic project and its token are a human provision (Phase
-11, ADR 0045) that has not happened yet, so the workflow is **inert**: a tiny `precheck`
+11, ADR 0046) that has not happened yet, so the workflow is **inert**: a tiny `precheck`
 job reports whether the token is set, and the snapshot job is _skipped_ (not failed) until
 it is — zero CI time during bootstrap, automatic activation once provisioned. The
 `chromatic` MCP server in [`.mcp.json`](.mcp.json) stays inert the same way until
 `CHROMATIC_APP_ID` is set.
 
-**AI diff pre-classification is deferred (ADR 0052).** Auto-sorting diffs into noise /
+**AI diff pre-classification is deferred (ADR 0053).** Auto-sorting diffs into noise /
 expected / suspected-regression before human approval is _not_ built: the friction is
 predicted, not yet measured, and a custom classifier over a SaaS's diff artifacts is the
-brittle pipeline ADR 0044 avoids. Compliance is the **absence** of that machinery (checked
-by the 0053 drift audit); revisit only on 0052's recorded triggers — sustained approval
+brittle pipeline ADR 0045 avoids. Compliance is the **absence** of that machinery (checked
+by the 0054 drift audit); revisit only on 0053's recorded triggers — sustained approval
 load, a native Chromatic triage feature, or noise persisting despite the determinism
 discipline above.
 
-## Design handoff — Figma (ADR 0044)
+## Design handoff — Figma (ADR 0045)
 
-**Design tokens are code-canonical.** The CSS-custom-property token layer (ADR 0025),
-mapped into the Tailwind theme (ADR 0024), is the single source of truth for colors,
+**Design tokens are code-canonical.** The CSS-custom-property token layer (ADR 0033),
+mapped into the Tailwind theme (ADR 0032), is the single source of truth for colors,
 spacing, and the type scale. Figma **mirrors** that scale; it does not author the
 authoritative values, so the two never drift.
 
-- The **`figma` MCP server is read-only** (ADR 0042/0044): agents and developers pull
+- The **`figma` MCP server is read-only** (ADR 0044/0045): agents and developers pull
   design _context_ — component anatomy, states, spacing, redlines via Dev Mode — into
   implementation, never the reverse. There is **no Figma → token export pipeline**; that
-  brittle coupling is deliberately rejected (ADR 0044).
+  brittle coupling is deliberately rejected (ADR 0045).
 - A design-originated token change is a deliberate, reviewed round-trip **through the
-  ADR-0025 layer** — never a silent fork in Figma or a generated sync.
+  ADR-0033 layer** — never a silent fork in Figma or a generated sync.
 - **Component parity:** Figma component names mirror [`src/components/**`](src/components)
-  so a design maps traceably to the shadcn component (ADR 0026) that implements it.
+  so a design maps traceably to the shadcn component (ADR 0034) that implements it.
 
 ## Design-system governance (ADR 0058–0064)
 
@@ -447,7 +446,7 @@ generated sources of truth live under [`src/design-system/`](src/design-system):
 | `npm run check:graph`         | composition graph ↔ import graph reconciliation — a mismatch fails CI and forces one of them to change (0059/0060)                                                                         |
 | `npm run check:design-intent` | the 0062 fitness functions: api↔props, state coverage, states↔stories, meta↔graph                                                                                                          |
 | `npm run check:seals`         | Figma drift-seal shape/presence (0063) — inert until a Figma project exists                                                                                                                |
-| `npm run check:i18n`          | message-catalog key parity + ICU syntax (0054)                                                                                                                                             |
+| `npm run check:i18n`          | message-catalog key parity + ICU syntax (0055)                                                                                                                                             |
 | `npm run check:gates`         | the gate self-test: every custom rule above rejects its planted violator (P6)                                                                                                              |
 
 **Structural helpers** (advisory, run inside the agent loop — also surfaced as the
@@ -465,35 +464,35 @@ baselines, Figma-drift resolution. Procedures (vocabulary changes are governed
 migrations with an owner; a component fitting no archetype escalates) live in
 [`docs/design-system/governance.md`](docs/design-system/governance.md).
 
-## Local development — `npm run dev` (ADR 0014, 0015, 0016, 0017)
+## Local development — `npm run dev` (ADR 0021, 0023, 0022, 0024)
 
 `npm run dev` runs the orchestrator in [`scripts/dev.mjs`](scripts/dev.mjs), which brings
 the whole local stack up in a **deterministic order** so nothing ever starts against a
 missing or stale dependency:
 
 1. **Supabase** — start the local stack if it isn't already up (idempotent — re-running
-   `npm run dev` skips a stack that's already running; needs Docker, ADR 0016).
+   `npm run dev` skips a stack that's already running; needs Docker, ADR 0022).
 2. **Types** — `gen:types` so [`database.types.ts`](src/lib/supabase/database.types.ts)
-   matches the live schema (ADR 0012).
-3. **Env** — resolve `.env.local` (see below, ADR 0015).
-4. **`next dev`** — hand off to the framework dev server (ADR 0015); Ctrl-C stops both.
+   matches the live schema (ADR 0015).
+3. **Env** — resolve `.env.local` (see below, ADR 0023).
+4. **`next dev`** — hand off to the framework dev server (ADR 0023); Ctrl-C stops both.
 
 Only the official platform CLIs are used — there is **no** bespoke docker-compose (ADR
-0014). One foot-gun the orchestrator surfaces clearly: if another local Supabase project
+0021). One foot-gun the orchestrator surfaces clearly: if another local Supabase project
 holds the standard ports (54321–54327), `supabase start` fails — stop the other stack with
 `supabase stop --project-id <other>` and re-run.
 
-**Environment resolution (ADR 0015, 0020).** Step 3 has two paths:
+**Environment resolution (ADR 0023, 0018).** Step 3 has two paths:
 
 - **Linked to Vercel** — after the one-time human setup `vercel login` + `vercel link`
-  (human-only, ADR 0045), the orchestrator runs `vercel env pull` to sync the project's
+  (human-only, ADR 0046), the orchestrator runs `vercel env pull` to sync the project's
   _development_ environment into `.env.local`, so local runs resolve env the way
   production does.
 - **Not linked (manual fallback)** — the app still runs on the local defaults baked into
   [`src/lib/env.ts`](src/lib/env.ts) (local Supabase + `http://localhost:3000`); to point
   elsewhere, hand-author `.env.local` from [`.env.example`](.env.example).
 
-## CI gate & deploys (ADR 0007, 0008, 0031, 0055)
+## CI gate & deploys (ADR 0009, 0010, 0008, 0056)
 
 Every push to `dev`/`main` and every PR runs
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) on Node 24 — the same commands as
@@ -510,29 +509,29 @@ The middle rows are the design-system deterministic gates (ADR 0058–0064, see
 [Design-system governance](#design-system-governance-adr-00580064)); the token-drift step
 mirrors the `gen:types` drift check — generated artifacts must match their source.
 `test:coverage` runs both Vitest projects, so CI installs a Playwright Chromium for the
-browser-mode story tests (ADR 0034→0057/0040). Alongside the quality job is a **blocking
+browser-mode story tests (ADR 0035→0035/0041). Alongside the quality job is a **blocking
 secret scan** (gitleaks, allowlist committed in [`.gitleaks.toml`](.gitleaks.toml) — every
-entry needs a justification and human review, ADR 0055). Two slower suites run **locally**
+entry needs a justification and human review, ADR 0056). Two slower suites run **locally**
 during bootstrap rather than in CI (deliberate, tracked lean deviations): the **e2e smoke**
 (needs a Supabase stack, Phase 7) and the **Storybook test-runner smoke** (Phase 10); both
 rejoin CI before the first `dev` → `main` promotion. Visual regression runs in its own
 workflow ([`chromatic.yml`](.github/workflows/chromatic.yml), ADR 0043) — inert until its
-token is provisioned (see [Visual regression](#visual-regression--chromatic-adr-0043-0052)).
+token is provisioned (see [Visual regression](#visual-regression--chromatic-adr-0043-0053)).
 Deploys are not CI's job: once you connect a Vercel project, it builds previews per PR
-and production from `main` (ADR 0007).
+and production from `main` (ADR 0009).
 
-### Hotfix exception (ADR 0031)
+### Hotfix exception (ADR 0008)
 
-Only a `hotfix/*` branch (off `main`, ADR 0029) or a PR carrying the `hotfix` label
+Only a `hotfix/*` branch (off `main`, ADR 0011) or a PR carrying the `hotfix` label
 bypasses the **coverage threshold** — and nothing else of the gate: typecheck, lint,
 format, build, the test run itself, and the secret scan all still apply. CI swaps
 `test:coverage` for plain `test` on such PRs. Each use is noted in the PR, and a
 follow-up restoring the missing coverage is required.
 
-### Branch protection (human-configured, ADR 0008, 0029, 0046)
+### Branch protection (human-configured, ADR 0010, 0011, 0047)
 
 Branch protection is a repository setting outside version control; it is configured by a
-human (ADR 0045) and documented here. On **both** `main` and `dev`:
+human (ADR 0046) and documented here. On **both** `main` and `dev`:
 
 - Require a pull request before merging; **≥1 approving review**; approver ≠ author
   (agent-authored PRs are reviewed by a human like any other); **dismiss stale approvals**
@@ -540,27 +539,27 @@ human (ADR 0045) and documented here. On **both** `main` and `dev`:
 - Required status checks: **Quality gate**, **Secret scan**, **e2e smoke** (the three
   jobs of `.github/workflows/ci.yml`), and — once its token is provisioned (Phase 11) —
   the **Chromatic** visual-regression check (ADR 0043). Required checks stay
-  deterministic-only — advisory AI jobs (Phase 12) are never required (ADR 0046).
+  deterministic-only — advisory AI jobs (Phase 12) are never required (ADR 0047).
 - No force pushes, no deletions.
 
-## Advisory AI process jobs (ADR 0047–0056)
+## Advisory AI process jobs (ADR 0048–0057)
 
 The Phase-12 AI process layer is wired and **inert until a 👤 human provisions
-`ANTHROPIC_API_KEY`** (a repo secret, env-reference only — ADR 0042/0045). Each workflow
+`ANTHROPIC_API_KEY`** (a repo secret, env-reference only — ADR 0044/0046). Each workflow
 starts with a guard job that checks key presence and _skips_ (never fails) without it, so
 the jobs self-activate when the key lands — the same inert-until-token pattern as
-Chromatic. Per ADR 0046 they are **never required checks**: every one posts advisory
+Chromatic. Per ADR 0047 they are **never required checks**: every one posts advisory
 comments citing the ADR records it grounds in.
 
 | Job                                                                                                                                                                                        | Trigger                                                                   | ADR              |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- | ---------------- |
-| AI PR review (diff + ADR corpus, cites record numbers; story-matrix and semantic-a11y angles folded in)                                                                                    | PRs ([`ai-advisory.yml`](.github/workflows/ai-advisory.yml))              | 0047, 0050, 0051 |
-| AI security review — Layer 2, diff-scoped, against recorded invariants (secret fence, RLS, env-references); the blocking gitleaks scan stays Layer 1                                       | PRs (same workflow)                                                       | 0055             |
-| Changelog draft (categorized from merge history; human edits in the release PR)                                                                                                            | `dev` → `main` PRs                                                        | 0049             |
-| CI-failure triage — classifies real regression / flaky-with-evidence / infrastructure                                                                                                      | failed CI runs ([`ai-ci-triage.yml`](.github/workflows/ai-ci-triage.yml)) | 0048             |
-| Dependency updates: Renovate with pinned committed config ([`renovate.json`](renovate.json)), grouped scheduled PRs, security advisories bypass the schedule; humans merge — no auto-merge | bot PRs                                                                   | 0056             |
+| AI PR review (diff + ADR corpus, cites record numbers; story-matrix and semantic-a11y angles folded in)                                                                                    | PRs ([`ai-advisory.yml`](.github/workflows/ai-advisory.yml))              | 0048, 0051, 0052 |
+| AI security review — Layer 2, diff-scoped, against recorded invariants (secret fence, RLS, env-references); the blocking gitleaks scan stays Layer 1                                       | PRs (same workflow)                                                       | 0056             |
+| Changelog draft (categorized from merge history; human edits in the release PR)                                                                                                            | `dev` → `main` PRs                                                        | 0050             |
+| CI-failure triage — classifies real regression / flaky-with-evidence / infrastructure                                                                                                      | failed CI runs ([`ai-ci-triage.yml`](.github/workflows/ai-ci-triage.yml)) | 0049             |
+| Dependency updates: Renovate with pinned committed config ([`renovate.json`](renovate.json)), grouped scheduled PRs, security advisories bypass the schedule; humans merge — no auto-merge | bot PRs                                                                   | 0057             |
 
-The job implementations live in [`scripts/ai/`](scripts/ai). Translation drafting (0054)
+The job implementations live in [`scripts/ai/`](scripts/ai). Translation drafting (0055)
 follows the same pattern — the deterministic half (`check:i18n` key parity + ICU) already
 blocks in CI; the drafting half is credential-gated.
 
@@ -569,7 +568,7 @@ blocks in CI; the drafting half is credential-gated.
 - Decisions first: no code lands without a covering ADR (or `CON-00x` constraint). See
   the ADR Process section in [`CLAUDE.md`](CLAUDE.md) and
   [Principles](#principles--deterministic-ai-driven-development) above.
-- Branch model: feature branches → `dev` (integration) → `main` (production), ADR 0029.
+- Branch model: feature branches → `dev` (integration) → `main` (production), ADR 0011.
 - Component loop: `ds:signature` **before** creating a component (duplicate check),
   `ds:states` while authoring its `design-intent.ts`/stories, `check:design-system`
   before committing, `ds:escalations` before requesting review. The allowed-token list

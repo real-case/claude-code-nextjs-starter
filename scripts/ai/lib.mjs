@@ -1,12 +1,12 @@
 // scripts/ai/lib.mjs
 //
-// Shared helpers for the Phase-12 ADVISORY AI jobs (ADRs 0047–0056). Every job is
-// advisory (it never blocks a merge — ADR 0046/0047), ADR-grounded (it cites record
-// numbers), and INERT until a 👤 provisions ANTHROPIC_API_KEY (ADR 0045/0042) — the
+// Shared helpers for the Phase-12 ADVISORY AI jobs (ADRs 0048–0057). Every job is
+// advisory (it never blocks a merge — ADR 0047/0048), ADR-grounded (it cites record
+// numbers), and INERT until a 👤 provisions ANTHROPIC_API_KEY (ADR 0046/0044) — the
 // same inert-until-token posture as the Chromatic token. With no key, each job no-ops
 // cleanly (the workflow also gates on a has-key job, so the script never even runs).
 //
-// Uses the official Anthropic SDK (this is a Node/TS repo — ADR 0017), model
+// Uses the official Anthropic SDK (this is a Node/TS repo — ADR 0024), model
 // claude-opus-4-8 with adaptive thinking. Grounding is CLAUDE.md + the decisions index
 // as a CACHED, byte-stable system prefix (prompt caching: stable prefix, volatile diff
 // last), so the model can cite ADR numbers without re-feeding all 64 records per run.
@@ -17,7 +17,7 @@ import { readFileSync, existsSync } from "node:fs";
 
 export const MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-4-8";
 
-/** True only when a non-empty key is present (ADR 0045 — human-provisioned). */
+/** True only when a non-empty key is present (ADR 0046 — human-provisioned). */
 export function hasKey() {
   return Boolean(process.env.ANTHROPIC_API_KEY?.trim());
 }
@@ -26,7 +26,7 @@ export function hasKey() {
 export function requireKeyOrExitInert(job) {
   if (hasKey()) return true;
   console.log(
-    `${job}: inert — no ANTHROPIC_API_KEY (👤-provisioned, ADR 0045/0042). ` +
+    `${job}: inert — no ANTHROPIC_API_KEY (👤-provisioned, ADR 0046/0044). ` +
       `Add it as a GitHub Actions secret to activate this advisory job.`,
   );
   process.exit(0);
@@ -111,7 +111,7 @@ export async function advise({ grounding, task, payload }) {
         type: "text",
         text:
           "You are an ADVISORY reviewer for this repository. Your output is a suggestion, " +
-          "never a gate (ADR 0046/0047): a human always decides. Ground every point in the " +
+          "never a gate (ADR 0047/0048): a human always decides. Ground every point in the " +
           "project's accepted ADRs and CITE the record number(s) you rely on (e.g. “ADR 0058”). " +
           "Be concise, specific, and actionable; prefer a short bulleted list over prose. If you " +
           "find nothing worth raising, say so in one line rather than inventing findings.",

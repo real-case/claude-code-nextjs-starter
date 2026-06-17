@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-// ADR 0041 — component story coverage, existence half.
+// ADR 0042 — component story coverage, existence half.
 //
 // Every exported, reusable UI component module under src/components/** must ship a
 // colocated CSF 3 stories file (`<name>.stories.tsx`). This is the part that is
 // *mechanically* checkable; the COMPLETENESS of states (the meaningful-states
 // checklist: variants, interactive, data-edge, theme/locale) is a PR-review judgment
-// a linter cannot make (ADR 0041), enforced via the pull-request template.
+// a linter cannot make (ADR 0042), enforced via the pull-request template.
 //
 // Page-level one-off compositions are out of scope — they live in src/app/** and are
-// covered end-to-end (ADR 0006), not in the component catalogue.
+// covered end-to-end (ADR 0007), not in the component catalogue.
 import { readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
@@ -46,7 +46,7 @@ const missing = components.filter((file) => !hasColocatedStory(file));
 
 if (missing.length > 0) {
   console.error(
-    `ADR 0041: ${missing.length} component module(s) under ${ROOT} have no colocated ` +
+    `ADR 0042: ${missing.length} component module(s) under ${ROOT} have no colocated ` +
       `*.stories.tsx:\n` +
       missing.map((file) => `  - ${relative(".", file)}`).join("\n") +
       `\n\nAdd <name>.stories.tsx beside each file above, covering the component's ` +
@@ -57,6 +57,6 @@ if (missing.length > 0) {
 }
 
 console.log(
-  `ADR 0041 OK — ${components.length} component module(s) under ${ROOT}, ` +
+  `ADR 0042 OK — ${components.length} component module(s) under ${ROOT}, ` +
     `each has a colocated *.stories.tsx.`,
 );

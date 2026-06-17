@@ -3,7 +3,7 @@
 Why the AI-assisted design-system governance layer is built the way it is: typed design
 intent, token/composition/state enforcement, anti-hallucination approval, and the feedback
 loop that keeps the rules from rotting. This is a **rationale doc**, not a tracker — the
-decisions themselves live in ADRs **0058–0064** (plus the AI-process records 0045–0056),
+decisions themselves live in ADRs **0058–0064** (plus the AI-process records 0046–0057),
 and the runtime artifacts live in [`src/design-system/`](../src/design-system/). Read this to
 understand the shape before you extend it.
 
@@ -26,7 +26,7 @@ needs:
 3. **Judgment** (human gates) — _the irreducible_. Intent collisions, state-set approval,
    composition-boundary calls, baseline approval, anything irreversible.
 
-Both the AI-process automation (ADRs 0045–0056) and the design-system component governance
+Both the AI-process automation (ADRs 0046–0057) and the design-system component governance
 (0058–0064) obey **ADR-first** (0001): a decision no ADR covers is recorded **before** code
 depends on it.
 
@@ -64,7 +64,7 @@ graph fresh."
 
 ## 4. The deterministic layer (CI gates, block merge)
 
-The guarantees — precision over recall. ADRs 0058, 0060, 0062, 0063; reuses 0038/0043; adds 0054. Honour the lean posture: heavy jobs stay inert/local until justified.
+The guarantees — precision over recall. ADRs 0058, 0060, 0062, 0063; reuses 0039/0043; adds 0055. Honour the lean posture: heavy jobs stay inert/local until justified.
 
 **Tokens (P1/P5/P6, ADR 0058).** The ESLint layer (`check:tokens`, scoped to
 `src/components/**`) bans raw color/size literals, `style={{…}}` raw values, raw
@@ -91,12 +91,12 @@ Figma drift-seal shape/presence — a clean no-op until a Figma project + seals 
 asserts the gate exits non-zero, and restores state — the guards are themselves guarded.
 Single-source: the lint allowlist **and** the agent-rules reference are generated from the
 token registry by `gen:tokens` and CI fails on drift — no token is duplicated in prose.
-Localization parity (ADR 0054): `check:i18n` is a blocking key-parity + ICU-syntax check.
+Localization parity (ADR 0055): `check:i18n` is a blocking key-parity + ICU-syntax check.
 
 ## 5. The generation layer (skills + agent rules, advisory)
 
 Reduce violation frequency inside the agent loop — recall over precision; the guarantee stays
-in the deterministic layer. ADRs 0047–0056; 0058/0059/0061.
+in the deterministic layer. ADRs 0048–0057; 0058/0059/0061.
 
 **Design-system skills.** `CLAUDE.md` and the agent rules reference the **generated**
 `tokens.agent-rules.md` (never a prose retelling). `/check-tokens` runs the token lint before
@@ -106,12 +106,12 @@ deferred until the Defect Log shows omissions) against the graph before creation
 **state-coverage** skill (`ds:states`) prints the archetype's mandatory state set so coverage
 starts from the full set, not memory.
 
-**Advisory AI jobs (ADRs 0047–0056).** Each is advisory, ADR-cited, and **never a required
-check**: AI PR review (diff + ADR corpus, citing record numbers, 0047), CI-failure triage
-(real regression / flaky-with-evidence / infra, no global retry, 0048), changelog drafting at
-`dev`→`main` (0049), story-matrix drafting against the archetype registry (0050), semantic
-a11y over built-Storybook states (0051), diff-scoped security layer-2 against recorded
-invariants (0055), and Renovate-class dependency triage (0056). All are **inert until a human
+**Advisory AI jobs (ADRs 0048–0057).** Each is advisory, ADR-cited, and **never a required
+check**: AI PR review (diff + ADR corpus, citing record numbers, 0048), CI-failure triage
+(real regression / flaky-with-evidence / infra, no global retry, 0049), changelog drafting at
+`dev`→`main` (0050), story-matrix drafting against the archetype registry (0051), semantic
+a11y over built-Storybook states (0052), diff-scoped security layer-2 against recorded
+invariants (0056), and Renovate-class dependency triage (0057). All are **inert until a human
 provisions `ANTHROPIC_API_KEY`** and self-activate when it lands (`scripts/ai/*` +
 `.github/workflows/ai-advisory.yml` / `ai-ci-triage.yml`).
 
@@ -139,7 +139,7 @@ own output. ADRs 0062, 0063.
 
 ## 7. Human gates (judgment, not automated)
 
-Keep judgment where it belongs, and only there. ADRs 0045, 0046, 0061, 0063.
+Keep judgment where it belongs, and only there. ADRs 0046, 0047, 0061, 0063.
 
 - **usageRole collision** → present both intent files side by side (duplicate vs deliberate
   specialization). `ds:escalations` groups specs by `usageRole` and surfaces shared roles.
@@ -151,15 +151,15 @@ Keep judgment where it belongs, and only there. ADRs 0045, 0046, 0061, 0063.
   layers, never by touching real gates.
 - **`combinations`** decided once per class, recorded in the intent.
 - **Visual-regression baseline approval** is human-only — the agent never approves its own
-  baseline (Chromatic UI, ADR 0043/0046).
+  baseline (Chromatic UI, ADR 0043/0047).
 - **Figma-drift re-approval** — a seal mismatch re-opens the affected variants.
 - Mandatory gates stay on the irreversible (RLS, prod migrations, auth middleware, payment
-  webhooks, secrets) and the ADR 0045 human-only list (ADR acceptance, repo settings,
+  webhooks, secrets) and the ADR 0046 human-only list (ADR acceptance, repo settings,
   promotion, secrets, `constraints.md`, merges to `dev`/`main`).
 
 ## 8. The feedback loop (defense against degradation)
 
-Stop the rules from rotting. ADR 0064; reuses 0048/0053.
+Stop the rules from rotting. ADR 0064; reuses 0049/0054.
 
 The [Defect Log](design-system/defect-log.md) is a journal of _missing or ambiguous rules_
 (not every error). Each entry carries a root-cause class (rule-absent / didn't-reach-agent /

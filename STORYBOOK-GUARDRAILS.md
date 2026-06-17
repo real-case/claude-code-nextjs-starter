@@ -17,7 +17,7 @@ The four guarantees, and the gate that proves each:
 | ----------------------------- | ----------------------------------------------- | ------------------- |
 | **Token-only styling**        | `check:tokens` (ESLint) + `gen:tokens` drift    | 0058                |
 | **No structural duplication** | `ds:signature` + `check:graph`                  | 0059 / 0060         |
-| **Complete testing**          | `check:stories` + browser-mode Vitest + axe     | 0036/0038/0040/0041 |
+| **Complete testing**          | `check:stories` + browser-mode Vitest + axe     | 0037/0039/0041/0042 |
 | **Full UI-state coverage**    | `check:design-intent` (coverage by subtraction) | 0061 / 0062         |
 
 ---
@@ -58,7 +58,7 @@ archetype's mandatory set_, never listed from memory ([ADR 0062](docs/decisions/
 The decision that makes everything else enforceable: **`@storybook/addon-vitest` turns
 every story export into a browser-mode Vitest test case.** "Write a story" and "write a
 test" are the same act. Coverage from stories merges with unit coverage into one ≥80%
-gate ([ADR 0040](docs/decisions/0040-coverage-merge-across-vitest-projects.md)).
+gate ([ADR 0041](docs/decisions/0041-coverage-merge-across-vitest-projects.md)).
 
 ```mermaid
 flowchart LR
@@ -73,16 +73,16 @@ flowchart LR
     stories["<id>.stories.tsx"] --> story
     main --> story
     preview --> story
-    unit --> cov["merged V8 coverage\n≥80% or CI red (ADR 0031)"]
+    unit --> cov["merged V8 coverage\n≥80% or CI red (ADR 0008)"]
     story --> cov
 ```
 
 What each story export gets, automatically:
 
 - **Render-without-throw** smoke (the story renders).
-- **`play` function execution** — user interactions run for real ([ADR 0037](docs/decisions/0037-interaction-testing-play-functions.md)).
+- **`play` function execution** — user interactions run for real ([ADR 0038](docs/decisions/0038-interaction-testing-play-functions.md)).
 - **axe accessibility scan** at WCAG 2.2 AA, `test: "error"` — any violation fails the
-  story ([ADR 0038](docs/decisions/0038-accessibility-testing-gate-a11y-axe.md)).
+  story ([ADR 0039](docs/decisions/0039-accessibility-testing-gate-a11y-axe.md)).
 - **Coverage contribution** to the merged gate.
 
 Determinism is pinned in `preview.tsx`: `freezeForSnapshot` zeroes animations,
@@ -90,11 +90,11 @@ transitions, and caret blinking _only_ under `isChromatic()`, so a visual diff m
 real change ([ADR 0043](docs/decisions/0043-visual-regression-chromatic.md)). The
 `test-runner.ts` smoke engine deliberately contributes **no coverage and no axe** —
 those are single-sourced from the Vitest projects, never duplicated
-([ADR 0036](docs/decisions/0036-story-test-execution-engines.md)).
+([ADR 0037](docs/decisions/0037-story-test-execution-engines.md)).
 
 A separate concern from _authoring_ rules: CSF 2 (`Template.bind({})`), `storiesOf`, and
 MDX-defined stories **fail lint** — only CSF 3 is legal
-([ADR 0035](docs/decisions/0035-story-authoring-csf3.md)).
+([ADR 0036](docs/decisions/0036-story-authoring-csf3.md)).
 
 ---
 
@@ -179,23 +179,23 @@ flowchart TD
     c["A component under src/components/**"] --> exist["check:stories\nmust have colocated <id>.stories.tsx"]
     exist --> run["browser-mode Vitest\nevery story renders + axe @ WCAG 2.2 AA"]
     run --> play["check:design-intent (fitness #5)\ninteractive archetype ⇒ ≥1 play function"]
-    play --> cov["merged coverage ≥ 80%\nor CI red (ADR 0031)"]
+    play --> cov["merged coverage ≥ 80%\nor CI red (ADR 0008)"]
 ```
 
 1. **Existence** — `check:stories` (`check-component-stories.mjs`) requires every
    non-test, non-story `.tsx` under `src/components/**` to have a colocated
-   `<name>.stories.tsx` sibling ([ADR 0041](docs/decisions/0041-component-story-coverage-policy.md)).
+   `<name>.stories.tsx` sibling ([ADR 0042](docs/decisions/0042-component-story-coverage-policy.md)).
 2. **Execution + a11y** — each story runs as a browser test with an axe gate (§2).
 3. **Interaction** — `check:design-intent` derives the set of _interactive_ archetypes
    (those whose mandatory axes include `interaction`) and fails if such a component's
    stories have no `play` function (`/\bplay\s*:/`), graduated from the Defect Log as
-   DL-005 ([ADR 0037](docs/decisions/0037-interaction-testing-play-functions.md)).
+   DL-005 ([ADR 0038](docs/decisions/0038-interaction-testing-play-functions.md)).
 4. **Coverage** — story + unit coverage merge into the ≥80% gate; `hotfix` PRs may
-   bypass the _threshold_ only, never the rest ([ADR 0031](docs/decisions/0031-test-coverage-threshold-gate.md)).
+   bypass the _threshold_ only, never the rest ([ADR 0008](docs/decisions/0008-test-coverage-threshold-gate.md)).
 
 Purely **presentational** components (graph `archetype: null`, e.g. `label`) are exempt
 from the play-function requirement — the exemption is recorded in the graph node, not
-assumed ([ADR 0041](docs/decisions/0041-component-story-coverage-policy.md)).
+assumed ([ADR 0042](docs/decisions/0042-component-story-coverage-policy.md)).
 
 What stays **human judgment**: whether the stories demo _meaningful_ states is reviewed
 by a person; the gate guarantees existence + execution + state-contract consistency, not
@@ -376,7 +376,7 @@ export const IconOnly: Story = { args: { size: "icon", "aria-label": "Add item",
 export const LongLabel: Story = { args: { children: "Confirm subscription and continue…" }, decorators: [/* w-56 */] };
 export const Dark: Story = { globals: { theme: "dark" }, render: /* variants under .dark */ };
 
-export const Clickable: Story = {                       // satisfies ADR 0037 (interactive ⇒ play)
+export const Clickable: Story = {                       // satisfies ADR 0038 (interactive ⇒ play)
   play: async ({ args, canvasElement }) => {
     const button = within(canvasElement).getByRole("button", { name: "Save" });
     await userEvent.click(button);
@@ -396,7 +396,7 @@ fail), using `bg-blue-600` anywhere (`check:tokens`), removing the play function
 ## 8. The authoring workflow — structural helpers in the loop
 
 The deterministic gates above are the backstop. To keep the agent _inside_ the rails
-while authoring, structural (warn-level) skills run first ([ADR 0050](docs/decisions/0050-ai-drafted-story-matrices-and-play-functions.md)):
+while authoring, structural (warn-level) skills run first ([ADR 0051](docs/decisions/0051-ai-drafted-story-matrices-and-play-functions.md)):
 
 ```mermaid
 flowchart LR
@@ -412,7 +412,7 @@ flowchart LR
 - **`story-matrix`** derives _which_ story exports must exist (Default, Dark,
   Variants/Overview, data-edge, one per `applicable:true` state) and which play
   functions the archetype requires — but never invents a state; meaningfulness stays
-  human (ADR 0041/0050).
+  human (ADR 0042/0051).
 - **`story-verify`** runs the scoped `vitest --project=storybook`, the scoped
   `check:design-intent --component <id>`, and collects screenshots **for a human to
   judge** — the agent never approves its own visuals.
@@ -426,7 +426,7 @@ flowchart LR
 human provisions `CHROMATIC_PROJECT_TOKEN` and stays `exitZeroOnChanges: true` — a visual
 change surfaces in the Chromatic UI, it doesn't redden CI by itself.
 
-**Baseline approval is human-only** ([ADR 0043](docs/decisions/0043-visual-regression-chromatic.md)/[0046](docs/decisions/0046-human-review-of-agent-authored-prs.md)): PNG baselines live off-repo in Chromatic, never in git, and the agent **never approves its own visual baseline** — the anti-hallucination principle from [`AI-GUARDRAILS.md` §11](AI-GUARDRAILS.md) applied to pixels.
+**Baseline approval is human-only** ([ADR 0043](docs/decisions/0043-visual-regression-chromatic.md)/[0047](docs/decisions/0047-human-review-of-agent-authored-prs.md)): PNG baselines live off-repo in Chromatic, never in git, and the agent **never approves its own visual baseline** — the anti-hallucination principle from [`AI-GUARDRAILS.md` §11](AI-GUARDRAILS.md) applied to pixels.
 
 ---
 
@@ -435,18 +435,18 @@ change surfaces in the Chromatic UI, it doesn't redden CI by itself.
 | Rule                                 | Edit-time hook        | Local / CI gate                    | Human            | ADR       |
 | ------------------------------------ | --------------------- | ---------------------------------- | ---------------- | --------- |
 | Token-only styling                   | scoped ESLint         | `check:tokens`, `gen:tokens` drift | —                | 0058      |
-| CSF 3 only (no CSF2/storiesOf/MDX)   | —                     | `lint`                             | —                | 0035      |
-| Every component has stories          | —                     | `check:stories`                    | —                | 0041      |
-| Stories run as browser tests         | —                     | `test` / `test:coverage`           | —                | 0036/0040 |
-| axe @ WCAG 2.2 AA per story          | —                     | `test` (a11y test=error)           | opt-out reviewed | 0038      |
-| Interactive ⇒ play function          | scoped nudge          | `check:design-intent` #5           | —                | 0037      |
+| CSF 3 only (no CSF2/storiesOf/MDX)   | —                     | `lint`                             | —                | 0036      |
+| Every component has stories          | —                     | `check:stories`                    | —                | 0042      |
+| Stories run as browser tests         | —                     | `test` / `test:coverage`           | —                | 0037/0041 |
+| axe @ WCAG 2.2 AA per story          | —                     | `test` (a11y test=error)           | opt-out reviewed | 0039      |
+| Interactive ⇒ play function          | scoped nudge          | `check:design-intent` #5           | —                | 0038      |
 | No structural duplicate              | `ds:signature` (warn) | `check:graph`                      | —                | 0059/0060 |
 | API ↔ props consistency              | scoped nudge          | `check:design-intent` #2           | —                | 0062      |
 | Full state coverage (by subtraction) | scoped nudge          | `check:design-intent` #3           | rationale review | 0061/0062 |
 | States ↔ stories contract            | scoped nudge          | `check:design-intent` #4           | —                | 0061/0062 |
-| Snapshot baselines update            | PreToolUse block      | reviewed action                    | 👤               | 0039      |
-| Visual baseline approval             | —                     | Chromatic status                   | 👤               | 0043/0046 |
-| Meaningful-state judgment            | —                     | —                                  | 👤               | 0041      |
+| Snapshot baselines update            | PreToolUse block      | reviewed action                    | 👤               | 0040      |
+| Visual baseline approval             | —                     | Chromatic status                   | 👤               | 0043/0047 |
+| Meaningful-state judgment            | —                     | —                                  | 👤               | 0042      |
 
 ---
 

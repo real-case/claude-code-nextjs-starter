@@ -1,4 +1,4 @@
-# Play-function recipes (ADR 0037)
+# Play-function recipes (ADR 0038)
 
 Canonical patterns per interaction class — these are **patterns**, not registries, so
 prose is safe here (P6). Every recipe obeys the two standing rules:
@@ -8,7 +8,7 @@ prose is safe here (P6). Every recipe obeys the two standing rules:
    interaction *changes*: a spy call, an aria attribute, a value.
 2. **Assert the *intended* behavior from the spec** (`design-intent.ts` `behavior`, the
    task, the PR description) — never lock in whatever the current implementation
-   happens to do (the ADR 0050 guardrail).
+   happens to do (the ADR 0051 guardrail).
 
 Shared mechanics: `import { expect, fn, userEvent, within } from "storybook/test"`;
 spies go on callback props via `args: { onX: fn() }` in `meta`; query by **role and
@@ -48,7 +48,7 @@ await expect(args.onClick).toHaveBeenCalledTimes(1);
 
 ## keyboard path — Tab reaches it, Enter/Space activates it
 
-Required for interactive archetypes, not optional (ADR 0038/0051 — the axe gate cannot
+Required for interactive archetypes, not optional (ADR 0039/0052 — the axe gate cannot
 see a broken keyboard path):
 
 ```ts
@@ -82,4 +82,4 @@ timing.
 
 For any component whose name comes from composition (icon-only triggers, cards), one
 play asserting `getByRole(role, { name })` resolves — the cheapest guard against a
-nameless control shipping (ADR 0038).
+nameless control shipping (ADR 0039).

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-// Smoke: the production build serves the home page end-to-end (ADR 0006).
+// Smoke: the production build serves the home page end-to-end (ADR 0007).
 //
 // "Alive" is defined as three checks, template for every future e2e journey:
 //   1. the route responds 200 — the server actually built and served the page;
@@ -10,7 +10,7 @@ import { expect, test } from "@playwright/test";
 //      React Compiler output are not silently broken (React reports
 //      hydration mismatches via console.error in production).
 //
-// No error allowlist on purpose: with retries: 0 (ADR 0048) any noise shows
+// No error allowlist on purpose: with retries: 0 (ADR 0049) any noise shows
 // up immediately and must be fixed or excluded explicitly in review.
 // This is the template's one generic journey; feature journeys join it as routes land.
 test("home page renders and hydrates cleanly", async ({ page }) => {

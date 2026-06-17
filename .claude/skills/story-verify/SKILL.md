@@ -18,7 +18,7 @@ broken states↔stories link surfaces now — not in CI. It only runs checks (no
 > Node 24 is required (`engines.node >=24 <25`). If `node -v` is not v24.x, prepend the
 > project's Node 24 to `PATH` before any command below (see `.nvmrc`).
 
-## 1. Scoped browser-mode run (ADR 0036/0057)
+## 1. Scoped browser-mode run (ADR 0037/0035)
 
 ```bash
 npx vitest run --project=storybook src/components/ui/<id>.stories.tsx
@@ -26,11 +26,11 @@ npx vitest run --project=storybook src/components/ui/<id>.stories.tsx
 
 Every story renders as a real browser test; **two failure classes land here**:
 
-- **Play failures** (ADR 0037) — an interaction assertion did not hold. Fix the
+- **Play failures** (ADR 0038) — an interaction assertion did not hold. Fix the
   component or the assertion, depending on which one contradicts the spec
   (`design-intent.ts` `behavior` is the authority — never re-fit the assertion to
-  broken behavior, the ADR 0050 guardrail).
-- **Axe violations** (ADR 0038 — `a11y.test: "error"`, WCAG 2.2 AA). Fix at the
+  broken behavior, the ADR 0051 guardrail).
+- **Axe violations** (ADR 0039 — `a11y.test: "error"`, WCAG 2.2 AA). Fix at the
   markup/token level, by rule family:
   - `color-contrast` → a token choice; check the semantic token against the dark axis
     too (the `Dark` story runs axe under `.dark`). Never a raw color (ADR 0058).
@@ -38,9 +38,9 @@ Every story renders as a real browser test; **two failure classes land here**:
     `aria-label` or visible text (see the IconOnly pattern in `button.stories.tsx`).
   - `aria-*` rules → a role/attribute contract broken in the component, not the story.
   - An opt-out is **only** an explicit per-story `a11y` parameter with a stated reason,
-    reviewed in the PR (ADR 0038) — never a silent disable, never meta-level.
+    reviewed in the PR (ADR 0039) — never a silent disable, never meta-level.
 
-## 2. Scoped gates (ADR 0062 / 0041)
+## 2. Scoped gates (ADR 0062 / 0042)
 
 ```bash
 node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-design-intent.mjs --component <id>
@@ -49,7 +49,7 @@ npm run check:stories
 
 The first reconciles the quartet: stale `demoStory` links, an `applicable:true` state
 with neither `demoStory` nor `demoRationale` (ADR 0062), a missing `play` for an
-interactive archetype (ADR 0037), undeclared `state:` tags. The second proves every
+interactive archetype (ADR 0038), undeclared `state:` tags. The second proves every
 component module still has a colocated stories file.
 
 ## 3. Optional — visual evidence for the human (👤 judges, never the agent)
@@ -58,7 +58,7 @@ When the change is visual (new states, token changes, layout), collect screensho
 the human can judge quickly. **ADR 0063 boundary, stated plainly: these screenshots are
 advisory evidence for human review. The agent never approves a visual baseline, never
 treats its own render as proof of design correctness, and Chromatic UI approval is
-human-only (ADR 0043/0046).** Flagging an obvious breakage (blown-out layout, missing
+human-only (ADR 0043/0047).** Flagging an obvious breakage (blown-out layout, missing
 content) is fine — that is a defect report, not an approval.
 
 ```bash

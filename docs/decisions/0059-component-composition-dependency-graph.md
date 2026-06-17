@@ -8,10 +8,10 @@ decision-makers: Yurii Anichkin
 
 ## Context and Problem Statement
 
-When the agent (**0045**) builds a component, the cheapest mistake to make and the hardest to
+When the agent (**0046**) builds a component, the cheapest mistake to make and the hardest to
 catch in review is **structural duplication**: re-implementing a component that is, by its
 composition, identical to one that already exists (a "labelled bordered container with a header
-slot" built twice under two names). **0041** mandates that components exist with full state
+slot" built twice under two names). **0042** mandates that components exist with full state
 coverage, but says nothing about *whether a proposed component should exist at all*, nor how to
 derive its API from how it will actually be used. The corpus has no machine-readable model of how
 components compose. Without one, deduplication degenerates into the agent eyeballing the
@@ -28,12 +28,12 @@ matches the design; it does not, and cannot, *decide* what should be common.
 * **Derive API from usage** — the union of a primitive's call sites (`usedIn`) is the honest source
   of its contract; the graph must carry that relation so **0062** can derive APIs from it, not from
   guesses (P5).
-* **Machine-readable, single artifact** — agents, the structural skills (**0050**-class), and the
+* **Machine-readable, single artifact** — agents, the structural skills (**0051**-class), and the
   **0060** reconciliation gate all need to read the same file; prose cannot serve them.
 * **Figma is a hint, not the truth** — design structure informs the graph, but the analytical
-  commonality decision is the project's, recorded here, not imported from a design tool (**0044**).
+  commonality decision is the project's, recorded here, not imported from a design tool (**0045**).
 * **Do not conflate the two graphs** — composition (intent, top-down) and import (code, bottom-up,
-  **0060**) are different objects; collapsing them loses the very mismatch the **0063**/**0009**-style
+  **0060**) are different objects; collapsing them loses the very mismatch the **0063**/**0012**-style
   anti-drift check depends on.
 
 ## Considered Options
@@ -64,7 +64,7 @@ the file path.
 
 * Good, because structural duplication becomes a checkable property: a new component's signature is
   compared against existing nodes before it is built (P2), inside the agent's own loop via the
-  **0050**-class skill.
+  **0051**-class skill.
 * Good, because API derivation gets an honest input — the real `usedIn` union — instead of a guessed
   prop list (P5), which **0062** consumes.
 * Good, because keeping the composition graph separate from the import graph (**0060**) is exactly what
@@ -79,9 +79,9 @@ the file path.
 
 A composition-graph JSON exists and validates against its schema; every `src/components/**` module
 appears as a node; each node has `composedOf`/`usedIn` edges and a normalized `compositionSignature`.
-A component whose signature matches an existing node is flagged before creation (the **0050**-class
+A component whose signature matches an existing node is flagged before creation (the **0051**-class
 structural skill); the `usedIn` union is what **0062** derives an API from. The graph is reconciled
-against the **0060** import graph (a mismatch fails CI). Subject to the **0053** drift audit once
+against the **0060** import graph (a mismatch fails CI). Subject to the **0054** drift audit once
 accepted.
 
 ## Pros and Cons of the Options
@@ -110,10 +110,10 @@ accepted.
 ## More Information
 
 New decision; introduces the composition graph the deduplication (P2) and API-derivation (P5) steps
-depend on. Read by the **0050**-class structural skill (signature check), consumed by **0062** (API
+depend on. Read by the **0051**-class structural skill (signature check), consumed by **0062** (API
 from the `usedIn` union), and reconciled against the code-derived import graph in **0060** — the two
 graphs are deliberately distinct (see the plan's §4). Figma's role stays the read-only hint of
-**0044**. Component-deprecation graph hygiene (the fate of a node and its `usedIn` edges on retirement)
+**0045**. Component-deprecation graph hygiene (the fate of a node and its `usedIn` edges on retirement)
 is owned by **0064**. Confirms problems P2 (structural duplication) and P5 (composition leaking into a
 primitive). The graph's file location/schema home is an open question carried in the plan. Drafted
-`proposed`; acceptance is the human gate (**0045**).
+`proposed`; acceptance is the human gate (**0046**).

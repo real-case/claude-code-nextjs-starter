@@ -9,7 +9,7 @@
 //   • the component sources      — semantic color utilities (`bg-primary`,
 //     `text-muted-foreground`, …) mapped back to their `--color-*` token.
 //
-// It is advisory (the inconsistency call is a human read of the table, ADR 0045) and
+// It is advisory (the inconsistency call is a human read of the table, ADR 0046) and
 // emits two consistency signals: tokens used in source but NOT declared in the spec
 // (spec gap), and tokens declared but not seen in source (stale/aspirational). The
 // allowed token names come from the GENERATED registry (tokens.generated.ts) — never a

@@ -3,7 +3,7 @@
 //
 // PostToolUse hook (Claude Code). Runs the fast, file-scoped half of the local gate the
 // moment a file is written, so a formatting drift or a design-token violation surfaces
-// HERE in the agent loop instead of later in CI. The CI gate (ADR 0008) stays the
+// HERE in the agent loop instead of later in CI. The CI gate (ADR 0010) stays the
 // guarantee; this only shortens the loop.
 //
 //   • Always: `prettier --write` the edited file (matches `npm run format`;
@@ -96,7 +96,7 @@ if (relPosix === "src/app/globals.css") {
   );
 }
 
-// 2b. A migration → the generated Supabase types (ADR 0011/0012). The CI
+// 2b. A migration → the generated Supabase types (ADR 0014/0015). The CI
 //     migration-replay + type-drift check is deferred during bootstrap, so this
 //     local nudge is currently the only automated drift signal.
 if (/^supabase\/migrations\/.+\.sql$/.test(relPosix)) {
@@ -104,7 +104,7 @@ if (/^supabase\/migrations\/.+\.sql$/.test(relPosix)) {
     `${relPosix} changed — src/lib/supabase/database.types.ts is now stale. Run ` +
       "`npm run gen:types` (needs the local Supabase stack up: `npx supabase start`) " +
       "and stage the regenerated types. The CI type-drift check is deferred during " +
-      "bootstrap, so this is currently the only automated signal (ADR 0011/0012).",
+      "bootstrap, so this is currently the only automated signal (ADR 0014/0015).",
   );
 }
 

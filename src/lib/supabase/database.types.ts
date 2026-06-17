@@ -35,7 +35,7 @@ export type Database = {
   public: {
     Tables: {
       // No tables yet — `npm run gen:types` regenerates this from your Supabase
-      // migrations once the first table lands (ADR 0012).
+      // migrations once the first table lands (ADR 0015).
       [_ in never]: never;
     };
     Views: {

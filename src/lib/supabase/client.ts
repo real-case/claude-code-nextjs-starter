@@ -5,11 +5,11 @@ import { env } from "@/lib/env";
 import type { Database } from "./database.types";
 
 /**
- * Browser Supabase client for Client Components (ADR 0010). Uses the public
+ * Browser Supabase client for Client Components (ADR 0013). Uses the public
  * publishable key and runs as the signed-in user, so all access is RLS-gated.
  * Typed
  * with the generated `Database` so queries are checked against the schema
- * (ADR 0012).
+ * (ADR 0015).
  */
 export function createClient() {
   return createBrowserClient<Database>(

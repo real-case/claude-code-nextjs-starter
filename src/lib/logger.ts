@@ -1,8 +1,8 @@
 /**
- * Structured stdout logger (ADR 0021).
+ * Structured stdout logger (ADR 0019).
  *
  * Emits one JSON object per line so logs are machine-parseable; on the Vercel
- * runtime (ADR 0007) stdout/stderr are captured as logs. Two rules from 0021
+ * runtime (ADR 0009) stdout/stderr are captured as logs. Two rules from 0019
  * shape this module:
  *
  *   1. **Generic client copy, detailed server logs.** This logger runs
@@ -15,7 +15,7 @@
  *      `error` — the ones worth alerting on once an aggregator exists.
  *
  * External error tracking (e.g. Sentry) is deliberately deferred to its own ADR
- * (0021); this stays a dependency-free stdout logger until then.
+ * (0019); this stays a dependency-free stdout logger until then.
  */
 
 export type LogLevel = "debug" | "info" | "warn" | "error";
@@ -44,11 +44,11 @@ export class ExpectedError extends Error {
 
 /**
  * Decide whether an error is *expected* (normal operation) or *unexpected* (a
- * bug or outage). ADR 0021 makes this an explicit, author-owned policy — the
+ * bug or outage). ADR 0019 makes this an explicit, author-owned policy — the
  * usefulness of the logs depends on drawing this line deliberately rather than
  * lumping every throwable together.
  *
- * TODO(you — ADR 0021 decision point): implement the classification policy.
+ * TODO(you — ADR 0019 decision point): implement the classification policy.
  * A reasonable shape to start from:
  *   - return `true` for known/handled failures you surface to the user, e.g.
  *       `error instanceof ExpectedError`,
@@ -98,7 +98,7 @@ export function logWarn(message: string, context: LogContext = {}): void {
 }
 
 /**
- * Log an error with the expected/unexpected distinction (ADR 0021). `expected`
+ * Log an error with the expected/unexpected distinction (ADR 0019). `expected`
  * is taken from `context.expected` when provided, else from `classifyError`.
  * Expected errors log at `warn`; unexpected at `error`.
  */

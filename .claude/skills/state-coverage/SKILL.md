@@ -38,8 +38,8 @@ The registry is [`src/design-system/states.ts`](../../../src/design-system/state
 3. In `design-intent.ts` (ADR 0062), mark each state `applicable` true/false. A
    **`false` requires a `rationale`** — a skipped state is then a visible, justified
    omission, never silent.
-4. Each **applicable** state needs a story case (ADR 0035/0041) that runs through axe
-   (ADR 0038) and Chromatic (ADR 0043) — render correctness, not just presence.
+4. Each **applicable** state needs a story case (ADR 0036/0042) that runs through axe
+   (ADR 0039) and Chromatic (ADR 0043) — render correctness, not just presence.
 
 ## Boundaries
 

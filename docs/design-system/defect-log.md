@@ -16,8 +16,8 @@ phase** (ADR 0064), and each wave _begins_ with a review of the accumulated entr
   - `didnt-reach-agent` → surface it in the agent rules / a skill.
   - `ambiguous` → sharpen the registry / ADR.
   - `not-auto-caught` → the rule exists (as an ADR Confirmation enforced by review) but
-    nothing enforces it — **graduate** it into an executable Stage-1 check (ADR 0053).
-- **Reactive growth (ADR 0064/0053):** a new invariant starts as an ADR Confirmation
+    nothing enforces it — **graduate** it into an executable Stage-1 check (ADR 0054).
+- **Reactive growth (ADR 0064/0054):** a new invariant starts as an ADR Confirmation
   enforced by review; on its **first violation** it earns an executable check and rises
   into the Stage-1 deterministic layer. The gate set grows from evidence, not guesswork.
 - "defect → rule/skill/registry" is an **owned, assigned** step, never "someday".
@@ -32,7 +32,7 @@ phase** (ADR 0064), and each wave _begins_ with a review of the accumulated entr
 | Root cause      | one of the four classes above.                           |
 | Fix type        | rule / skill / registry / graph-hygiene.                 |
 | Graduated check | the Stage-1 check it became, if any.                     |
-| Status          | `open` (tracked, time-boxed per ADR 0048) / `converted`. |
+| Status          | `open` (tracked, time-boxed per ADR 0049) / `converted`. |
 
 ---
 
@@ -41,4 +41,4 @@ phase** (ADR 0064), and each wave _begins_ with a review of the accumulated entr
 _No entries yet._ This template ships an **empty journal**. Record the first entry when a
 real failure traces to a **missing or ambiguous rule** (not the code), using the format
 above; on its first violation an invariant graduates from a review-enforced ADR
-Confirmation into an executable Stage-1 check (ADR 0064/0053).
+Confirmation into an executable Stage-1 check (ADR 0064/0054).

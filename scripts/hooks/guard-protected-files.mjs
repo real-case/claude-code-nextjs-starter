@@ -10,15 +10,15 @@
 //   • an ACCEPTED ADR (docs/decisions/NNNN-*.md, status: accepted) — accepted records
 //     change only via a superseding record, never in place (ADR 0001); use adr-supersede.
 //   • docs/decisions/constraints.md — editing the constraints registry is human-only
-//     (ADR 0045).
+//     (ADR 0046).
 //   • a real secrets file (.env, .env.<x>) except the committed .env.example — secrets
-//     are human-provisioned and never tracked (ADR 0020 / 0045).
+//     are human-provisioned and never tracked (ADR 0018 / 0046).
 //   • tailwind.config.* — Tailwind is configured CSS-first via @theme; there is no
-//     config file (ADR 0024).
+//     config file (ADR 0032).
 //   • a DOM-snapshot baseline (__snapshots__/, *.snap) — baselines update only as a
-//     REVIEWED action (ADR 0039), never as a silent side effect of an agent edit.
+//     REVIEWED action (ADR 0040), never as a silent side effect of an agent edit.
 //
-// Also blocks a Bash `vitest -u` / `--update` run for the same ADR 0039 reason — a
+// Also blocks a Bash `vitest -u` / `--update` run for the same ADR 0040 reason — a
 // baseline regeneration is the command-line spelling of the same unreviewed update.
 //
 // Contract: read the hook payload on stdin; exit 2 with the reason on stderr to BLOCK
@@ -57,7 +57,7 @@ try {
 const input = payload.tool_input ?? {};
 
 // 0. Bash branch: a `vitest -u` / `--update` run regenerates snapshot baselines —
-//    a reviewed action (ADR 0039), so the agent must ask a human first. The regex is
+//    a reviewed action (ADR 0040), so the agent must ask a human first. The regex is
 //    deliberately narrow (a vitest token followed by a -u/--update flag on the SAME
 //    line — a real invocation never splits them, and the line bound stops commit-
 //    message heredocs that merely mention the phrase across lines from false-firing).
@@ -66,7 +66,7 @@ if (payload.tool_name === "Bash" && typeof input.command === "string") {
   if (/\bvitest\b[^|;&\n]*\s--?u(pdate)?\b/.test(input.command)) {
     block(
       "`vitest -u` regenerates DOM-snapshot baselines, which update only as a " +
-        "REVIEWED action (ADR 0039) — the hook cannot verify an approval, so the " +
+        "REVIEWED action (ADR 0040) — the hook cannot verify an approval, so the " +
         "update is human-run. Show the human the failing snapshot diff and ask them " +
         "to run `npx vitest -u` themselves (e.g. via `! npx vitest -u`).",
     );
@@ -85,31 +85,31 @@ const base = basename(relPosix);
 if (/^\.env(\..+)?$/.test(base) && base !== ".env.example") {
   block(
     `${relPosix} is a secrets file — values are human-provisioned and never tracked ` +
-      `(ADR 0020 / 0045). Edit .env by hand; add placeholders to .env.example instead.`,
+      `(ADR 0018 / 0046). Edit .env by hand; add placeholders to .env.example instead.`,
   );
 }
 
-// 2. The constraints registry — human-only (ADR 0045).
+// 2. The constraints registry — human-only (ADR 0046).
 if (relPosix === "docs/decisions/constraints.md") {
   block(
     "docs/decisions/constraints.md is human-only — externally-fixed client mandates " +
-      "(CON-00x) are edited by a person, not the agent (ADR 0045).",
+      "(CON-00x) are edited by a person, not the agent (ADR 0046).",
   );
 }
 
-// 3. No Tailwind config — CSS-first only (ADR 0024). Match the basename anywhere.
+// 3. No Tailwind config — CSS-first only (ADR 0032). Match the basename anywhere.
 if (/^tailwind\.config\.(c|m)?[jt]s$/.test(base)) {
   block(
     `${base} is banned — Tailwind is configured CSS-first via @theme in ` +
-      `src/app/globals.css; there is no config file (ADR 0024).`,
+      `src/app/globals.css; there is no config file (ADR 0032).`,
   );
 }
 
-// 4. Snapshot baselines change only as a reviewed action (ADR 0039).
+// 4. Snapshot baselines change only as a reviewed action (ADR 0040).
 if (relPosix.includes("/__snapshots__/") || relPosix.endsWith(".snap")) {
   block(
     `${relPosix} is a DOM-snapshot baseline — baselines update only as a REVIEWED ` +
-      `action (ADR 0039), never as an agent edit. Show the human the snapshot diff ` +
+      `action (ADR 0040), never as an agent edit. Show the human the snapshot diff ` +
       `and ask them to run \`npx vitest -u\` themselves.`,
   );
 }

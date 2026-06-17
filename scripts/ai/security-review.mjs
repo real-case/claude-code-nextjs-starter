@@ -21,8 +21,10 @@ if (!diff.trim()) {
   process.exit(0);
 }
 
-// Pull the full text of the security-relevant ADRs for a sharper pass.
-const securityAdrs = readAdrs(["0010", "0011", "0020", "0042", "0055"]);
+// Pull the full text of the security-relevant ADRs for a sharper pass — the same
+// records the task text below cites: service-role/RLS data access (0013), RLS-policied
+// migrations (0014), the server-only secret fence (0018), env-reference MCP creds (0044).
+const securityAdrs = readAdrs(["0013", "0014", "0018", "0044"]);
 
 const review = await advise({
   grounding: `${adrGrounding()}\n\n${securityAdrs}`,

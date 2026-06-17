@@ -9,7 +9,7 @@ decision-makers: Yurii Anichkin
 ## Context and Problem Statement
 
 Per **CON-003**, the project mandates a fixed MCP server toolchain — `context7`, `figma`,
-`vercel`, `supabase`, and `chromatic` — as the agent/development tooling baseline it must
+`vercel`, `supabase`, `chromatic`, and `github` — as the agent/development tooling baseline it must
 provide and use. *Which* servers is given by that constraint and is not deliberated here. What
 remains open is the residual choice **CON-003** leaves: *where and how* these servers are
 configured, and — because that configuration can be committed to the repository — how their
@@ -19,13 +19,13 @@ and the trust posture; it does not re-argue the server list.
 
 The stakes are concrete: an MCP configuration committed to version control is inherited by
 every contributor and every agent on checkout, and these particular servers carry credentials
-to external accounts (Vercel, Supabase, Chromatic, Figma) and operate with repository and
+to external accounts (Vercel, Supabase, Chromatic, Figma, GitHub) and operate with repository and
 network access. So the residual decision is really about *reproducibility* and *the secret /
 trust boundary*, which intersects the secrets fence in **0018**.
 
 ## Decision Drivers
 
-* **Per CON-003, the five servers are fixed** — this record decides only their configuration,
+* **Per CON-003, the six servers are fixed** — this record decides only their configuration,
   not their selection.
 * **Project-level placement (mandated)** — the config must be shared and versioned so every
   clone yields the same agent toolchain, not per-developer drift.
@@ -48,9 +48,9 @@ trust boundary*, which intersects the secrets fence in **0018**.
 Chosen option: "project-scoped committed config with secrets by reference", because it gives
 every contributor and agent the mandated toolchain (**CON-003**) on checkout while keeping the
 secret fence (**0018**) intact. A single project-scoped configuration file (`.mcp.json` at the
-repo root) is committed and declares the five servers. **Every credential is an
+repo root) is committed and declares the six servers. **Every credential is an
 environment-variable reference** — e.g. `${VERCEL_TOKEN}`, `${SUPABASE_ACCESS_TOKEN}`,
-`${CHROMATIC_PROJECT_TOKEN}`, `${FIGMA_TOKEN}` — **never a literal**; the actual values live in
+`${CHROMATIC_PROJECT_TOKEN}`, `${FIGMA_TOKEN}`, `${GITHUB_MCP_PAT}` — **never a literal**; the actual values live in
 untracked local environment (`.env*` / local settings) per **0018**. Servers are **pinned** to
 explicit versions and limited to **official / first-party** implementations; tokens are scoped
 **least-privilege** (read-only where the workflow allows). Per-developer deviations (an extra

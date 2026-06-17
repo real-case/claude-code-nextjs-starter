@@ -87,8 +87,8 @@ Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human
 - App Router error boundaries + structured stdout JSON logger `src/lib/logger.ts`
   (0019).
 - **MCP toolchain** (CON-003): committed `.mcp.json` with env-reference secrets —
-  context7, figma (read-only design context, 0045), vercel, supabase, chromatic
-  (0044).
+  context7, figma (read-only design context, 0045), vercel, supabase, chromatic,
+  github (0044).
 - **Design-system AI-tooling governance** (decided 0058–0064; enforcement lands with
   Phase 12 / Stages 0–6): single-source token codegen + a stylelint/ESLint token-usage gate
   (0058); a top-down composition graph (0059) reconciled against a **dependency-cruiser**

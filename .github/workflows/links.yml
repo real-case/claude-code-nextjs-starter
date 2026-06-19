@@ -31,5 +31,6 @@ jobs:
         uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
         with:
           # --offline: no network; only relative/in-repo links are resolved (ADR 0073/0049).
-          args: "--offline --no-progress --include-verbose './**/*.md'"
+          # (Links inside code blocks are skipped by default — illustrative examples don't fail.)
+          args: "--offline --no-progress './**/*.md'"
           fail: true

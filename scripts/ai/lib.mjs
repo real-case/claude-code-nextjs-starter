@@ -2,34 +2,59 @@
 //
 // Shared helpers for the Phase-12 ADVISORY AI jobs (ADRs 0048–0057). Every job is
 // advisory (it never blocks a merge — ADR 0047/0048), ADR-grounded (it cites record
-// numbers), and INERT until a 👤 provisions ANTHROPIC_API_KEY (ADR 0046/0044) — the
-// same inert-until-token posture as the Chromatic token. With no key, each job no-ops
-// cleanly (the workflow also gates on a has-key job, so the script never even runs).
+// numbers), and INERT until a 👤 provisions AI_API_KEY (ADR 0046/0044) — the same
+// inert-until-token posture as the Chromatic token. With no key, each job no-ops cleanly
+// (the workflow also gates on a has-key job, so the script never even runs).
 //
-// Uses the official Anthropic SDK (this is a Node/TS repo — ADR 0024), model
-// claude-opus-4-8 with adaptive thinking. Grounding is CLAUDE.md + the decisions index
-// as a CACHED, byte-stable system prefix (prompt caching: stable prefix, volatile diff
-// last), so the model can cite ADR numbers without re-feeding all 64 records per run.
+// PROVIDER-AGNOSTIC (ADR 0075): talks the OpenAI-compatible Chat Completions shape over
+// Node 24's global `fetch` (ADR 0004) — no vendor SDK. Point it at any provider with three
+// env vars:
+//   AI_API_KEY   the key (gates inertness)            — a 👤-provisioned secret
+//   AI_BASE_URL  the OpenAI-compatible base, e.g. Gemini:
+//                https://generativelanguage.googleapis.com/v1beta/openai
+//   AI_MODEL     e.g. gemini-2.5-flash | gpt-4.1-mini | claude-… (provider's id)
+// The template ships neutral (no default provider); .env.example documents Gemini as the
+// worked example with OpenAI / Anthropic-compat alternatives.
+//
+// Grounding is CLAUDE.md + the decisions index, sent as the system message so the model can
+// cite ADR numbers. (Vendor-specific prompt caching / reasoning-effort knobs are out of
+// scope here per ADR 0075 — the common OpenAI-compatible subset only.)
 
-import Anthropic from "@anthropic-ai/sdk";
 import { execSync } from "node:child_process";
 import { readFileSync, existsSync } from "node:fs";
 
-export const MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-4-8";
+export const MODEL = process.env.AI_MODEL || "";
+const MAX_TOKENS = Number(process.env.AI_MAX_TOKENS || 8000);
 
 /** True only when a non-empty key is present (ADR 0046 — human-provisioned). */
 export function hasKey() {
-  return Boolean(process.env.ANTHROPIC_API_KEY?.trim());
+  return Boolean(process.env.AI_API_KEY?.trim());
 }
 
-/** Exit 0 with an inert note when no key — the double-guard beneath the workflow gate. */
+/**
+ * Exit 0 with an inert note when no key — the double-guard beneath the workflow gate.
+ * When a key IS present but the rest of the contract is missing, fail loudly (the operator
+ * clearly intends to run): point them at the AI_BASE_URL / AI_MODEL they still owe.
+ */
 export function requireKeyOrExitInert(job) {
-  if (hasKey()) return true;
-  console.log(
-    `${job}: inert — no ANTHROPIC_API_KEY (👤-provisioned, ADR 0046/0044). ` +
-      `Add it as a GitHub Actions secret to activate this advisory job.`,
+  if (!hasKey()) {
+    console.log(
+      `${job}: inert — no AI_API_KEY (👤-provisioned, ADR 0046/0044). ` +
+        `Add it as a GitHub Actions secret to activate this advisory job.`,
+    );
+    process.exit(0);
+  }
+  const missing = ["AI_BASE_URL", "AI_MODEL"].filter(
+    (k) => !process.env[k]?.trim(),
   );
-  process.exit(0);
+  if (missing.length) {
+    console.error(
+      `${job}: AI_API_KEY is set but ${missing.join(" + ")} ${missing.length > 1 ? "are" : "is"} not — ` +
+        `set the provider endpoint + model (see .env.example; e.g. Gemini's OpenAI-compatible base). ADR 0075.`,
+    );
+    process.exit(1);
+  }
+  return true;
 }
 
 /** The ADR grounding: CLAUDE.md (summarizes every record) + the decisions index. */
@@ -78,58 +103,51 @@ export function getDiff() {
   }
 }
 
-// Adaptive thinking + the `effort` parameter are only valid on these tiers. Haiku 4.5,
-// Sonnet 4.5, and older models return a 400 on BOTH, so we send neither for them — which
-// is also the cheaper, faster default someone picks Haiku for. Keep this list in sync
-// with the claude-api reference (effort: Fable 5 / Opus 4.6–4.8 / Sonnet 4.6; adaptive
-// thinking: same set).
-const SUPPORTS_ADAPTIVE_EFFORT = /^claude-(fable-5|opus-4-[678]|sonnet-4-6)/;
-
-/** The thinking/effort params the chosen model accepts (empty for Haiku/older). */
-function modelParams(model) {
-  if (!SUPPORTS_ADAPTIVE_EFFORT.test(model)) return {}; // e.g. claude-haiku-4-5
-  return {
-    thinking: { type: "adaptive" },
-    output_config: { effort: process.env.ANTHROPIC_EFFORT || "high" },
-  };
-}
+const SYSTEM_INSTRUCTIONS =
+  "You are an ADVISORY reviewer for this repository. Your output is a suggestion, never a " +
+  "gate (ADR 0047/0048): a human always decides. Ground every point in the project's accepted " +
+  "ADRs and CITE the record number(s) you rely on (e.g. “ADR 0058”). Be concise, specific, and " +
+  "actionable; prefer a short bulleted list over prose. If you find nothing worth raising, say " +
+  "so in one line rather than inventing findings.";
 
 /**
- * Run one advisory turn. Grounding is a CACHED system block (ADR-stable prefix);
- * `task` + `payload` are the volatile user turn. Streams (per the API guidance for
- * larger outputs) and returns the final text. The thinking/effort knobs are sent only
- * to models that support them (so `ANTHROPIC_MODEL=claude-haiku-4-5` just works).
+ * Run one advisory turn against any OpenAI-compatible Chat Completions endpoint (ADR 0075).
+ * Grounding + instructions go in the system message; `task` + `payload` are the user turn.
+ * Returns the final text. Non-streaming — advisory outputs are small and posted as a comment.
+ *
+ * Note: a few compat layers differ at the edges — e.g. OpenAI's o-series wants
+ * `max_completion_tokens` instead of `max_tokens`. The common subset (Gemini, OpenAI chat
+ * models, OpenRouter, Groq, Anthropic-compat) accepts what is sent here.
  */
 export async function advise({ grounding, task, payload }) {
-  const client = new Anthropic(); // reads ANTHROPIC_API_KEY from env
-  const stream = client.messages.stream({
-    model: MODEL,
-    max_tokens: 8000,
-    ...modelParams(MODEL),
-    system: [
-      {
-        type: "text",
-        text:
-          "You are an ADVISORY reviewer for this repository. Your output is a suggestion, " +
-          "never a gate (ADR 0047/0048): a human always decides. Ground every point in the " +
-          "project's accepted ADRs and CITE the record number(s) you rely on (e.g. “ADR 0058”). " +
-          "Be concise, specific, and actionable; prefer a short bulleted list over prose. If you " +
-          "find nothing worth raising, say so in one line rather than inventing findings.",
-      },
-      {
-        type: "text",
-        text: `Project decision context (ADR corpus summary):\n\n${grounding}`,
-        cache_control: { type: "ephemeral" },
-      },
-    ],
-    messages: [{ role: "user", content: `${task}\n\n${payload}` }],
+  const baseUrl = process.env.AI_BASE_URL.replace(/\/+$/, "");
+  const res = await fetch(`${baseUrl}/chat/completions`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${process.env.AI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: MAX_TOKENS,
+      messages: [
+        {
+          role: "system",
+          content: `${SYSTEM_INSTRUCTIONS}\n\nProject decision context (ADR corpus summary):\n\n${grounding}`,
+        },
+        { role: "user", content: `${task}\n\n${payload}` },
+      ],
+    }),
   });
-  const message = await stream.finalMessage();
-  return message.content
-    .filter((b) => b.type === "text")
-    .map((b) => b.text)
-    .join("\n")
-    .trim();
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(
+      `AI request failed: ${res.status} ${res.statusText} — ${body.slice(0, 500)}`,
+    );
+  }
+  const json = await res.json();
+  const text = json.choices?.[0]?.message?.content;
+  return (typeof text === "string" ? text : "").trim();
 }
 
 /** Post a comment on a PR via the gh CLI (advisory — no required-check status). */

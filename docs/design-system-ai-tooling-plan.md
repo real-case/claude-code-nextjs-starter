@@ -112,7 +112,8 @@ check**: AI PR review (diff + ADR corpus, citing record numbers, 0048), CI-failu
 `dev`→`main` (0050), story-matrix drafting against the archetype registry (0051), semantic
 a11y over built-Storybook states (0052), diff-scoped security layer-2 against recorded
 invariants (0056), and Renovate-class dependency triage (0057). All are **inert until a human
-provisions `ANTHROPIC_API_KEY`** and self-activate when it lands (`scripts/ai/*` +
+provisions `AI_API_KEY`** (provider-agnostic via the OpenAI-compatible client, ADR 0075) and
+self-activate when it lands (`scripts/ai/*` +
 `.github/workflows/ai-advisory.yml` / `ai-ci-triage.yml`).
 
 ## 6. API derivation & anti-hallucination approval

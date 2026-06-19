@@ -32,6 +32,7 @@ Firestore
 firstviol
 frontmatter
 generatable
+Groq
 Histoire
 hotfixes
 hrefs

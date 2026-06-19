@@ -1,10 +1,10 @@
 # Phase-12 ADVISORY AI jobs (ADR 0048 PR review, 0051 story-matrix hints, 0052 semantic
 # a11y, 0056 security Layer 2, 0050 changelog). Every job here is ADVISORY — it posts a
-# comment and never sets a required-check status (ADR 0046/0047). The whole workflow is
-# INERT until a 👤 provisions the ANTHROPIC_API_KEY secret (ADR 0046/0044): the `guard`
-# job reads whether the secret is non-empty WITHOUT exposing it, and the AI jobs are
-# skipped while it is absent — so this lands dormant and self-activates on the day the
-# key is added, exactly like the Chromatic token.
+# comment and never sets a required-check status (ADR 0046/0047). Provider-agnostic via the
+# OpenAI-compatible client (ADR 0075). The whole workflow is INERT until a 👤 provisions the
+# AI_API_KEY secret (ADR 0046/0044): the `guard` job reads whether the secret is non-empty
+# WITHOUT exposing it, and the AI jobs are skipped while it is absent — so this lands dormant
+# and self-activates on the day the key is added, exactly like the Chromatic token.
 name: AI advisory (Phase 12)
 
 on:
@@ -23,13 +23,13 @@ concurrency:
 jobs:
   # secrets.* cannot be used directly in `if:`, so surface a boolean output instead.
   guard:
-    name: Has ANTHROPIC_API_KEY?
+    name: Has AI_API_KEY?
     runs-on: ubuntu-latest
     outputs:
       has_key: ${{ steps.k.outputs.has_key }}
     steps:
       - id: k
-        run: echo "has_key=${{ secrets.ANTHROPIC_API_KEY != '' }}" >> "$GITHUB_OUTPUT"
+        run: echo "has_key=${{ secrets.AI_API_KEY != '' }}" >> "$GITHUB_OUTPUT"
 
   review:
     name: AI review + security L2 (advisory)
@@ -49,24 +49,21 @@ jobs:
       - name: AI PR review (ADR 0048 / 0051 / 0052)
         run: node scripts/ai/pr-review.mjs
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          # Repo variable (Settings → Secrets and variables → Actions → Variables).
-          # Unset → the script's default (claude-opus-4-8). Set to claude-haiku-4-5 for
-          # the cheap/fast tier. ANTHROPIC_EFFORT is an optional companion var.
-          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
-          ANTHROPIC_EFFORT: ${{ vars.ANTHROPIC_EFFORT }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          # Provider via repo Variables (Settings → Secrets and variables → Actions → Variables).
+          # AI_BASE_URL = an OpenAI-compatible base (Gemini example in .env.example);
+          # AI_MODEL = the provider's model id (e.g. gemini-2.5-flash). ADR 0075.
+          AI_BASE_URL: ${{ vars.AI_BASE_URL }}
+          AI_MODEL: ${{ vars.AI_MODEL }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           DIFF_BASE: ${{ github.event.pull_request.base.ref }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: AI security review — Layer 2 (ADR 0056)
         run: node scripts/ai/security-review.mjs
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          # Repo variable (Settings → Secrets and variables → Actions → Variables).
-          # Unset → the script's default (claude-opus-4-8). Set to claude-haiku-4-5 for
-          # the cheap/fast tier. ANTHROPIC_EFFORT is an optional companion var.
-          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
-          ANTHROPIC_EFFORT: ${{ vars.ANTHROPIC_EFFORT }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_BASE_URL: ${{ vars.AI_BASE_URL }}
+          AI_MODEL: ${{ vars.AI_MODEL }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           DIFF_BASE: ${{ github.event.pull_request.base.ref }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -89,9 +86,9 @@ jobs:
       - name: Draft changelog (ADR 0050 — posted as an advisory comment, human edits in the release PR)
         run: node scripts/ai/changelog.mjs
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
-          ANTHROPIC_EFFORT: ${{ vars.ANTHROPIC_EFFORT }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_BASE_URL: ${{ vars.AI_BASE_URL }}
+          AI_MODEL: ${{ vars.AI_MODEL }}
           CHANGELOG_RANGE: origin/main..HEAD
           PR_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

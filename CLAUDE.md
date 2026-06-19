@@ -123,7 +123,7 @@ Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human
   **quality gate** (typecheck → lint → format:check → check:stories → the design-system
   gates → check:gates → token-drift → build → test:coverage at the ≥80% threshold), a
   **secret scan** (gitleaks, 0056), and a **Claude-infra integrity** job (check:claude /
-  check:claude-md / debt:scan). The Playwright e2e + migration-replay + type-drift job
+  check:claude-md / check:debt). The Playwright e2e + migration-replay + type-drift job
   and the Storybook test-runner smoke are **deferred during bootstrap** — they run
   locally (`npm run test:e2e`, `npm run test:storybook`) and return before the first
   production promotion; the deviation is tracked in `docs/bootstrap-plan.md` (0010, 0024,

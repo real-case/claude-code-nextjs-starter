@@ -2,6 +2,9 @@
 # green-local means green-CI. Deployment is not CI's job: Vercel owns preview
 # and production deploys (ADR 0009). Action versions are pinned to commit SHAs
 # per the ADR 0044 pinning posture (reaffirmed by ADR 0056 for the scanner).
+#
+# Gate step names use a uniform `[slug] Label` format — `slug` matches the gate's
+# `npm run check:<slug>` script; each step's ADR lives in a trailing comment, not the name.
 name: CI
 
 on:
@@ -51,63 +54,64 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Typecheck
-        run: npm run typecheck
+      - name: "[types] Typecheck"
+        run: npm run typecheck # ADR 0003
 
-      - name: Lint
-        run: npm run lint
+      - name: "[lint] ESLint"
+        run: npm run lint # ADR 0006
 
-      - name: Format check
-        run: npm run format:check
+      - name: "[format] Prettier check"
+        run: npm run format:check # ADR 0006
 
-      - name: Dependency vulnerabilities — npm audit (high+, production) (ADR 0069)
-        run: npm audit --audit-level=high --omit=dev
+      - name: "[audit] Dependency vulnerabilities"
+        run: npm run check:audit # ADR 0069
 
-      - name: Dependency licenses — permissive allowlist (ADR 0071)
-        run: npm run check:licenses
+      - name: "[licenses] License allowlist"
+        run: npm run check:licenses # ADR 0071
 
-      - name: Spelling — documentation (ADR 0074)
-        run: npm run check:spelling
+      - name: "[spelling] Spell check"
+        run: npm run check:spelling # ADR 0074
 
-      - name: Component stories exist (ADR 0042)
-        run: npm run check:stories
+      - name: "[stories] Colocated stories"
+        run: npm run check:stories # ADR 0042
 
-      - name: Module boundaries — dependency-cruiser (ADR 0060)
-        run: npm run check:boundaries
+      - name: "[boundaries] Module imports"
+        run: npm run check:boundaries # ADR 0060
 
-      - name: FSD layer boundaries — Steiger (ADR 0065/0066)
-        run: npm run check:fsd
+      - name: "[fsd] Layer boundaries"
+        run: npm run check:fsd # ADR 0065/0066
 
-      - name: Composition graph ↔ import reconciliation (ADR 0059/0060)
-        run: npm run check:graph
+      - name: "[graph] Composition vs imports"
+        run: npm run check:graph # ADR 0059/0060
 
-      - name: design-intent fitness functions — api↔props, state coverage, states↔stories (ADR 0062)
-        run: npm run check:design-intent
+      - name: "[design-intent] Fitness functions"
+        run: npm run check:design-intent # ADR 0062
 
-      - name: Figma drift seals — shape + presence (ADR 0063; inert until a Figma file is wired)
-        run: npm run check:seals
+      - name: "[seals] Figma drift seals"
+        run: npm run check:seals # ADR 0063 (inert until a Figma file is wired)
 
-      - name: i18n key parity + ICU (ADR 0055)
-        run: npm run check:i18n
+      - name: "[i18n] Key parity + ICU"
+        run: npm run check:i18n # ADR 0055
 
-      - name: Gate self-test — each custom rule rejects its violator (ADR 0058/0060/0059/0055, P6)
-        run: npm run check:gates
+      - name: "[gates] Self test"
+        run: npm run check:gates # ADR 0058/0059/0060/0055, P6
 
-      - name: Token drift — gen:tokens output matches globals.css (ADR 0058)
+      - name: "[tokens] Codegen drift"
+        # ADR 0058 — gen:tokens output must match the @theme layer in globals.css
         run: |
           npm run gen:tokens
           git diff --exit-code -- src/design-system/tokens.generated.ts src/design-system/tokens.allowlist.json src/design-system/tokens.agent-rules.md
 
-      - name: Build
-        run: npm run build
+      - name: "[build] Next build"
+        run: npm run build # ADR 0002
 
-      - name: Test with coverage gate (≥80%, ADR 0008)
+      - name: "[coverage] Coverage gate"
         if: env.HOTFIX != 'true'
-        run: npm run test:coverage
+        run: npm run test:coverage # ADR 0008/0041 (merged ≥80%)
 
-      - name: Test without coverage threshold (hotfix bypass, ADR 0008)
+      - name: "[coverage] Hotfix bypass"
         if: env.HOTFIX == 'true'
-        run: npm run test
+        run: npm run test # ADR 0008 (tests still run; threshold waived)
 
   secret-scan:
     name: Secret scan
@@ -124,7 +128,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: gitleaks — blocking secret scan (ADR 0056 Layer 1)
+      - name: "[secrets] Gitleaks scan"
         uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -159,29 +163,29 @@ jobs:
         with:
           node-version-file: .nvmrc
 
-      - name: Gate self-test — check:claude rejects its own violators (P6, the check:gates pattern)
-        run: npm run check:claude -- --self-test
+      - name: "[claude] Self test"
+        run: npm run check:claude -- --self-test # P6 (the check:gates pattern)
 
-      - name: Skill/agent/command references resolve — skill-drift gate (extends ADR 0054)
-        run: npm run check:claude
+      - name: "[claude] Refs resolve"
+        run: npm run check:claude # ADR 0054 (skill-drift gate)
 
-      - name: CLAUDE.md ↔ accepted-ADR citation reconciliation (ADR 0001 accepted-only rule)
-        run: npm run check:claude-md
+      - name: "[claude-md] Accepted-only citations"
+        run: npm run check:claude-md # ADR 0001
 
-      - name: Citation self-test — check:citations rejects its own violators (P6)
-        run: npm run check:citations -- --self-test
+      - name: "[citations] Self test"
+        run: npm run check:citations -- --self-test # P6
 
-      - name: ADR/CON citations resolve in CI + env surfaces (ADR 0067)
-        run: npm run check:citations
+      - name: "[citations] Resolve references"
+        run: npm run check:citations # ADR 0067
 
-      - name: Action-pin self-test — check:action-pins rejects its own violators (P6)
-        run: npm run check:action-pins -- --self-test
+      - name: "[action-pins] Self test"
+        run: npm run check:action-pins -- --self-test # P6
 
-      - name: GitHub Actions are SHA-pinned (ADR 0044/0070)
-        run: npm run check:action-pins
+      - name: "[action-pins] SHA-pinned actions"
+        run: npm run check:action-pins # ADR 0044/0070
 
-      - name: Technical-debt escape-hatch inventory (ADR 0003/0029/0039/0049/0062/0064)
-        run: npm run debt:scan
+      - name: "[debt] Escape-hatch inventory"
+        run: npm run check:debt # ADR 0003/0029/0039/0049/0062/0064
 
   # ── Conventional Commits ─────────────────────────────────────────────────────
   # commitlint over the PR's commit range (ADR 0072) — the format the AI changelog draft
@@ -207,8 +211,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: commitlint — Conventional Commits over the PR range (ADR 0072)
-        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+      - name: "[commits] Conventional format"
+        env:
+          COMMITLINT_FROM: ${{ github.event.pull_request.base.sha }}
+          COMMITLINT_TO: ${{ github.event.pull_request.head.sha }}
+        run: npm run check:commits -- --verbose # ADR 0072
+
 
   # ── e2e job: temporarily removed during bootstrap (2026-06-11) ──────────────
   # ADR 0007/0010 put the Playwright e2e in the CI gate, and a full working job

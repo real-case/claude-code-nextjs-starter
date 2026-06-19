@@ -2,7 +2,7 @@
 name: debt-scan
 description: >-
   Inventory the project's technical debt — specifically the ADR-sanctioned escape
-  hatches used without their required justification. Runs debt:scan: every
+  hatches used without their required justification. Runs check:debt: every
   eslint-disable (ADR 0003/0006), "use no memo" (ADR 0029), a11y opt-out in stories
   (ADR 0039), applicable:false design-intent state (ADR 0062), and quarantined/skipped
   test (ADR 0049) is found, checked for its mandated reason, and quarantine time-boxes
@@ -24,9 +24,9 @@ a silent accumulation, and feeds the Defect Log (ADR 0064).
 ## Run it
 
 ```bash
-npm run debt:scan            # report needs-attention items + a per-category summary
-npm run debt:scan -- --all   # also list every justified hatch and TODO/FIXME marker
-npm run debt:scan -- --json  # machine-readable findings
+npm run check:debt            # report needs-attention items + a per-category summary
+npm run check:debt -- --all   # also list every justified hatch and TODO/FIXME marker
+npm run check:debt -- --json  # machine-readable findings
 ```
 
 Exit `0` = no escape hatch is missing its justification and no quarantine has expired.

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // scripts/debt-scan.mjs
 //
-// `debt:scan` — technical-debt inventory for this project's *sanctioned* escape hatches.
+// `check:debt` — technical-debt inventory for this project's *sanctioned* escape hatches.
 // The ADRs don't forbid every shortcut; they ALLOW a few, each conditional on a recorded
 // justification. Debt here is those allowances used WITHOUT their condition met — an
 // `eslint-disable` with no reason (ADR 0003), a `"use no memo"` with no explanation
@@ -213,7 +213,7 @@ for (const f of findings) {
 }
 
 console.log(
-  `debt:scan — ${files.length} file(s) scanned across ${ROOTS.join(", ")}\n`,
+  `check:debt — ${files.length} file(s) scanned across ${ROOTS.join(", ")}\n`,
 );
 if (cats.size) {
   const pad = Math.max(...[...cats.keys()].map((k) => k.length), 8);
@@ -243,10 +243,10 @@ for (const f of listed) {
 
 if (attention.length) {
   console.error(
-    `\ndebt:scan: ${attention.length} sanctioned escape hatch(es) missing their required justification or past their time-box. These violate the ADR's own terms.`,
+    `\ncheck:debt: ${attention.length} sanctioned escape hatch(es) missing their required justification or past their time-box. These violate the ADR's own terms.`,
   );
   process.exit(1);
 }
 console.log(
-  `\ndebt:scan: OK — ${findings.length} debt item(s) found, all sanctioned ones justified${findings.length ? " (run with --all to list every item)" : ""}.`,
+  `\ncheck:debt: OK — ${findings.length} debt item(s) found, all sanctioned ones justified${findings.length ? " (run with --all to list every item)" : ""}.`,
 );

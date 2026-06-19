@@ -41,6 +41,7 @@ function surfaces() {
         out.push(`${WORKFLOWS_DIR}/${f}`);
   }
   if (existsSync(".env.example")) out.push(".env.example");
+  if (existsSync("README.md")) out.push("README.md");
   return out;
 }
 

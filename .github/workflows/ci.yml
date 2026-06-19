@@ -60,6 +60,15 @@ jobs:
       - name: Format check
         run: npm run format:check
 
+      - name: Dependency vulnerabilities — npm audit (high+, production) (ADR 0069)
+        run: npm audit --audit-level=high --omit=dev
+
+      - name: Dependency licenses — permissive allowlist (ADR 0071)
+        run: npm run check:licenses
+
+      - name: Spelling — documentation (ADR 0074)
+        run: npm run check:spelling
+
       - name: Component stories exist (ADR 0042)
         run: npm run check:stories
 
@@ -165,8 +174,41 @@ jobs:
       - name: ADR/CON citations resolve in CI + env surfaces (ADR 0067)
         run: npm run check:citations
 
+      - name: Action-pin self-test — check:action-pins rejects its own violators (P6)
+        run: npm run check:action-pins -- --self-test
+
+      - name: GitHub Actions are SHA-pinned (ADR 0044/0070)
+        run: npm run check:action-pins
+
       - name: Technical-debt escape-hatch inventory (ADR 0003/0029/0039/0049/0062/0064)
         run: npm run debt:scan
+
+  # ── Conventional Commits ─────────────────────────────────────────────────────
+  # commitlint over the PR's commit range (ADR 0072) — the format the AI changelog draft
+  # (0050) assumes. Merge commits are ignored by config-conventional; squash-merge title
+  # enforcement is a separate 👤 branch-protection setting.
+  commitlint:
+    name: Conventional Commits
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node 24 from .nvmrc (ADR 0004)
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: commitlint — Conventional Commits over the PR range (ADR 0072)
+        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
   # ── e2e job: temporarily removed during bootstrap (2026-06-11) ──────────────
   # ADR 0007/0010 put the Playwright e2e in the CI gate, and a full working job

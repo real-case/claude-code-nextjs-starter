@@ -1,0 +1,48 @@
+# Static application security testing — ADR 0068. Native CodeQL code scanning over
+# JavaScript/TypeScript; deterministic results land in the Security tab as SARIF,
+# completing the defense-in-depth of ADR 0056 (gitleaks secret scan + advisory AI review).
+# ADVISORY during bootstrap: findings surface in the Security tab and PR; promoting the
+# code-scanning check to REQUIRED is a 👤 branch-protection setting (ADR 0046/0047).
+# Action versions are SHA-pinned per ADR 0044/0070.
+name: CodeQL
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  schedule:
+    # Weekly re-scan of unchanged code against improved queries (ADR 0068).
+    - cron: "23 5 * * 1"
+
+# Least-privilege default; the analyze job elevates only `security-events: write`.
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  analyze:
+    name: Analyze (javascript-typescript)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write # upload SARIF to the Security tab
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: "[codeql] Initialize"
+        uses: github/codeql-action/init@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3
+        with:
+          languages: javascript-typescript
+          # default + security-extended query suite (ADR 0068).
+          queries: security-extended
+
+      - name: "[codeql] Analyze"
+        uses: github/codeql-action/analyze@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3
+        with:
+          category: "/language:javascript-typescript"

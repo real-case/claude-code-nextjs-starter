@@ -70,3 +70,11 @@ Architecture Decision Records for this project, in [MADR](https://adr.github.io/
 | [0064](0064-defect-log-and-reactive-fitness-growth.md) | Defect Log and reactive growth of design-system fitness functions | accepted | 2026-06-11 |
 | [0065](0065-feature-sliced-design-architecture.md) | Adopt Feature-Sliced Design for application architecture | proposed | 2026-06-17 |
 | [0066](0066-fsd-boundary-enforcement-steiger.md) | Enforce Feature-Sliced Design boundaries with Steiger | proposed | 2026-06-17 |
+| [0067](0067-reference-integrity-gates-for-adr-citations.md) | Reference-integrity gates for ADR/CON citations across operative surfaces | proposed | 2026-06-19 |
+| [0068](0068-sast-codeql-code-scanning.md) | Static application security testing via GitHub CodeQL code scanning | proposed | 2026-06-19 |
+| [0069](0069-dependency-vulnerability-audit-gate.md) | Dependency vulnerability gate via `npm audit` | proposed | 2026-06-19 |
+| [0070](0070-github-actions-sha-pinning-gate.md) | Enforce SHA-pinning of GitHub Actions with a fitness-function gate | proposed | 2026-06-19 |
+| [0071](0071-dependency-license-compliance-gate.md) | Dependency license-compliance gate | proposed | 2026-06-19 |
+| [0072](0072-conventional-commits-enforcement.md) | Enforce Conventional Commits with commitlint | proposed | 2026-06-19 |
+| [0073](0073-documentation-link-check.md) | Documentation link-integrity gate (internal links) | proposed | 2026-06-19 |
+| [0074](0074-documentation-spell-check.md) | Documentation spell-check with cspell | proposed | 2026-06-19 |

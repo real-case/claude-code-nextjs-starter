@@ -2,12 +2,12 @@
 # and snapshots every story; TurboSnap (`onlyChanged`) limits snapshots to the
 # stories affected by changed files (ADR 0043). Baselines live off-repo and are
 # approved by a human in the Chromatic UI (ADR 0043/0046) — no PNG baselines in
-# git. This is a separate publish-and-snapshot pass (ADR 0036), distinct from the
+# git. This is a separate publish-and-snapshot pass (ADR 0037), distinct from the
 # quality gate in ci.yml (which runs the Vitest addon). Action versions are pinned
-# to commit SHAs per the ADR 0042 pinning posture.
+# to commit SHAs per the ADR 0044 pinning posture.
 #
 # Bootstrap posture: the snapshot job is INERT until a human provisions the
-# Chromatic project token (Phase 11 👤, ADR 0045). Secrets can't be read in a
+# Chromatic project token (Phase 11 👤, ADR 0046). Secrets can't be read in a
 # job-level `if`, so a tiny `precheck` job exposes "is the token set?" as an output
 # the `chromatic` job gates on — the job is *skipped* (not failed) until the token
 # exists, so zero CI time is spent during bootstrap and it activates automatically
@@ -38,7 +38,7 @@ jobs:
     outputs:
       has_token: ${{ steps.check.outputs.has_token }}
     steps:
-      - name: Detect Chromatic token (env-reference, ADR 0042)
+      - name: Detect Chromatic token (env-reference, ADR 0044)
         id: check
         env:
           CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -76,7 +76,7 @@ jobs:
         uses: chromaui/action@1db61b73b7919508ee8e62336f04bd0aed6da756 # v17.4.1
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          # Reuse the existing static build script (ADR 0057).
+          # Reuse the existing static build script (ADR 0035).
           buildScriptName: build-storybook
           # TurboSnap: snapshot only stories touched by changed files (ADR 0043).
           onlyChanged: true

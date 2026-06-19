@@ -18,6 +18,11 @@ set and justify every omission. This skill prints that set so you can't miss one
 Advisory (Stage 2); the blocking version (rejecting a rationale-less omission) is the
 Stage-3 `design-intent.ts` fitness function.
 
+> Node 24 is required (`engines.node >=24 <25`). If `node -v` is not v24.x, prepend your
+> Node 24 (the newest `~/.nvm/versions/node/v24.*/bin`) to `PATH` before `npm run ds:states`
+> below (see `.nvmrc`) — it imports a `.ts` registry and crashes on Node 22 with
+> `ERR_UNKNOWN_FILE_EXTENSION`.
+
 ## Run it
 
 ```bash

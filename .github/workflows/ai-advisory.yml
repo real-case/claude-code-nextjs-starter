@@ -1,7 +1,7 @@
-# Phase-12 ADVISORY AI jobs (ADR 0047 PR review, 0050 story-matrix hints, 0051 semantic
-# a11y, 0055 security Layer 2, 0049 changelog). Every job here is ADVISORY — it posts a
+# Phase-12 ADVISORY AI jobs (ADR 0048 PR review, 0051 story-matrix hints, 0052 semantic
+# a11y, 0056 security Layer 2, 0050 changelog). Every job here is ADVISORY — it posts a
 # comment and never sets a required-check status (ADR 0046/0047). The whole workflow is
-# INERT until a 👤 provisions the ANTHROPIC_API_KEY secret (ADR 0045/0042): the `guard`
+# INERT until a 👤 provisions the ANTHROPIC_API_KEY secret (ADR 0046/0044): the `guard`
 # job reads whether the secret is non-empty WITHOUT exposing it, and the AI jobs are
 # skipped while it is absent — so this lands dormant and self-activates on the day the
 # key is added, exactly like the Chromatic token.
@@ -46,7 +46,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - name: AI PR review (ADR 0047 / 0050 / 0051)
+      - name: AI PR review (ADR 0048 / 0051 / 0052)
         run: node scripts/ai/pr-review.mjs
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -58,7 +58,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           DIFF_BASE: ${{ github.event.pull_request.base.ref }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: AI security review — Layer 2 (ADR 0055)
+      - name: AI security review — Layer 2 (ADR 0056)
         run: node scripts/ai/security-review.mjs
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -86,7 +86,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - name: Draft changelog (ADR 0049 — posted as an advisory comment, human edits in the release PR)
+      - name: Draft changelog (ADR 0050 — posted as an advisory comment, human edits in the release PR)
         run: node scripts/ai/changelog.mjs
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

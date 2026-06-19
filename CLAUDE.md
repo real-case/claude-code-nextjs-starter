@@ -1,11 +1,14 @@
 # CLAUDE.md
 
-> **Bootstrap stage.** No application code exists yet. Architectural decisions are
-> recorded as ADRs under `docs/decisions/` **before** any code depends on them. The
-> **ADR Process** section below is authoritative now; the **Stack / Commands /
-> Conventions / Restrictions** sections are Phase-3 placeholders, filled from the
-> **accepted** ADRs via the `adr-sync-claude-md` skill once decisions are ratified —
-> they are intentionally empty until then.
+> **Stage.** The template's infrastructure and scaffolding are in place under `src/`
+> (the env / Supabase / i18n / logging / state / SEO layers); feature code is built on
+> top. The **Stack / Commands / Conventions / Restrictions** sections below are synced
+> from the **accepted** ADRs via the `adr-sync-claude-md` skill and describe the shipped
+> code. Architectural decisions are still recorded as ADRs under `docs/decisions/`
+> **before** any code depends on them; the **ADR Process** section is authoritative.
+> These sections track the **accepted** ADRs; where a still-`proposed` baseline already
+> exists in the code it is flagged inline as proposed/pending the human acceptance gate
+> (see the design-token note under **Stack**), never presented as ratified.
 
 ## ADR Process
 
@@ -87,8 +90,8 @@ Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human
 - App Router error boundaries + structured stdout JSON logger `src/lib/logger.ts`
   (0019).
 - **MCP toolchain** (CON-003): committed `.mcp.json` with env-reference secrets —
-  context7, figma (read-only design context, 0045), vercel, supabase, chromatic
-  (0044).
+  context7, figma (read-only design context, 0045), vercel, supabase, chromatic,
+  github (0044).
 - **Design-system AI-tooling governance** (decided 0058–0064; enforcement lands with
   Phase 12 / Stages 0–6): single-source token codegen + a stylelint/ESLint token-usage gate
   (0058); a top-down composition graph (0059) reconciled against a **dependency-cruiser**
@@ -116,10 +119,15 @@ Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human
   over the built Storybook (0037); `npm run check:stories` — every `src/components/**`
   module has colocated stories (0042).
 - `tsc --noEmit` — typecheck, part of the CI gate (0003, 0010).
-- CI (`.github/workflows/ci.yml`, Node 24, `npm ci`): typecheck → lint →
-  format:check → check:stories → build → test:coverage (browser-mode story tests +
-  merged coverage), plus migration replay, type-drift check, and Playwright e2e
-  against a local Supabase stack (0010, 0024, 0041, 0042).
+- CI (`.github/workflows/ci.yml`, Node 24, `npm ci`) runs three parallel jobs: the
+  **quality gate** (typecheck → lint → format:check → check:stories → the design-system
+  gates → check:gates → token-drift → build → test:coverage at the ≥80% threshold), a
+  **secret scan** (gitleaks, 0056), and a **Claude-infra integrity** job (check:claude /
+  check:claude-md / check:debt). The Playwright e2e + migration-replay + type-drift job
+  and the Storybook test-runner smoke are **deferred during bootstrap** — they run
+  locally (`npm run test:e2e`, `npm run test:storybook`) and return before the first
+  production promotion; the deviation is tracked in `docs/bootstrap-plan.md` (0010, 0024,
+  0041, 0042, 0056).
 - Design-system gates (Stages 0–3, wired in CI): `npm run gen:tokens` — regenerate the
   semantic-token union + lint allowlist + agent-rules reference from the `@theme`/`:root`
   layer, CI drift-checked like `gen:types` (0058); `npm run check:boundaries`

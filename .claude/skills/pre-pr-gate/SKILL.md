@@ -24,9 +24,9 @@ longer means "everything ran". This skill runs **the CI gate plus those deferred
 pass and reports a checklist, so nothing reaches the PR unproven. It only runs checks (no code
 edits), but it is **user-invoked** because the full sweep (build + coverage + e2e) is heavy.
 
-> Node 24 is required (`engines.node >=24 <25`). If `node -v` is not v24.x, prepend
-> `~/.nvm/versions/node/v24.16.0/bin` to `PATH` first. The e2e tier needs **Docker** and a
-> local Supabase stack (`npx supabase start`).
+> Node 24 is required (`engines.node >=24 <25`). If `node -v` is not v24.x, prepend your
+> Node 24 (the newest `~/.nvm/versions/node/v24.*/bin`) to `PATH` first. The e2e tier needs
+> **Docker** and a local Supabase stack (`npx supabase start`).
 
 ## How to run it
 

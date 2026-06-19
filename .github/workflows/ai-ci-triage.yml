@@ -1,7 +1,7 @@
-# Phase-12 ADVISORY CI-failure triage (ADR 0048). Fires after the CI workflow finishes;
+# Phase-12 ADVISORY CI-failure triage (ADR 0049). Fires after the CI workflow finishes;
 # if it FAILED, an AI pass classifies the failure (real regression / flaky / infra) with
 # evidence and comments on the PR. It NEVER retries (there is no global retry policy) and
-# NEVER quarantines on its own — both are human actions (ADR 0048). INERT until a 👤
+# NEVER quarantines on its own — both are human actions (ADR 0049). INERT until a 👤
 # provisions ANTHROPIC_API_KEY, via the same `guard` pattern as ai-advisory.yml.
 name: AI CI-failure triage (Phase 12)
 
@@ -44,7 +44,7 @@ jobs:
         run: gh run view ${{ github.event.workflow_run.id }} --log-failed > ci-failure.log || true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: AI CI-failure triage (ADR 0048)
+      - name: AI CI-failure triage (ADR 0049)
         run: node scripts/ai/ci-triage.mjs
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

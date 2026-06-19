@@ -133,14 +133,14 @@ MCP client, so load the file before starting it (e.g. `set -a; source .env; set 
 direnv). Tokens are scoped least-privilege (ADR 0044); provisioning and rotation are
 human-only actions (ADR 0046).
 
-| Variable                  | Used by                    | Notes                                                                                                                                                                           |
-| ------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SUPABASE_ACCESS_TOKEN`   | `supabase` MCP server      | Personal access token, least-privilege                                                                                                                                          |
-| `SUPABASE_PROJECT_REF`    | `supabase` MCP server      | Set once the cloud project exists (bootstrap Phase 7)                                                                                                                           |
-| `GITHUB_MCP_PAT`          | `github` MCP server        | Fine-grained PAT, least-privilege read (this repo's PRs/issues/Actions); inert until provisioned, like the Chromatic token — the server simply stays off without it (0044/0046) |
-| `CHROMATIC_APP_ID`        | `chromatic` MCP server URL | Set once the Chromatic project exists (bootstrap Phase 11)                                                                                                                      |
-| `CHROMATIC_PROJECT_TOKEN` | Chromatic CI builds        | Needed from bootstrap Phase 11, referenced from CI as env/secret                                                                                                                |
-| `ANTHROPIC_API_KEY`       | Phase-12 advisory AI jobs  | Inert placeholder — provisions the advisory AI-process jobs (0048–0057); referenced from CI as a secret, never a literal (0044); least-privilege, human-provisioned (0046)      |
+| Variable                  | Used by                    | Notes                                                                                                                                                                                                                                                |
+| ------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SUPABASE_ACCESS_TOKEN`   | `supabase` MCP server      | Personal access token, least-privilege                                                                                                                                                                                                               |
+| `SUPABASE_PROJECT_REF`    | `supabase` MCP server      | Set once the cloud project exists (bootstrap Phase 7)                                                                                                                                                                                                |
+| `GITHUB_MCP_PAT`          | `github` MCP server        | Fine-grained PAT, least-privilege read (this repo's PRs/issues/Actions); inert until provisioned, like the Chromatic token — the server simply stays off without it (0044/0046)                                                                      |
+| `CHROMATIC_APP_ID`        | `chromatic` MCP server URL | Set once the Chromatic project exists (bootstrap Phase 11)                                                                                                                                                                                           |
+| `CHROMATIC_PROJECT_TOKEN` | Chromatic CI builds        | Needed from bootstrap Phase 11, referenced from CI as env/secret                                                                                                                                                                                     |
+| `AI_API_KEY`              | Phase-12 advisory AI jobs  | Inert placeholder — provisions the advisory AI-process jobs (0048–0057); provider-agnostic via `AI_BASE_URL` + `AI_MODEL` (Gemini example in `.env.example`, ADR 0075); CI secret, never a literal (0044); least-privilege, human-provisioned (0046) |
 
 The `vercel` and `figma` servers authenticate via first-party OAuth flows, so —
 improving on the illustrative `${VERCEL_TOKEN}` / `${FIGMA_TOKEN}` examples in ADR
@@ -547,7 +547,9 @@ human (ADR 0046) and documented here. On **both** `main` and `dev`:
 ## Advisory AI process jobs (ADR 0048–0057)
 
 The Phase-12 AI process layer is wired and **inert until a 👤 human provisions
-`ANTHROPIC_API_KEY`** (a repo secret, env-reference only — ADR 0044/0046). Each workflow
+`AI_API_KEY`** (a repo secret, env-reference only — ADR 0044/0046). It is
+**provider-agnostic** via the OpenAI-compatible client — set `AI_BASE_URL` + `AI_MODEL`
+(Gemini example in [`.env.example`](.env.example); ADR 0075). Each workflow
 starts with a guard job that checks key presence and _skips_ (never fails) without it, so
 the jobs self-activate when the key lands — the same inert-until-token pattern as
 Chromatic. Per ADR 0047 they are **never required checks**: every one posts advisory

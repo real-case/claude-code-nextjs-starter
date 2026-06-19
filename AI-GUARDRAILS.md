@@ -359,7 +359,8 @@ The agent writes most code, but every _irreversible_ or _judgment_ action is res
 for a human. AI process jobs (`ai-advisory.yml`, `ai-ci-triage.yml`) post comments
 citing ADR numbers and are **never required checks** — they inform the human reviewer,
 they never substitute for approval. All are inert until a human provisions
-`ANTHROPIC_API_KEY`.
+`AI_API_KEY` — provider-agnostic via the OpenAI-compatible client (Gemini, OpenAI, …;
+ADR 0075).
 
 ```mermaid
 flowchart TD

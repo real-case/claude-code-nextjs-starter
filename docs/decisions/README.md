@@ -78,3 +78,4 @@ Architecture Decision Records for this project, in [MADR](https://adr.github.io/
 | [0072](0072-conventional-commits-enforcement.md) | Enforce Conventional Commits with commitlint | proposed | 2026-06-19 |
 | [0073](0073-documentation-link-check.md) | Documentation link-integrity gate (internal links) | proposed | 2026-06-19 |
 | [0074](0074-documentation-spell-check.md) | Documentation spell-check with cspell | proposed | 2026-06-19 |
+| [0075](0075-provider-agnostic-ai-client.md) | Provider-agnostic advisory-AI client via the OpenAI-compatible Chat Completions API | proposed | 2026-06-19 |

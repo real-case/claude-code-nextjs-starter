@@ -2,7 +2,7 @@
 # if it FAILED, an AI pass classifies the failure (real regression / flaky / infra) with
 # evidence and comments on the PR. It NEVER retries (there is no global retry policy) and
 # NEVER quarantines on its own — both are human actions (ADR 0049). INERT until a 👤
-# provisions ANTHROPIC_API_KEY, via the same `guard` pattern as ai-advisory.yml.
+# provisions AI_API_KEY (provider-agnostic, ADR 0075), via the same `guard` pattern as ai-advisory.yml.
 name: AI CI-failure triage (Phase 12)
 
 on:
@@ -25,7 +25,7 @@ jobs:
       has_key: ${{ steps.k.outputs.has_key }}
     steps:
       - id: k
-        run: echo "has_key=${{ secrets.ANTHROPIC_API_KEY != '' }}" >> "$GITHUB_OUTPUT"
+        run: echo "has_key=${{ secrets.AI_API_KEY != '' }}" >> "$GITHUB_OUTPUT"
 
   triage:
     name: AI triage (advisory)
@@ -47,9 +47,9 @@ jobs:
       - name: AI CI-failure triage (ADR 0049)
         run: node scripts/ai/ci-triage.mjs
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
-          ANTHROPIC_EFFORT: ${{ vars.ANTHROPIC_EFFORT }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_BASE_URL: ${{ vars.AI_BASE_URL }}
+          AI_MODEL: ${{ vars.AI_MODEL }}
           CI_LOG_PATH: ci-failure.log
           PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

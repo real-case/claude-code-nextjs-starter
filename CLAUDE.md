@@ -148,8 +148,9 @@ Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human
   table (0058, Stage 6, P1). Surfaced as the `component-signature`, `state-coverage`, and
   `check-tokens` skills. The allowed-token list is the **generated**
   `src/design-system/tokens.agent-rules.md` — never re-list tokens in prose (0058, P6).
-- Phase-12 advisory AI jobs (`scripts/ai/*`, ADRs 0048–0057) — inert until a 👤 provisions
-  `ANTHROPIC_API_KEY`: AI PR review (0048), CI-failure triage (0049), changelog draft
+- Phase-12 advisory AI jobs (`scripts/ai/*`, ADRs 0048–0057) — provider-agnostic via the
+  OpenAI-compatible client, inert until a 👤 provisions `AI_API_KEY`: AI PR review (0048),
+  CI-failure triage (0049), changelog draft
   (0050), security Layer 2 (0056), via `.github/workflows/ai-advisory.yml` /
   `ai-ci-triage.yml`, plus the Renovate config `renovate.json` (0057). Each is advisory
   (never a required check) and self-activates when the key lands.

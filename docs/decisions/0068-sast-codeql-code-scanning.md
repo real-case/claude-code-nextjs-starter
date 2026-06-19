@@ -93,4 +93,8 @@ to branch protection (👤).
 Completes the security triad of **0056**: Layer 1 secret scan (gitleaks), this record's
 deterministic SAST (CodeQL), and Layer 2 advisory AI review. Actions are SHA-pinned per
 **0044**; human-only promotion to required per **0046/0047**. Runs on the CI surface of
-**0010**. Revisit query suites and the schedule cadence as the codebase grows.
+**0010**. SARIF upload requires **code scanning enabled on the repository** (Settings → Code
+security & analysis — free on public repos; GitHub Advanced Security on private), so a
+`precheck` job SKIPS analyze until it is enabled — the inert-until-provisioned posture of the
+Chromatic token guard, so the workflow shows *skipping* (never a red ✗) while dormant.
+Revisit query suites and the schedule cadence as the codebase grows.

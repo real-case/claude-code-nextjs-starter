@@ -70,3 +70,4 @@ Architecture Decision Records for this project, in [MADR](https://adr.github.io/
 | [0064](0064-defect-log-and-reactive-fitness-growth.md) | Defect Log and reactive growth of design-system fitness functions | accepted | 2026-06-11 |
 | [0065](0065-feature-sliced-design-architecture.md) | Adopt Feature-Sliced Design for application architecture | proposed | 2026-06-17 |
 | [0066](0066-fsd-boundary-enforcement-steiger.md) | Enforce Feature-Sliced Design boundaries with Steiger | proposed | 2026-06-17 |
+| [0067](0067-reference-integrity-gates-for-adr-citations.md) | Reference-integrity gates for ADR/CON citations across operative surfaces | proposed | 2026-06-19 |

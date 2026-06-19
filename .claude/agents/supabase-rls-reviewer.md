@@ -18,7 +18,7 @@ You are the **RLS / database-security** lens. Stay in your lane:
 - **adr-conformance-reviewer** owns ADR-conformance mapping and the design-system gates.
 - **You own:** the correctness of the row-isolation model in `supabase/migrations/**` and `supabase/config.toml` — RLS enablement, policy completeness, owner scoping, privilege grants, and function security context. The other reviewers will not catch a policy that silently exposes every row; that is your job.
 
-The canonical reference is the first migration, `supabase/migrations/20260611141953_create_notes.sql` — a per-user owned table done correctly. Hold new migrations to that bar.
+The canonical reference is the per-user-owned `create_notes` pattern documented in the **create-migration** skill (RLS enabled, owner-scoped `select`/`insert`/`update`/`delete`, `to authenticated`, table GRANTs, `search_path`-pinned functions) — a per-user owned table done correctly. A fresh template ships no migrations yet; hold the first and every later migration to that bar.
 
 ## The checklist — run it against every table the diff adds or alters
 

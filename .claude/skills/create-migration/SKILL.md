@@ -24,8 +24,9 @@ types), so it is **user-invoked only**.
 > Node 24 (the newest `~/.nvm/versions/node/v24.*/bin`) to `PATH` before any `npm run`.
 > The local stack needs **Docker** running and **`npx supabase start`** up.
 
-The canonical reference is `supabase/migrations/20260611141953_create_notes.sql` — a
-correctly-isolated per-user table. Mirror its structure. Run the steps **in order**.
+The canonical reference is the **`create_notes` template in step 2 below** — a
+correctly-isolated per-user table. A fresh template ships no migrations yet; this skill
+scaffolds the first one, so mirror that template's structure. Run the steps **in order**.
 
 ## 0. Decide the change
 - **Name:** a verb-first slug — `create_<table>`, `add_<col>_to_<table>`, `add_rls_to_<table>`.

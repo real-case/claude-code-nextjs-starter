@@ -120,6 +120,7 @@ or overrides belong in your untracked user-scoped MCP config, layered over this 
 | `vercel`    | `https://mcp.vercel.com` (first-party)                                                     | OAuth, interactive on first connect |
 | `supabase`  | `@supabase/mcp-server-supabase@0.8.2` (npm, pinned, `--read-only`)                         | `SUPABASE_ACCESS_TOKEN`             |
 | `chromatic` | `https://<app-id>.chromatic.com/mcp` (first-party, the published Storybook's `/mcp` route) | Chromatic sign-in                   |
+| `github`    | `https://api.githubcopilot.com/mcp/` (first-party, GitHub-hosted)                          | `GITHUB_MCP_PAT` (fine-grained PAT) |
 
 The `figma` server is consulted **read-only** for design context; design tokens are
 code-canonical and never imported from Figma (ADR 0045).
@@ -132,13 +133,14 @@ MCP client, so load the file before starting it (e.g. `set -a; source .env; set 
 direnv). Tokens are scoped least-privilege (ADR 0044); provisioning and rotation are
 human-only actions (ADR 0046).
 
-| Variable                  | Used by                    | Notes                                                                                                                                                                      |
-| ------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SUPABASE_ACCESS_TOKEN`   | `supabase` MCP server      | Personal access token, least-privilege                                                                                                                                     |
-| `SUPABASE_PROJECT_REF`    | `supabase` MCP server      | Set once the cloud project exists (bootstrap Phase 7)                                                                                                                      |
-| `CHROMATIC_APP_ID`        | `chromatic` MCP server URL | Set once the Chromatic project exists (bootstrap Phase 11)                                                                                                                 |
-| `CHROMATIC_PROJECT_TOKEN` | Chromatic CI builds        | Needed from bootstrap Phase 11, referenced from CI as env/secret                                                                                                           |
-| `ANTHROPIC_API_KEY`       | Phase-12 advisory AI jobs  | Inert placeholder — provisions the advisory AI-process jobs (0048–0057); referenced from CI as a secret, never a literal (0044); least-privilege, human-provisioned (0046) |
+| Variable                  | Used by                    | Notes                                                                                                                                                                           |
+| ------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SUPABASE_ACCESS_TOKEN`   | `supabase` MCP server      | Personal access token, least-privilege                                                                                                                                          |
+| `SUPABASE_PROJECT_REF`    | `supabase` MCP server      | Set once the cloud project exists (bootstrap Phase 7)                                                                                                                           |
+| `GITHUB_MCP_PAT`          | `github` MCP server        | Fine-grained PAT, least-privilege read (this repo's PRs/issues/Actions); inert until provisioned, like the Chromatic token — the server simply stays off without it (0044/0046) |
+| `CHROMATIC_APP_ID`        | `chromatic` MCP server URL | Set once the Chromatic project exists (bootstrap Phase 11)                                                                                                                      |
+| `CHROMATIC_PROJECT_TOKEN` | Chromatic CI builds        | Needed from bootstrap Phase 11, referenced from CI as env/secret                                                                                                                |
+| `ANTHROPIC_API_KEY`       | Phase-12 advisory AI jobs  | Inert placeholder — provisions the advisory AI-process jobs (0048–0057); referenced from CI as a secret, never a literal (0044); least-privilege, human-provisioned (0046)      |
 
 The `vercel` and `figma` servers authenticate via first-party OAuth flows, so —
 improving on the illustrative `${VERCEL_TOKEN}` / `${FIGMA_TOKEN}` examples in ADR

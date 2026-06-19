@@ -34,6 +34,7 @@
     "check:gates": "node scripts/check-gates.mjs",
     "check:claude": "node scripts/check-claude-infra.mjs",
     "check:claude-md": "node scripts/check-claude-md.mjs",
+    "check:citations": "node scripts/check-adr-citations.mjs",
     "debt:scan": "node scripts/debt-scan.mjs",
     "ds:signature": "node scripts/component-signature.mjs",
     "ds:states": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/state-coverage.mjs",

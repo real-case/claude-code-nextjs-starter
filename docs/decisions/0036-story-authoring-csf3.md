@@ -115,8 +115,8 @@ under `.storybook`/stories defines documentation pages only, not stories.
 Builds directly on **0035** (the workbench and the stories-as-tests reuse this format serves),
 **0003** (the strict-TypeScript / `satisfies` typing pattern stories follow), **0006** (ESLint
 flat config that hosts `eslint-plugin-storybook`), and **0010** (the CI gate that runs lint).
-CSF 3 is the default authoring format on the Storybook 9 line targeted in **0035**. MDX stays
+CSF 3 is the default authoring format on the Storybook 10 line targeted in **0035**. MDX stays
 in scope only for autodocs/documentation pages. Revisit when Storybook's announced successor
-format — the experimental CSF Factories ("CSF Next") already shipping on the Storybook 9
+format — the experimental CSF Factories ("CSF Next") already shipping on the Storybook 10
 line — stabilizes; adopting it would be recorded as a new superseding ADR rather than an
 in-place edit.

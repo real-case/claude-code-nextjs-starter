@@ -47,7 +47,11 @@ request-scoped **server client** (cookie-bound) is used in Server Components, ro
 and Server Actions. All user-facing access runs **as the user**, governed by RLS policies;
 the **service-role** key is confined to trusted server-only contexts (e.g. admin tasks,
 webhooks) and never exposed to the client. Clients live under `src/lib/supabase/`. Session
-refresh happens in middleware so every request carries a fresh session.
+refresh happens in middleware so every request carries a fresh session. Server code that needs
+the authenticated identity reads it through a **verifying** call — `getClaims()` (local JWT
+signature verification) or `getUser()` (revalidation against the Auth server) — never
+`getSession()`, which only deserializes the cookie and is therefore not a trust boundary on the
+server.
 
 ### Consequences
 
@@ -66,6 +70,8 @@ refresh happens in middleware so every request carries a fresh session.
 Browser/server client factories exist under `src/lib/supabase/`; middleware refreshes the
 session each request; RLS policies are defined in migrations and exercised by e2e tests
 (**0007**). Service-role usage is grep-auditable and confined to server-only modules.
+Trusted-identity reads use `getClaims()` / `getUser()`; `getSession()` is never used to gate
+access on the server (grep-auditable; checked by the diff-scoped security review, **0056**).
 
 ## Pros and Cons of the Options
 

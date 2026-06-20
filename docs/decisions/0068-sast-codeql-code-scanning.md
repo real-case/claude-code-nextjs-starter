@@ -1,6 +1,6 @@
 ---
-status: "proposed"
-date: 2026-06-19
+status: "accepted"
+date: 2026-06-20
 decision-makers: Yurii Anichkin
 ---
 

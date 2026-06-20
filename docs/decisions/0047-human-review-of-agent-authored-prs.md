@@ -97,7 +97,7 @@ approval purposes. Verified in repository settings and by sampling merge history
 ## More Information
 
 Builds on **0011** (the PR flow this gates), **0010** (branch protection as the
-enforcement point), **0046** (agent role and PR labeling). **0048** defines the AI first
+enforcement point), **0046** (agent role; PR attribution deliberately left to the project). **0048** defines the AI first
 pass this record explicitly subordinates to human approval. Revisit with a superseding
 record when review-throughput data exists to support a tiered model, or if team size
 changes the review economics.

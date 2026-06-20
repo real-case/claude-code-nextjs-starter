@@ -33,7 +33,7 @@ matches the design; it does not, and cannot, *decide* what should be common.
 * **Figma is a hint, not the truth** — design structure informs the graph, but the analytical
   commonality decision is the project's, recorded here, not imported from a design tool (**0045**).
 * **Do not conflate the two graphs** — composition (intent, top-down) and import (code, bottom-up,
-  **0060**) are different objects; collapsing them loses the very mismatch the **0063**/**0012**-style
+  **0060**) are different objects; collapsing them loses the very mismatch the **0063**/**0060**-style
   anti-drift check depends on.
 
 ## Considered Options

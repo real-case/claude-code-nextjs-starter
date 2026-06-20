@@ -61,7 +61,8 @@ locale list and default are configured in one place.
 
 A `[locale]` route segment exists; middleware composes next-intl with the Supabase session
 refresh; per-locale message catalogs exist and are read from both Server and Client
-Components. Locale routing is covered by e2e tests (**0007**).
+Components. Locale routing is covered by e2e tests (**0007**; the e2e job is deferred during
+bootstrap per **0010**, so this runs locally until e2e returns to the CI gate).
 
 ## Pros and Cons of the Options
 

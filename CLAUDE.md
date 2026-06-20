@@ -6,9 +6,8 @@
 > from the **accepted** ADRs via the `adr-sync-claude-md` skill and describe the shipped
 > code. Architectural decisions are still recorded as ADRs under `docs/decisions/`
 > **before** any code depends on them; the **ADR Process** section is authoritative.
-> These sections track the **accepted** ADRs; where a still-`proposed` baseline already
-> exists in the code it is flagged inline as proposed/pending the human acceptance gate
-> (see the design-token note under **Stack**), never presented as ratified.
+> These sections track the **accepted** ADRs; the full Phase-3 baseline is now accepted, so
+> nothing below is flagged as still-proposed pending the acceptance gate.
 
 ## ADR Process
 
@@ -49,9 +48,10 @@ externally fixed client mandate, a `CON-00x` row in `constraints.md`), then impl
 
 ## Stack
 
-_Derived from the accepted ADRs via `adr-sync-claude-md` (the design-system governance layer
-0058–0064 is decided, with enforcement landing incrementally across bootstrap Phase 12 /
-Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human acceptance gate._
+_Derived from the accepted ADRs via `adr-sync-claude-md`. The full Phase-3 baseline is now
+accepted — design tokens (0033), Feature-Sliced Design (0065/0066), the security & integrity
+gates (0067–0074), the advisory-AI client (0075), and the guardrail meta-layer (0076–0078) —
+so nothing below is flagged as still-proposed._
 
 - **Next.js (App Router)** on **React 19** (`^19` pinned) — Server Components by
   default (0002; CON-001/CON-002).
@@ -99,6 +99,27 @@ Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human
   `src/design-system/` (0061); per-component typed `design-intent.ts` specs (0062);
   anti-hallucination Figma-image approval with a drift seal (0063); a Defect Log driving
   reactive fitness-function growth (0064).
+- **Feature-Sliced Design** application architecture (0065): layers `src/shared`,
+  `src/entities`, `src/features`, `src/widgets` under canonical FSD names, added
+  **additively** beside `src/app` (App Router, the app/pages role), the `src/components/ui`
+  shadcn kit, and `src/design-system`. Boundaries are a gate, not a convention — **Steiger**
+  (`check:fsd`, 0066).
+- **Security & supply-chain gates**: `gitleaks` secret scan (0056) and **CodeQL** SAST
+  (`security-extended`; analysis inert until a 👤 enables code scanning, 0068); `npm audit`
+  (0069), GitHub Actions SHA-pinning (0070), an SPDX license allowlist (0071), Conventional
+  Commits via **commitlint** (0072), offline `lychee` docs link-integrity (0073), and `cspell`
+  spell-check (0074).
+- **Reference-integrity gates** (0067): every `ADR NNNN` / `CON-00x` citation on operative
+  surfaces resolves (`check:citations`), alongside the Claude-infra gates (`check:claude` /
+  `check:claude-md`).
+- **Provider-agnostic advisory-AI client** (0075): OpenAI-compatible Chat Completions over
+  `fetch` (zero-dep), reaching any compatible key (Gemini, OpenAI, OpenRouter, …); inert until
+  `AI_API_KEY` is provisioned.
+- **Guardrail layers** (the three-layer control model): edit-time **Claude Code hooks**
+  (`PreToolUse` guard + `PostToolUse` checks, 0076); **skills + review-subagents** as the
+  structural/recall layer (advisory, never a gate's source of truth, 0077); **self-testing
+  gates** (`check:gates`) + the **technical-debt escape-hatch** gate (`check:debt`) as the
+  meta-integrity layer (0078).
 
 ## Commands
 
@@ -119,15 +140,18 @@ Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human
   over the built Storybook (0037); `npm run check:stories` — every `src/components/**`
   module has colocated stories (0042).
 - `tsc --noEmit` — typecheck, part of the CI gate (0003, 0010).
-- CI (`.github/workflows/ci.yml`, Node 24, `npm ci`) runs three parallel jobs: the
-  **quality gate** (typecheck → lint → format:check → check:stories → the design-system
-  gates → check:gates → token-drift → build → test:coverage at the ≥80% threshold), a
-  **secret scan** (gitleaks, 0056), and a **Claude-infra integrity** job (check:claude /
-  check:claude-md / check:debt). The Playwright e2e + migration-replay + type-drift job
-  and the Storybook test-runner smoke are **deferred during bootstrap** — they run
-  locally (`npm run test:e2e`, `npm run test:storybook`) and return before the first
-  production promotion; the deviation is tracked in `docs/bootstrap-plan.md` (0010, 0024,
-  0041, 0042, 0056).
+- CI (`.github/workflows/ci.yml`, Node 24, `npm ci`) runs parallel required jobs. The
+  **quality gate** (ordered): typecheck → lint → format:check → check:audit → check:licenses
+  → check:spelling → check:stories → check:boundaries → check:fsd → check:graph →
+  check:design-intent → check:seals → check:i18n → check:gates → token-drift → build →
+  test:coverage (≥80%). Alongside it: a **secret scan** (gitleaks, 0056), a **Claude-infra
+  integrity** job (check:claude / check:claude-md / check:citations / check:action-pins /
+  check:debt — each custom gate self-tests via `-- --self-test`, P6/0078), and a PR-only
+  **commitlint** job (check:commits, 0072). **CodeQL** (0068), **Chromatic** (0043), and the
+  **docs link check** (0073) run as separate workflows. The Playwright e2e + migration-replay
+  job and the Storybook test-runner smoke are **deferred during bootstrap** — they run locally
+  (`npm run test:e2e`, `npm run test:storybook`) and return before the first production
+  promotion; tracked in `docs/bootstrap-plan.md` (0010, 0024, 0041, 0042).
 - Design-system gates (Stages 0–3, wired in CI): `npm run gen:tokens` — regenerate the
   semantic-token union + lint allowlist + agent-rules reference from the `@theme`/`:root`
   layer, CI drift-checked like `gen:types` (0058); `npm run check:boundaries`
@@ -139,6 +163,13 @@ Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human
   check:tokens` — token-usage lint over `src/components/**` (0058); `npm run check:i18n` —
   key-parity + ICU (0055); `npm run check:gates` — gate self-test (every custom rule
   rejects its violator, P6); `npm run check:design-system` runs the bundle.
+- Security & integrity gates: `npm run check:audit` (`npm audit --audit-level=high
+  --omit=dev`, 0069); `npm run check:action-pins` — every workflow `uses:` pinned to a commit
+  SHA (0044/0070); `npm run check:licenses` — production deps against an SPDX allowlist (0071);
+  `npm run check:spelling` — `cspell` over `**/*.md` (0074); `npm run check:commits` —
+  commitlint over the PR range (0072); `npm run check:citations` — ADR/CON citations resolve on
+  operative surfaces (0067); `npm run check:fsd` — Feature-Sliced Design boundaries via Steiger
+  (0066).
 - Design-system agent-loop helpers (advisory — run before/while building a component):
   `npm run ds:signature` — composition-signature duplicate check before creating a
   component (0059, P2); `npm run ds:states` — the mandatory state set for an archetype,
@@ -148,8 +179,8 @@ Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human
   table (0058, Stage 6, P1). Surfaced as the `component-signature`, `state-coverage`, and
   `check-tokens` skills. The allowed-token list is the **generated**
   `src/design-system/tokens.agent-rules.md` — never re-list tokens in prose (0058, P6).
-- Phase-12 advisory AI jobs (`scripts/ai/*`, ADRs 0048–0057) — provider-agnostic via the
-  OpenAI-compatible client, inert until a 👤 provisions `AI_API_KEY`: AI PR review (0048),
+- Phase-12 advisory AI jobs (`scripts/ai/*`, ADRs 0048–0057, 0075) — provider-agnostic via the
+  OpenAI-compatible client (0075), inert until a 👤 provisions `AI_API_KEY`: AI PR review (0048),
   CI-failure triage (0049), changelog draft
   (0050), security Layer 2 (0056), via `.github/workflows/ai-advisory.yml` /
   `ai-ci-triage.yml`, plus the Renovate config `renovate.json` (0057). Each is advisory
@@ -160,6 +191,11 @@ Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human
 - Server Components by default; `"use client"` only at interactive leaves; mutations
   via Server Actions (route handlers for webhook-style endpoints); app code in
   `src/app/` (0002).
+- Application code is placed by Feature-Sliced Design (0065): the `new-slice` skill's decision
+  tree picks the layer (`shared`/`entities`/`features`/`widgets`); imports go downward only,
+  same-layer slices are isolated, and each slice is reached through its public `index.ts`. A
+  reusable shadcn primitive goes in `src/components/ui` via `new-component` (a kit outside FSD);
+  `src/design-system`, `src/lib`, and `src/i18n` also stay outside the FSD area (0065/0066).
 - Types are inferred from Zod schemas (`z.infer`), never written separately; boundary
   schemas carry origin markers (`[env]`, `[form:signup]`, …) (0017); the same schema
   validates on the client and re-validates on the server (0020).
@@ -189,6 +225,8 @@ Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human
 - Git: feature branches → PR into `dev` (integration); `dev` is promoted to `main`
   (production, always deployable); both protected, CI check required (0011);
   production deploys from `main`, every PR gets a preview URL (0009).
+- Commits follow Conventional Commits (commitlint); the machine-readable history feeds the
+  AI changelog draft at the `dev`→`main` release (0072, 0050).
 - Tests are colocated (`src/**/*.test.tsx`), e2e lives in `e2e/`; coverage is
   risk-weighted — auth/RLS/critical flows get e2e first (0007).
 - Every exported component in `src/components/**` ships colocated CSF 3 stories
@@ -263,6 +301,14 @@ Stages 0–6). The design-token baseline (0033) is `proposed`, pending the human
   `fill`/`stroke`, or Tailwind numbered-palette classes; the token allowlist + agent rules are
   generated, never hand-written (0058). Primitives never import composites; cross-component
   imports go through `index.ts`; no import cycles or orphan modules (0060).
+- Application code obeys FSD direction: no upward imports, no imports between same-layer slices,
+  no sidestep of a slice's public `index.ts` — enforced by Steiger (`check:fsd`, 0066).
+- GitHub Actions `uses:` are pinned to a full commit SHA (0044/0070); production dependencies
+  stay within the SPDX license allowlist (0071); commits violating Conventional Commits fail CI
+  (0072).
+- Runtime theme switching is deferred (0079): the template ships only the `.dark` value layer
+  and the `dark` variant — no theme toggle or provider; a consuming project records its own ADR
+  to add one.
 - The agent never approves its own visual baseline (Chromatic UI, human-only) and is never
   shown its own implementation during API approval — the proof is Figma pixels it does not
   control (0063, 0047). Controlled-vocabulary entries are human-authored; a rename/merge/split

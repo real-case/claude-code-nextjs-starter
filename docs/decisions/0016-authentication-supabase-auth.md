@@ -43,7 +43,9 @@ the one identity RLS evaluates — no second auth authority to reconcile. Email/
 baseline method, sufficient to exercise the full auth + RLS path end-to-end; OAuth providers,
 magic links, and richer flows are deferred to later ADRs. Sessions are refreshed in
 middleware so every request carries a current session; RLS policies authorize against
-`auth.uid()`.
+`auth.uid()`. On the server, the authenticated identity is read through a verifying call
+(`getClaims()` / `getUser()`), never `getSession()` — the trusted-identity rule recorded in
+**0013**.
 
 ### Consequences
 

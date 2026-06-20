@@ -65,7 +65,7 @@ two lint layers enforce usage:
 
 A companion structural rule — **"a primitive carries no external margin"** (layout spacing is the
 composer's concern, not the primitive's) — is recorded here as a token-of-layout invariant; its
-mechanical form lands with the boundary work in **0060**. Honoring the bootstrap-lean posture
+mechanical form lands with the per-component intent check in **0062**. Honoring the bootstrap-lean posture
 (**0010** deferrals), the lints run in the existing quality gate; nothing new is deferred-out.
 
 ### Consequences
@@ -99,7 +99,7 @@ generated artifact). Subject to the **0054** drift audit once accepted.
 
 * Good, because it delivers the guarantee (CI) and the single source (codegen) together.
 * Good, because it reuses the **0015** `gen:types` pattern the repo already trusts.
-* Neutral, because the "no external margin" invariant is stated here but enforced with **0060**.
+* Neutral, because the "no external margin" invariant is stated here but enforced with **0062**.
 * Bad, because CSS parsing is more fragile than a JSON token pipeline and renames ripple.
 
 ### Hand-maintained allowlist
@@ -119,7 +119,7 @@ generated artifact). Subject to the **0054** drift audit once accepted.
 Extends **0032** (the CSS-first `@theme` config) and **0033** (the canonical token layer) by adding
 the enforcement and codegen they deferred; mirrors **0015** (`gen:types`) for the generate→drift-check
 loop and runs in the **0010** CI gate. The "no external margin" invariant is completed mechanically by
-the boundary checks in **0060**; the generated union is referenced by the intent files of **0062**.
+the per-component intent check (`check:design-intent`) of **0062**, which also references the generated token union.
 Dictionary-rename friction is the governance concern shared with **0061** and **0064**. Confirms
 problems P1 (raw/non-semantic values), P5 (composition leaking into a primitive — the margin rule),
 and P6 (agent rules diverging from CI). Drafted `proposed`; acceptance is the human gate (**0046** /

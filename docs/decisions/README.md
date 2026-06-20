@@ -36,7 +36,7 @@ Architecture Decision Records for this project, in [MADR](https://adr.github.io/
 | [0030](0030-internationalization-next-intl.md) | Internationalization with next-intl | accepted | 2026-06-11 |
 | [0031](0031-seo-and-metadata.md) | SEO and page metadata via the App Router Metadata API | accepted | 2026-06-11 |
 | [0032](0032-styling-tailwind-css.md) | Styling with Tailwind CSS, configured CSS-first | accepted | 2026-06-11 |
-| [0033](0033-design-tokens.md) | Design tokens: CSS custom properties via @theme, with a neutral shadcn baseline | proposed | 2026-06-15 |
+| [0033](0033-design-tokens.md) | Design tokens: CSS custom properties via @theme, with a neutral shadcn baseline | accepted | 2026-06-20 |
 | [0034](0034-component-layer-shadcn-ui.md) | Component layer: shadcn/ui, copied into the repo and themed by design tokens | accepted | 2026-06-11 |
 | [0035](0035-component-workbench-storybook.md) | Component workbench: Storybook 10 on the Vite builder, with stories doubling as tests | accepted | 2026-06-11 |
 | [0036](0036-story-authoring-csf3.md) | Story authoring standard: Component Story Format 3 (CSF 3) | accepted | 2026-06-11 |
@@ -68,14 +68,18 @@ Architecture Decision Records for this project, in [MADR](https://adr.github.io/
 | [0062](0062-design-intent-spec-and-api-derivation.md) | `design-intent.ts` as component specification and usage-driven API derivation | accepted | 2026-06-11 |
 | [0063](0063-anti-hallucination-approval-and-drift-seal.md) | Anti-hallucination component approval and the Figma drift seal | accepted | 2026-06-11 |
 | [0064](0064-defect-log-and-reactive-fitness-growth.md) | Defect Log and reactive growth of design-system fitness functions | accepted | 2026-06-11 |
-| [0065](0065-feature-sliced-design-architecture.md) | Adopt Feature-Sliced Design for application architecture | proposed | 2026-06-17 |
-| [0066](0066-fsd-boundary-enforcement-steiger.md) | Enforce Feature-Sliced Design boundaries with Steiger | proposed | 2026-06-17 |
-| [0067](0067-reference-integrity-gates-for-adr-citations.md) | Reference-integrity gates for ADR/CON citations across operative surfaces | proposed | 2026-06-19 |
-| [0068](0068-sast-codeql-code-scanning.md) | Static application security testing via GitHub CodeQL code scanning | proposed | 2026-06-19 |
-| [0069](0069-dependency-vulnerability-audit-gate.md) | Dependency vulnerability gate via `npm audit` | proposed | 2026-06-19 |
-| [0070](0070-github-actions-sha-pinning-gate.md) | Enforce SHA-pinning of GitHub Actions with a fitness-function gate | proposed | 2026-06-19 |
-| [0071](0071-dependency-license-compliance-gate.md) | Dependency license-compliance gate | proposed | 2026-06-19 |
-| [0072](0072-conventional-commits-enforcement.md) | Enforce Conventional Commits with commitlint | proposed | 2026-06-19 |
-| [0073](0073-documentation-link-check.md) | Documentation link-integrity gate (internal links) | proposed | 2026-06-19 |
-| [0074](0074-documentation-spell-check.md) | Documentation spell-check with cspell | proposed | 2026-06-19 |
-| [0075](0075-provider-agnostic-ai-client.md) | Provider-agnostic advisory-AI client via the OpenAI-compatible Chat Completions API | proposed | 2026-06-19 |
+| [0065](0065-feature-sliced-design-architecture.md) | Adopt Feature-Sliced Design for application architecture | accepted | 2026-06-20 |
+| [0066](0066-fsd-boundary-enforcement-steiger.md) | Enforce Feature-Sliced Design boundaries with Steiger | accepted | 2026-06-20 |
+| [0067](0067-reference-integrity-gates-for-adr-citations.md) | Reference-integrity gates for ADR/CON citations across operative surfaces | accepted | 2026-06-20 |
+| [0068](0068-sast-codeql-code-scanning.md) | Static application security testing via GitHub CodeQL code scanning | accepted | 2026-06-20 |
+| [0069](0069-dependency-vulnerability-audit-gate.md) | Dependency vulnerability gate via `npm audit` | accepted | 2026-06-20 |
+| [0070](0070-github-actions-sha-pinning-gate.md) | Enforce SHA-pinning of GitHub Actions with a fitness-function gate | accepted | 2026-06-20 |
+| [0071](0071-dependency-license-compliance-gate.md) | Dependency license-compliance gate | accepted | 2026-06-20 |
+| [0072](0072-conventional-commits-enforcement.md) | Enforce Conventional Commits with commitlint | accepted | 2026-06-20 |
+| [0073](0073-documentation-link-check.md) | Documentation link-integrity gate (internal links) | accepted | 2026-06-20 |
+| [0074](0074-documentation-spell-check.md) | Documentation spell-check with cspell | accepted | 2026-06-20 |
+| [0075](0075-provider-agnostic-ai-client.md) | Provider-agnostic advisory-AI client via the OpenAI-compatible Chat Completions API | accepted | 2026-06-20 |
+| [0076](0076-claude-code-hooks-edit-time-enforcement.md) | Claude Code hooks as the edit-time enforcement layer | accepted | 2026-06-20 |
+| [0077](0077-skills-and-review-subagents-structural-layer.md) | Skills and review-subagents as the structural (recall) layer | accepted | 2026-06-20 |
+| [0078](0078-self-testing-gates-and-debt-escape-hatch.md) | Self-testing gates and the technical-debt escape-hatch gate | accepted | 2026-06-20 |
+| [0079](0079-runtime-theme-switching-deferred.md) | Runtime theme switching deferred; ship the `.dark` value layer only | accepted | 2026-06-20 |

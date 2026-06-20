@@ -48,8 +48,8 @@ are removed from the codebase, kept only in rare, documented cases the compiler 
 (e.g. an explicit `"use no memo"` escape hatch). Components must follow the Rules of React,
 which the compiler depends on; the React Compiler ESLint rule (part of the lint setup,
 **0006**) flags violations. This makes manual memoization the exception rather than the norm,
-and revises the manual-memoization leanings in **0028** — an in-place refinement while both
-records are still `proposed`, not a formal lifecycle change.
+and narrows the scope of **0028** accordingly — memoization is now the compiler's job, while
+**0028** governs only concurrency scheduling (`useTransition` / `useDeferredValue`).
 
 ### Consequences
 

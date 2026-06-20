@@ -7,10 +7,14 @@ decisions themselves live in ADRs **0058–0064** (plus the AI-process records 0
 and the runtime artifacts live in [`src/design-system/`](../src/design-system/). Read this to
 understand the shape before you extend it.
 
-> The companion how-it-fits-together docs are [`AI-GUARDRAILS.md`](../AI-GUARDRAILS.md)
-> (project-wide deterministic governance) and
-> [`STORYBOOK-GUARDRAILS.md`](../STORYBOOK-GUARDRAILS.md) (the component layer). Where this
-> doc and an accepted ADR disagree, the ADR wins.
+> The companion how-it-fits-together docs are the overview set in this folder —
+> [`01-problems-and-advantages.md`](01-problems-and-advantages.md),
+> [`02-defense-mechanisms.md`](02-defense-mechanisms.md), and
+> [`03-methodology.md`](03-methodology.md) — covering project-wide deterministic governance;
+> the component layer lives in the Storybook ADRs (0035–0043) and the `story-matrix` /
+> `new-component` skills. (The earlier `AI-GUARDRAILS.md` and `STORYBOOK-GUARDRAILS.md`
+> companions were folded into this set and remain in git history.) Where this doc and an
+> accepted ADR disagree, the ADR wins.
 
 ## 1. The spine — three verification layers
 

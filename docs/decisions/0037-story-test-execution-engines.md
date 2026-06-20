@@ -106,5 +106,5 @@ This record is the hub for the story-testing modalities: **0038** (interaction),
 **0035** (the addon engine), **0007** (Playwright/Vitest reuse and the `composeStories`
 boundary), **0036** (the CSF 3 stories both engines execute), **0008** (coverage gate fed by
 the addon), **0010** (CI runs both), and **0009** (the built Storybook artifact the runner
-smoke-tests). Targets the Storybook 9 line. Revisit if the test-runner's roles are fully
+smoke-tests). Targets the Storybook 10 line. Revisit if the test-runner's roles are fully
 absorbed by the addon in a later Storybook release, at which point the runner could be dropped.

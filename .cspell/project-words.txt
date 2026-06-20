@@ -26,8 +26,10 @@ demoable
 depcruise
 diagnosability
 didnt
+diffable
 direnv
 doesnotexist
+dogfood
 Firestore
 firstviol
 frontmatter
@@ -50,6 +52,7 @@ Nygard
 oklch
 operationalized
 operationalizes
+prebuild
 precheck
 primaryy
 refetched
@@ -68,6 +71,7 @@ stringly
 Supabase
 Supabase's
 tokenizable
+triggerable
 typesafe
 uncitable
 undercounting

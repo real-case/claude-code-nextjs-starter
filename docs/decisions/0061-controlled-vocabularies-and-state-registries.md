@@ -30,7 +30,7 @@ of the whole design-system plan. This record establishes them and how they are g
   escalation" (P3).
 * **Decide simultaneity once** — behavior under `disabled+loading`, `invalid+read-only`,
   `hover-over-selected` is a cross-component contract that must be fixed system-wide, not per component
-  (P2/P8).
+  (P8).
 * **Type-checked references, governed renames** — referencing an unknown role/archetype must fail
   typecheck; but a *rename/merge/split* of a vocabulary entry is a migration of every referencing intent
   file, which needs an owner and a procedure (the governance the union types cannot provide).
@@ -62,7 +62,7 @@ one governed truth. Four artifacts, all 👤 human-authored under `src/design-sy
 * **Archetype→states registry** — the "class → mandatory state axes" table (the plan's Appendix A1
   starting set); the acceptance-criteria source for coverage by subtraction (P8).
 * **State-precedence matrix** — simultaneity resolved once: focus-visible always wins, disabled suppresses
-  hover/active, `loading+disabled` defined explicitly, etc. (P2/P8).
+  hover/active, `loading+disabled` defined explicitly, etc. (P8).
 
 References are typed (a story/intent naming an unknown role or archetype fails typecheck — the cheap half),
 but the union types catch only *broken references*, **not** the *decision* to rename. So dictionary

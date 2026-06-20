@@ -3,12 +3,12 @@
 /.pnp
 .pnp.*
 
-# Local environment — secrets never enter version control (ADR 0020, 0042)
+# Local environment — secrets never enter version control
 .env
 .env.*
 !.env.example
 
-# Per-developer local overrides (ADR 0042)
+# Per-developer local overrides
 .claude/settings.local.json
 
 # Next.js
@@ -25,7 +25,7 @@ next-env.d.ts
 /blob-report
 /playwright/.cache
 
-# Storybook (ADR 0034 → 0057)
+# Storybook
 /storybook-static
 *storybook.log
 
@@ -39,3 +39,9 @@ npm-debug.log*
 .idea/
 .DS_Store
 *.pem
+
+# ADR-edit waiver sentinel — template-maintenance opt-out for the accepted-ADR
+# immutability guard (scripts/hooks/guard-protected-files.mjs). NEVER commit it: a
+# committed sentinel would ship the guard disabled. Drop it locally to edit an accepted
+# ADR in place, remove it when done.
+.adr-edit-waiver

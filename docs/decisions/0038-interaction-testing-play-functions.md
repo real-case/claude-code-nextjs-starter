@@ -41,7 +41,7 @@ component with interactive behavior** — inputs, buttons with side effects, tog
 dialogs, and forms (**0020**) — ships at least one story whose `play` function drives the UI
 with `userEvent` and asserts post-interaction DOM via `expect` / `within`, and uses `fn()`
 spies to prove that callback props were invoked with the expected arguments. The toolkit is
-`@storybook/test` (in the Storybook 9 line, imported from `storybook/test`): Testing Library
+`@storybook/test` (in the Storybook 10 line, imported from `storybook/test`): Testing Library
 plus Vitest-compatible matchers, instrumented so each step is visible in the Storybook UI and
 executed by the engines in **0037**. **Purely presentational components are exempt** — a render
 story (with `args`) is sufficient, and forcing an empty `play` on them would be noise.
@@ -95,4 +95,4 @@ Builds on **0036** (CSF 3 object stories that host `play`), **0037** (the engine
 `play`), **0035** (stories-as-tests), **0007** (shared Testing Library idioms and the
 RTL boundary), **0003** (strict typing of interaction code), and **0020** (forms are a primary
 interaction surface). The accessibility checks layered over the same stories are decided in
-**0039**. Targets the Storybook 9 `storybook/test` package; revisit if that API changes.
+**0039**. Targets the Storybook 10 `storybook/test` package; revisit if that API changes.

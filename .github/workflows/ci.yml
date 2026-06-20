@@ -94,7 +94,7 @@ jobs:
         run: npm run check:i18n # ADR 0055
 
       - name: "[gates] Self test"
-        run: npm run check:gates # ADR 0058/0059/0060/0055, P6
+        run: npm run check:gates # ADR 0078, P6
 
       - name: "[tokens] Codegen drift"
         # ADR 0058 — gen:tokens output must match the @theme layer in globals.css
@@ -147,9 +147,9 @@ jobs:
   # Dependency-free Node scripts — no node_modules needed — so this job skips `npm ci`
   # and runs in parallel with the quality gate.
   #
-  # GOVERNANCE: these reference-integrity gates are recorded by ADR 0067 (proposed) and
-  # extend the ADR 0054 drift-audit posture; while 0067 is proposed keep them advisory —
-  # accept it before marking any of them a required check (a 👤 branch-protection setting).
+  # GOVERNANCE: these reference-integrity gates are recorded by ADR 0067 (accepted) and
+  # extend the ADR 0054 drift-audit posture. Marking any of them a required check remains a
+  # 👤 branch-protection setting.
   claude-infra:
     name: Claude-infra integrity
     runs-on: ubuntu-latest
@@ -185,7 +185,7 @@ jobs:
         run: npm run check:action-pins # ADR 0044/0070
 
       - name: "[debt] Escape-hatch inventory"
-        run: npm run check:debt # ADR 0003/0029/0039/0049/0062/0064
+        run: npm run check:debt # ADR 0078 escape-hatch gate (sources 0003/0029/0039/0049/0062/0064)
 
   # ── Conventional Commits ─────────────────────────────────────────────────────
   # commitlint over the PR's commit range (ADR 0072) — the format the AI changelog draft

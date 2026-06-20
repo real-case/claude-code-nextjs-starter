@@ -1,6 +1,6 @@
 ---
-status: "proposed"
-date: 2026-06-19
+status: "accepted"
+date: 2026-06-20
 decision-makers: Yurii Anichkin
 ---
 
@@ -66,8 +66,10 @@ dangling citation, and it runs in the `claude-infra` CI job beside its siblings.
 record ratifies the pre-existing `check:claude` / `check:claude-md` gates, which until now
 ran without one. The surface list is the gate's single source of truth — adding a new
 file that cites decisions means adding it to that list, not writing a second parser. This
-record is `proposed`; per **0046** the implementation lands only after the human acceptance
-gate, so the gate is not wired ahead of ratification.
+record is `proposed`; the gate already ships under the bootstrap posture (like its sibling
+`check:*` gates), running in the `claude-infra` CI job as a **non-blocking advisory** — it
+WARNs on citations to still-`proposed` records — until the human acceptance gate (**0046**)
+promotes it to a required check.
 
 ### Consequences
 
@@ -127,8 +129,9 @@ Extends the deterministic half of the **0054** drift-audit posture to operative 
 and completes the reference-integrity family alongside `check:claude` (`.claude/**`) and
 `check:claude-md` (`CLAUDE.md`). Reuses `scripts/lib/adr-corpus.mjs` (single resolver) and
 the P6 self-test convention shared with `check:gates` (**0058**/**0059**/**0060**). Falls
-under the agent role and human-only acceptance gate of **0046**. On acceptance, wire the
-gate into the `claude-infra` CI job and update the standing note in `ci.yml` that records
-the reference-integrity gates as lacking a ratifying ADR. Revisit the surface list whenever
+under the agent role and human-only acceptance gate of **0046**. The gate already runs in the
+`claude-infra` CI job as a non-blocking advisory; on acceptance, promote it to a required check
+and remove the standing note in `ci.yml` that records the reference-integrity gates as awaiting
+a ratifying ADR. Revisit the surface list whenever
 a new file begins citing decisions by number (e.g. `README.md`, were its prose citations
 ever to warrant hard enforcement).

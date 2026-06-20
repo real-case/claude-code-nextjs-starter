@@ -113,8 +113,8 @@ bidirectional — the constraint cites this ADR, this ADR cites the constraint. 
 `vercel` server's target platform), **0012** / **0013** / **0014** (Supabase, the `supabase`
 server's target), and **0021** / **0024** (local environment and onboarding, where contributors
 provision the env vars). **Scope note:** configuring the `chromatic` and `figma` servers does
-**not** by itself decide the *visual-regression strategy* — explicitly deferred in **0040** —
-or a *design-handoff process*; those remain separate, unrecorded decisions that should each get
-their own ADR before code depends on them. Revisit if the MCP configuration schema or the
+**not** by itself decide the *visual-regression strategy* (deferred in **0040**, then settled in
+**0043**) or the *design-handoff process* (recorded in **0045**); this record covers only the MCP
+server configuration. Revisit if the MCP configuration schema or the
 env-reference mechanism changes materially, or if a server must be added to or removed from
 **CON-003** (which would be a constraint change, not an edit here).

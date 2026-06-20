@@ -61,9 +61,10 @@ convention would *sharpen* the draft's raw material, not replace this process.
 
 ### Confirmation
 
-`CHANGELOG.md` exists and gains an entry with every `dev → main` release PR; the entry is
-part of the reviewed release PR (human-edited per **0047**); drafting tooling (script or
-workflow) exists and reads history rather than requiring annotated commits.
+At the first `dev → main` release, `CHANGELOG.md` is created and thereafter gains an entry with
+every release PR; the entry is part of the reviewed release PR (human-edited per **0047**);
+drafting tooling (`scripts/ai/changelog.mjs`) exists today and reads history rather than
+requiring annotated commits.
 
 ## Pros and Cons of the Options
 

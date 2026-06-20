@@ -26,11 +26,25 @@
 // any unexpected error — a guard must never brick every edit because its own input
 // shape changed.
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { basename, resolve, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(fileURLToPath(import.meta.url), "..", "..", "..");
+
+// Template-maintenance waiver for the ACCEPTED-ADR immutability guard (clause 5 ONLY).
+// This repo is a reusable starter template, so its own maintainer has to fix typos, stale
+// versions and wrong cross-references in already-accepted records *in place* — superseding
+// every record over a one-word change would bloat the corpus (the edit-in-place waiver). The
+// guard still SHIPS its protective default: it blocks accepted-ADR edits unless an EXPLICIT,
+// out-of-band, auditable opt-in is present, so a downstream project that adopts this template
+// keeps ADR 0001 immutability enforced. The opt-in is a human-dropped sentinel file
+// (`.adr-edit-waiver`, git-ignored) or `CLAUDE_ADR_EDIT_WAIVER=1` — never something an ordinary
+// edit can set — and every bypass is logged to stderr. It relaxes ONLY clause 5; secrets,
+// constraints.md, the Tailwind-config ban and snapshot baselines stay blocked unconditionally.
+const ADR_EDIT_WAIVER =
+  process.env.CLAUDE_ADR_EDIT_WAIVER === "1" ||
+  existsSync(resolve(repoRoot, ".adr-edit-waiver"));
 
 function block(reason) {
   process.stderr.write(
@@ -127,9 +141,19 @@ if (/^docs\/decisions\/\d{4}-.+\.md$/.test(relPosix)) {
     ? (fm[1].match(/^\s*status:\s*["']?([a-z]+)["']?/im)?.[1] ?? null)
     : null;
   if (status === "accepted") {
+    if (ADR_EDIT_WAIVER) {
+      process.stderr.write(
+        `⚠ guard-protected-files: ADR-edit waiver active — allowing in-place edit of ACCEPTED ` +
+          `${relPosix}. This bypasses ADR 0001 immutability and is intended for TEMPLATE ` +
+          `MAINTENANCE only. Remove ./.adr-edit-waiver (or unset CLAUDE_ADR_EDIT_WAIVER) to ` +
+          `restore the shipped guard.\n`,
+      );
+      process.exit(0);
+    }
     block(
       `${relPosix} is an ACCEPTED ADR — accepted records are never edited in place. ` +
-        `Record a superseding ADR instead (adr-supersede / \`adr.py supersede\`), per ADR 0001.`,
+        `Record a superseding ADR instead (adr-supersede / \`adr.py supersede\`), per ADR 0001. ` +
+        `(Template maintainers: see the ADR-edit waiver documented at the top of this hook.)`,
     );
   }
 }

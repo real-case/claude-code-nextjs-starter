@@ -8,7 +8,8 @@
     ".next/**",
     "coverage/**",
     "**/package-lock.json",
-    "docs/decisions/README.md"
+    "docs/decisions/README.md",
+    "docs/ru/**"
   ],
   "dictionaryDefinitions": [
     {

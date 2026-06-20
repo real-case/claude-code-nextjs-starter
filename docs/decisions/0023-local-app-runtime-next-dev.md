@@ -106,6 +106,5 @@ decided in **0024**; the hosting platform whose env this syncs is recorded in **
 env validation model is **0018**. Vercel's CLI documentation (vercel.com/docs/cli/dev,
 checked 2026-06-11) states that when a framework's development command already provides the
 needed features — naming Next.js's `next dev` — `vercel dev` is not recommended; that
-recommendation is the basis of this record's parity reasoning. While still `proposed`,
-this record was revised from an earlier "vercel dev primary" draft after review surfaced
-that vendor recommendation.
+recommendation is the basis of this record's parity reasoning; an earlier "vercel dev
+primary" draft was revised to `next dev` after review surfaced that vendor recommendation.

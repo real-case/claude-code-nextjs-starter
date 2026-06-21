@@ -5,7 +5,7 @@
 # scoped and carry a justification; changes to this file are human-reviewed
 # like any other (ADR 0046). Weakening the scan here is a red flag in review.
 
-title = "claude-code-next-starter gitleaks config"
+title = "claude-code-nextjs-starter gitleaks config"
 
 [extend]
 # Extend the default gitleaks ruleset — never replace it.

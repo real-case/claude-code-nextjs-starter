@@ -18,7 +18,7 @@
 | --- | --- | --- | --- | --- |
 | CON-001 | **React** as the UI library | Client mandate — pre-selected before bootstrap | 2026-06-10 | None of its own — subsumed by CON-002's Next.js framework ADR ([0002](0002-nextjs-app-router-server-components.md)) |
 | CON-002 | **Next.js (App Router)** as the application framework | Client mandate | 2026-06-10 | [0002](0002-nextjs-app-router-server-components.md) — App Router + Server-Components-default rendering strategy |
-| CON-003 | **MCP server toolchain** — `context7`, `figma`, `vercel`, `supabase`, `chromatic` — as the mandated agent/dev tooling baseline the project must provide and use | Project-owner mandate — fixed, not deliberated | 2026-06-10 | [0044](0044-mcp-server-configuration.md) — project-scoped, committed config with secrets handled by env-reference |
+| CON-003 | **MCP server toolchain** — `context7`, `figma`, `vercel`, `supabase`, `chromatic`, `github` — as the mandated agent/dev tooling baseline the project must provide and use | Project-owner mandate — fixed, not deliberated | 2026-06-10 | [0044](0044-mcp-server-configuration.md) — project-scoped, committed config with secrets handled by env-reference |
 
 ## How to use this registry
 

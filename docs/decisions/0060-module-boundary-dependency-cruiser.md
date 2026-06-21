@@ -31,8 +31,10 @@ that answers "who keeps the graph honest."
 * **Reconcile intent vs. code (P9)** — a mismatch between the **0059** composition graph and the
   derived import graph must fail CI and force an update of one or the other; this is the anti-drift
   guarantee.
-* **Non-FSD structure** — the repo is `src/app` + `src/components/ui` + `src/lib` on a single `@/*`
-  alias (no Feature-Sliced layers), so boundaries are expressed as path globs, not layer aliases.
+* **Glob-scoped component tier** — dependency-cruiser governs the `src/components` tier
+  (`src/components/ui` primitives + composites above), which sits *outside* the Feature-Sliced layers
+  added by **0065** (enforced separately by Steiger, **0066**); its boundaries are therefore expressed
+  as path globs, not layer aliases.
 
 ## Considered Options
 
@@ -46,7 +48,7 @@ that answers "who keeps the graph honest."
 Chosen option: "adopt dependency-cruiser", because it is the one option that both enforces import
 boundaries *and* can emit a machine-readable import graph to reconcile against **0059** — the
 reconciliation is the whole point, and a lint rule cannot produce a graph to compare. `dependency-cruiser`
-is added as a devDependency with a committed config authored for this repo's non-FSD layout: boundaries
+is added as a devDependency with a committed config authored for the `src/components` tier: boundaries
 are path globs — `src/components/ui/**` is the *primitive* layer, composites/patterns live above it —
 expressed as rules:
 
@@ -72,7 +74,7 @@ and config land now.
   diverge (P9); whoever changes one is forced to update the other.
 * Good, because `no-circular`/`no-orphans` surface dead and tangled modules that erode dedup (P2) and
   break wave topology (Stage 6).
-* Bad, because dependency-cruiser config for a non-FSD layout is hand-authored glob logic that must be
+* Bad, because dependency-cruiser config for the glob-scoped component tier is hand-authored glob logic that must be
   kept correct as the structure evolves — a maintenance surface of its own.
 * Bad, because the reconciliation step is only as good as the **0059** graph's freshness; a stale graph
   produces false mismatches, so it couples to **0064** deprecation hygiene.
@@ -93,7 +95,7 @@ audit once accepted.
 * Good, because it enforces boundaries and emits the graph the **0059** reconciliation needs.
 * Good, because `no-circular`/`no-orphans` come for free and protect the wave topology.
 * Neutral, because the bootstrap-lean posture may keep it local until justified.
-* Bad, because non-FSD boundaries are glob-expressed config to maintain, and reconciliation depends on
+* Bad, because these component-tier boundaries are glob-expressed config to maintain, and reconciliation depends on
   graph freshness.
 
 ### ESLint `no-restricted-imports`
@@ -114,7 +116,6 @@ New decision; adopts the dependency-cruiser devDependency the plan's §2 notes i
 *code* against the *intent* graph of **0059** — the two graphs are deliberately distinct (plan §4): this
 record builds the import graph and the reconciliation; **0059** owns the composition graph. Runs in the
 **0010** CI gate beside the **0058** token lints; mirrors **0015**'s drift-check discipline; couples to
-**0064** for graph/deprecation hygiene. The primitive-vs-composite glob expression for a non-FSD Next
-layout is an open question carried in the plan. Confirms problems P5 (composition leaking into a
-primitive), P2 (orphans/duplication), and P9 (artifact↔code drift). Drafted `proposed`; acceptance is the
-human gate (**0046**).
+**0064** for graph/deprecation hygiene. The primitive-vs-composite glob expression for the
+component tier is an open question carried in the plan. Confirms problems P5 (composition leaking into a
+primitive), P2 (orphans/duplication), and P9 (artifact↔code drift).

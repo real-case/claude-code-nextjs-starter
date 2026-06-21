@@ -50,9 +50,8 @@ either the code is fixed to match the record, or a superseding record is opened 
 silent edit of the accepted record. Two boundaries: mechanical predicates should
 *graduate* into standing lint/CI checks opportunistically (the audit then verifies the
 check exists rather than re-deriving the predicate); and the audit gains its purpose only
-as records reach `accepted` — today's all-`proposed` corpus makes this record
-deliberately ahead of need, recorded now because the Confirmation-writing convention it
-rewards is being set now.
+as records reach `accepted` — with the corpus now fully accepted, the Confirmation-writing
+convention it rewards is the live contract it verifies.
 
 ### Consequences
 
@@ -106,7 +105,7 @@ this record's own Confirmation is subject to the audit once accepted.
 
 Completes the tooling triad of **0001**: `adr-audit` (corpus integrity), `adr-coverage`
 (decision gaps), and this record (code/decision drift). Operates only on `accepted`
-records — its activation is coupled to the corpus's first acceptance wave. Cited as the
+records — now that the baseline is fully accepted, it covers the whole corpus. Cited as the
 verification backstop by **0049** (quarantine rot), **0053** (absence-of-machinery
 confirmation), and **0056** (whole-repo complement to diff-scoped checks). Falls under
 the agent role of **0046**; disposition authority under **0047**. Revisit scoping

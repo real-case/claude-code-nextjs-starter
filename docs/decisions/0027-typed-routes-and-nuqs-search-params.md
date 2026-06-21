@@ -68,8 +68,8 @@ boundary. Concretely:
   nuqs handling serialization, defaults, batching, and shallow/RSC behavior.
 * Good, because the state model is now unambiguous: server state in Query (**0025**),
   URL-owned state in nuqs, ephemeral client state in Zustand (**0026**).
-* Bad, because typed routes is a build-time codegen feature (stable in the pinned Next 16,
-  earlier behind an experimental flag) — it adds a generated-types step and only checks statically analyzable
+* Bad, because typed routes is a build-time codegen feature (now stable, earlier behind an
+  experimental flag) — it adds a generated-types step and only checks statically analyzable
   `href`s, so dynamically built string hrefs still need care.
 * Bad, because nuqs is another dependency and a small API to learn, and putting
   state that should not be public (sensitive, or very large) into the URL is a misuse to

@@ -112,5 +112,5 @@ operates within the read-only figma posture of **0045**/**0044**; the plan's `ge
 distinction maps to this server's screenshot vs. code-generation tools. Complements **0053**, which deferred
 AI pre-classification of visual diffs — this record adds no diff-classification machinery, only the seal.
 Figma image rate limits and an image-generation provider for showcase artifacts are open questions the plan
-carries. Confirms problems P4 (API hallucination) and P9 (post-approval drift). Drafted `proposed`; acceptance,
-and all baseline/variant approvals, are human actions (**0046**/**0047**).
+carries. Confirms problems P4 (API hallucination) and P9 (post-approval drift). All
+baseline/variant approvals are human actions (**0046**/**0047**).

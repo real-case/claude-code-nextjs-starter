@@ -61,8 +61,9 @@ coverage. Tests are wired into the CI gate (**0010**).
 
 ### Confirmation
 
-`npm run test` runs `vitest run` for the fast inner loop; coverage is enforced separately in
-CI through the dedicated `npm run test:coverage` command (**0008**). `npm run test:e2e` runs
+`npm run test` runs `vitest run` (the full Vitest run); the fast jsdom-only inner loop is
+`npm run test:unit`. Coverage is enforced separately in CI through the dedicated
+`npm run test:coverage` command (**0008**). `npm run test:e2e` runs
 Playwright against a production build with the local Supabase stack up. The coverage and e2e
 runs are part of the CI quality gate (**0010**).
 

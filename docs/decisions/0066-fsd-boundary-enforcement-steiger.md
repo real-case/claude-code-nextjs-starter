@@ -118,5 +118,4 @@ this rejection so the guard is itself guarded (P6). The scope is disjoint from `
 
 New decision; the enforcement half of **0065**, mirroring how **0060** enforces **0059**. Runs
 in the **0010** quality gate beside the **0058** token lints and the **0060** boundary gate, on
-a disjoint scope. Steiger: <https://github.com/feature-sliced/steiger>. Drafted `proposed`;
-acceptance is the human gate (**0046**).
+a disjoint scope. Steiger: <https://github.com/feature-sliced/steiger>.

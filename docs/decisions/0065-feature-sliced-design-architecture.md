@@ -135,5 +135,4 @@ acceptance is the human gate (**0046**).
 New decision. Splits structure (this record) from enforcement (**0066**), mirroring
 **0059**/**0060**. Coexists with **0002** (App Router, CON-002) and the **0058**–**0064**
 design-system governance, which it neither replaces nor modifies. Feature-Sliced Design
-reference: <https://feature-sliced.design>. Drafted `proposed`; acceptance is the human gate
-(**0046**).
+reference: <https://feature-sliced.design>.

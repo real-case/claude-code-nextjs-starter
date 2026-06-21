@@ -113,5 +113,4 @@ set. Owns the dictionary-governance procedure that **0061** renames require and 
 hygiene that keeps the **0059** graph and **0060** reconciliation honest. The batch-wave (L1) methodology is
 the Stage-6 convention, not an ADR unless it gains enforcement. Confirms problems P6 (rules diverging from
 reality / knowledge laundering), P7 (context loss across batch passes), and P9 (artifact drift after
-approval). Drafted `proposed`; acceptance, and the assignment of the governance/loop owner, are human actions
-(**0046**).
+approval). Assigning the governance/loop owner is a human action (**0046**).

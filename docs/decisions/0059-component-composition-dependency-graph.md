@@ -115,5 +115,4 @@ from the `usedIn` union), and reconciled against the code-derived import graph i
 graphs are deliberately distinct (see the plan's §4). Figma's role stays the read-only hint of
 **0045**. Component-deprecation graph hygiene (the fate of a node and its `usedIn` edges on retirement)
 is owned by **0064**. Confirms problems P2 (structural duplication) and P5 (composition leaking into a
-primitive). The graph's file location/schema home is an open question carried in the plan. Drafted
-`proposed`; acceptance is the human gate (**0046**).
+primitive). The graph's file location/schema home is an open question carried in the plan.

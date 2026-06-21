@@ -109,4 +109,4 @@ config), **0040** (snapshot baselines), **0046** (human-only actions), **0058** 
 **0062** (design-intent) — this record decides only that they are enforced *at the write, by
 hooks*. The CI gate (**0010**) remains the guarantee; the hooks only shorten the loop. The
 edit-in-place waiver this hook implements is the template-maintenance complement to **0001**'s
-immutability rule. Drafted `proposed`; acceptance is the human gate (**0046** / `adr.py accept`).
+immutability rule.

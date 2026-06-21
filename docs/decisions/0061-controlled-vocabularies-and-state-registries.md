@@ -123,5 +123,5 @@ coverage/matrix skill consumes. The archetype→states starting set is the plan'
 the separate state-precedence matrix. Dictionary governance (owner + rename/merge/split procedure) is
 operationalized with **0064**. These are the un-generatable human-contribution points the plan flags as the
 project's bottleneck — author `usage-roles.ts` and `archetypes.ts` first, as Stage-0 root dependencies.
-Confirms problems P3 (intent duplication) and P8 (incomplete state coverage). Drafted `proposed`; acceptance,
-and the authoring of the vocabularies themselves, are human actions (**0046**).
+Confirms problems P3 (intent duplication) and P8 (incomplete state coverage). Authoring the
+vocabularies themselves is a human action (**0046**).

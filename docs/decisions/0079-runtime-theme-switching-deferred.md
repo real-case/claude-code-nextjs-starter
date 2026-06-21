@@ -94,4 +94,3 @@ runtime switching is gated behind a new ADR.
 Extends **0032** (CSS-first Tailwind) and **0033** (the token layers and the `dark` variant). The
 deferral pattern is shared with **0019**, **0031**, and **0053**: a deliberate
 "not-yet / project's-choice" decision whose Confirmation is the *absence* of the machinery.
-Drafted `proposed`; acceptance is the human gate (**0046** / `adr.py accept`).

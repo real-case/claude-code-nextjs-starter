@@ -2,8 +2,6 @@
 status: "accepted"
 date: 2026-06-20
 decision-makers: Yurii Anichkin
-consulted: AI implementer
-informed: AI implementer
 ---
 
 # Design tokens: CSS custom properties via @theme, with a neutral shadcn baseline
@@ -76,9 +74,6 @@ spacing/radius/typography scale, a semantic layer, and a component-token layer
 (`--color-c-{component}-{part}[-state]`) carried as literal values in `@theme` — with the `@theme
 inline` bridge pointing the value layer at it and the codegen unchanged. That re-adoption is
 itself an ADR for the consuming project.
-
-This record is `proposed`: it is the template's token baseline pending the human acceptance gate
-(**0001** / **0046**).
 
 ### Consequences
 

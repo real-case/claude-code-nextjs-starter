@@ -42,7 +42,7 @@ correctness checks on the same platform as the source and pull requests while le
 build-and-deploy to the platform that specializes in it. A `.github/workflows/ci.yml`
 workflow runs on Node 24 and mirrors the local gate: `typecheck`, `lint`, `format:check`,
 `build`, and `test:coverage` — the coverage-enforcing test run (**0008**), kept separate from
-the fast `npm run test` inner loop. Once the database tooling exists, the gate also replays
+the fast `npm run test:unit` inner loop. Once the database tooling exists, the gate also replays
 migrations, checks for generated-type drift, and runs Playwright e2e against a local Supabase
 stack. Vercel
 handles Git-integrated preview and production deploys. Requiring the CI status check before
@@ -66,7 +66,7 @@ merge is a human-configured branch-protection setting on the repository.
 `.github/workflows/ci.yml` exists, pins Node 24, and runs the gate commands. The local gate
 `npm run typecheck && npm run lint && npm run format:check && npm run build && npm run test:coverage`
 mirrors it. Coverage is enforced by the dedicated `npm run test:coverage` command — separate
-from the fast `npm run test` inner-loop runner (**0007**) — so sub-threshold coverage fails the
+from the fast `npm run test:unit` inner-loop runner (**0007**) — so sub-threshold coverage fails the
 gate (**0008**). Branch protection requiring the CI check is verifiable in repository settings.
 
 ## Pros and Cons of the Options

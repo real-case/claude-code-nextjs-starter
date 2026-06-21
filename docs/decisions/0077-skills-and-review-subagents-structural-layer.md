@@ -104,5 +104,4 @@ commissioned elsewhere — story matrices and play drafts (**0051**), the semant
 (**0052**) — and is the loop-side cousin of the CI advisory jobs (**0048**–**0057**). Its
 authority is bounded by **0046** (agent role) and **0047** (the human is the only approver); its
 references are kept honest by `check:claude`, part of the reference-integrity family alongside
-**0067** and the meta-integrity gates of **0078**. Drafted `proposed`; acceptance is the human
-gate (**0046** / `adr.py accept`).
+**0067** and the meta-integrity gates of **0078**.

@@ -53,7 +53,8 @@ Chosen option: "single-source codegen + a two-layer lint gate", because it is th
 makes token usage a *guarantee* while keeping the canonical CSS layer (**0033**) the one place a
 token is defined. A Node script `scripts/gen-tokens.mjs` parses the `@theme`/`:root` block in
 `globals.css` and emits `src/design-system/tokens.generated.ts` — a semantic-token union type — plus
-the lint allowlist, wired exactly like `gen:types` (**0015**): styled output through `prettier`,
+the lint allowlist and the agent-rules reference `src/design-system/tokens.agent-rules.md` (the single
+source the agent reads for the allowed-token list), wired exactly like `gen:types` (**0015**): styled output through `prettier`,
 an `npm run gen:tokens` script, and a CI drift check that fails on diff. On top of that registry,
 two lint layers enforce usage:
 
@@ -85,7 +86,8 @@ mechanical form lands with the per-component intent check in **0062**. Honoring 
 
 ### Confirmation
 
-`npm run gen:tokens` regenerates `src/design-system/tokens.generated.ts` + the allowlist and leaves a
+`npm run gen:tokens` regenerates `src/design-system/tokens.generated.ts` + the allowlist +
+`src/design-system/tokens.agent-rules.md` and leaves a
 clean `git status` (no drift), exactly as `gen:types` does (**0015**); a CI step fails on drift. A
 planted raw hex, an `oklch(...)` literal, an inline-`style` color, a raw SVG `fill`, and a
 `bg-red-600`-style numbered-palette class each fail their respective lint layer; a plausible but
@@ -122,5 +124,4 @@ loop and runs in the **0010** CI gate. The "no external margin" invariant is com
 the per-component intent check (`check:design-intent`) of **0062**, which also references the generated token union.
 Dictionary-rename friction is the governance concern shared with **0061** and **0064**. Confirms
 problems P1 (raw/non-semantic values), P5 (composition leaking into a primitive — the margin rule),
-and P6 (agent rules diverging from CI). Drafted `proposed`; acceptance is the human gate (**0046** /
-`adr.py accept`).
+and P6 (agent rules diverging from CI).

@@ -28,7 +28,7 @@ definition from which the type is derived.
 * **Strict-typing synergy** — inferred types must be precise enough to satisfy the strict
   policy (**0003**).
 * **Ecosystem fit** — the validator should integrate with the form library (**0020**) and
-  be usable for the env module (decided later).
+  be usable for the env module (**0018**).
 * **Traceable error messages** — a validation failure must reveal where it came from, so a
   message read in a log, a test failure, or during development points to its origin
   schema/boundary without needing a stack trace.
@@ -110,5 +110,5 @@ marker's presence is checked in code review.
 ## More Information
 
 Builds on **0003** (strict typing whose runtime gap this closes). Zod schemas are consumed by
-the forms decision (**0020**) and by the later environment-variables decision; request-body
+the forms decision (**0020**) and by the environment-variables decision (**0018**); request-body
 and external-data validation reuse the same schemas.

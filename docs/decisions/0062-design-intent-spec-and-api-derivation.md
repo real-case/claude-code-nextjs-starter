@@ -119,5 +119,4 @@ derives the API from the **0059** `usedIn` graph; classifies states against the 
 references the **0058** token registry and the **0061** vocabularies rather than inlining them. The Figma
 `variants`/`seal` fields are owned by **0063**; `behavior` is engineering-built, never from Figma (**0045**).
 The field map is the plan's Appendix A2. Confirms problems P4 (API hallucination), P5 (composition leaking
-into a primitive), and P8 (incomplete state coverage). Drafted `proposed`; acceptance is the human gate
-(**0046**).
+into a primitive), and P8 (incomplete state coverage).

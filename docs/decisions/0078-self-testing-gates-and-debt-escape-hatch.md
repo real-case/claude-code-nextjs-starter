@@ -103,5 +103,4 @@ P6 ("gates that test themselves") is from `AI-GUARDRAILS.md` §7; the escape hat
 by **0003**, **0029**, **0039**, **0049**, and **0062**. The Defect-Log reactive growth (**0064**)
 graduates new invariants into Stage-1 gates, each of which then needs its own self-test under this
 record. This completes the integrity-gate family alongside **0067** (citation resolution) and the
-`check:claude` reference checks (**0077**). Drafted `proposed`; acceptance is the human gate
-(**0046** / `adr.py accept`).
+`check:claude` reference checks (**0077**).

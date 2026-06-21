@@ -79,7 +79,7 @@ gate (**0010**) and branch protection (**0011**). Concretely:
 
 Vitest `coverage.thresholds` is set to 80% (statements/lines) with the exclusions above;
 coverage runs as a dedicated `npm run test:coverage` command — separate from the fast
-`npm run test` inner-loop runner (**0007**) — and fails below the threshold; CI (**0010**) runs
+`npm run test:unit` inner-loop runner (**0007**) — and fails below the threshold; CI (**0010**) runs
 `test:coverage` as its own step and the check is required for merge (**0011**). The only
 sanctioned bypass is a `hotfix/*` branch or `hotfix`-labeled PR, documented as such.
 

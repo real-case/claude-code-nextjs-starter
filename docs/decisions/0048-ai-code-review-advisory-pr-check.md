@@ -23,7 +23,7 @@ pass to CI, and if so with what authority?
 
 * **Cheapest-feedback-first** — semantic convention violations should surface before human
   review, not during it (**0003**'s reasoning extended one layer up).
-* **The corpus as normative base** — 44+ records of explicit, citable conventions are
+* **The corpus as normative base** — the accepted records of explicit, citable conventions are
   exactly the grounding an AI reviewer needs to produce precise, non-generic findings.
 * **The gate must stay deterministic** — **0010**'s required checks are reproducible;
   a probabilistic check that can false-positive must not block merges.
@@ -42,8 +42,8 @@ pass to CI, and if so with what authority?
 
 Chosen option: "advisory AI review job grounded in the ADR corpus", because it adds the
 missing semantic feedback layer at the right authority level: visible, early, and citable,
-but unable to block a merge on a false positive. A CI job (e.g. a Claude-based review
-action) runs on pull requests, receives the diff plus the ADR index, and posts a review
+but unable to block a merge on a false positive. A CI job (an AI review action via the
+provider-agnostic client of **0075**) runs on pull requests, receives the diff plus the ADR index, and posts a review
 comment. Findings must **cite the violated record by number** ("privileged Supabase client
 in a request path — see **0013**") — uncitable findings are styled as questions, not
 violations. The job is **not** a required status check; the human reviewer (**0047**)

@@ -6,7 +6,7 @@
 // gate: it runs inside the agent's own loop, BEFORE a new component is created, to
 // reduce the chance of building a second component that is structurally the same as
 // one that already exists. The guarantee stays in Stage 1 (this layer is
-// recall-over-precision; see design-system-ai-tooling-plan.md §1).
+// recall-over-precision, ADR 0059/0064).
 //
 // Signature v1 (ADR 0059): the normalized *set* of composed primitive ids — NO
 // topology (subtree isomorphism is nontrivial and fuzzy matching yields false

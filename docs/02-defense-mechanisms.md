@@ -14,7 +14,7 @@ Each deterministic mechanism reads the real files, checks an invariant, and repo
 
 ## The three-layer model
 
-Every rule belongs to exactly **one** layer, chosen by the _kind_ of guarantee it provides. The model comes from [`design-system-ai-tooling-plan.md`](design-system-ai-tooling-plan.md), §1.
+Every rule belongs to exactly **one** layer, chosen by the _kind_ of guarantee it provides.
 
 | Layer         | Guarantee                                                    | Failure mode          | Where it lives                                                      | ADR        |
 | ------------- | ------------------------------------------------------------ | --------------------- | ------------------------------------------------------------------- | ---------- |
@@ -185,7 +185,7 @@ Alongside it run **secret-scan** (gitleaks, ADR 0056 Layer 1) and **Claude-infra
 - Coverage of at least 80% is required (ADR 0008); only `hotfix/*` branches or PRs labeled `hotfix` bypass the _threshold_ — the tests still run, and nothing else in the gate is bypassed.
 - There are no global retries (ADR 0049). The required status checks are deterministic only.
 
-While the template has no product code, two heavier suites — Playwright e2e (with migration replay) and the Storybook test-runner smoke — run **locally** rather than in CI for speed. The deviation is tracked in [`bootstrap-plan.md`](bootstrap-plan.md) and returns to CI before the first `dev → main` promotion.
+While the template has no product code, two heavier suites — Playwright e2e (with migration replay) and the Storybook test-runner smoke — run **locally** rather than in CI for speed. This deviation is tracked in [`deviations.md`](deviations.md) and returns to CI before the first `dev → main` promotion.
 
 ## Human gates: the judgment layer
 

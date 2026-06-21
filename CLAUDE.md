@@ -151,7 +151,7 @@ so nothing below is flagged as still-proposed._
   **docs link check** (0073) run as separate workflows. The Playwright e2e + migration-replay
   job and the Storybook test-runner smoke are **deferred during bootstrap** — they run locally
   (`npm run test:e2e`, `npm run test:storybook`) and return before the first production
-  promotion; tracked in `docs/bootstrap-plan.md` (0010, 0024, 0041, 0042).
+  promotion; tracked in `docs/deviations.md` (0010, 0024, 0041, 0042).
 - Design-system gates (Stages 0–3, wired in CI): `npm run gen:tokens` — regenerate the
   semantic-token union + lint allowlist + agent-rules reference from the `@theme`/`:root`
   layer, CI drift-checked like `gen:types` (0058); `npm run check:boundaries`

@@ -115,7 +115,7 @@ The advantages of this template are not standalone merits but direct consequence
 
 ## The design-system failure taxonomy (P1–P9)
 
-The governance layer (ADR 0058–0064) exists against specific failure modes, numbered P1 through P9. The source is [`design-system-ai-tooling-plan.md`](design-system-ai-tooling-plan.md), §2.
+The governance layer (ADR 0058–0064) exists against specific failure modes, numbered P1 through P9.
 
 | P#  | Problem                                                                | Primary layer              | How it is closed                                |
 | --- | ---------------------------------------------------------------------- | -------------------------- | ----------------------------------------------- |

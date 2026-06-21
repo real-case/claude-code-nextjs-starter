@@ -85,7 +85,7 @@ The lifecycle is `proposed → accepted`. A record is edited freely while `propo
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/`            | Application source. Feature code is organized by Feature-Sliced Design (`shared`, `entities`, `features`, `widgets`), alongside `app/` (App Router routes), `components/` (the shadcn ui kit), `design-system/` (controlled vocabularies and generated tokens), `lib/` (env, Supabase clients, logger), and `i18n/`. |
 | `docs/decisions/` | The ADR corpus (MADR) and the `constraints.md` registry.                                                                                                                                                                                                                                                             |
-| `docs/`           | Planning documents and the overview document set (`docs/ru/`).                                                                                                                                                                                                                                                       |
+| `docs/`           | The overview document set (`01`–`03`) and the design-system process docs (`docs/design-system/`).                                                                                                                                                                                                                    |
 | `.claude/`        | Claude Code configuration: `skills/`, `agents/` (subagents), and `commands/`.                                                                                                                                                                                                                                        |
 | `scripts/`        | Gate scripts, the dev orchestrator, `hooks/` (edit-time), and `ai/` (advisory jobs).                                                                                                                                                                                                                                 |
 | `supabase/`       | Plain-SQL migrations, including RLS policies.                                                                                                                                                                                                                                                                        |
@@ -120,7 +120,7 @@ The lifecycle is `proposed → accepted`. A record is edited freely while `propo
    npm run dev
    ```
 
-   `npm run dev` is an orchestrated startup: it brings up the local Supabase stack, regenerates the database types, syncs environment variables (`vercel env pull` when the project is linked), and then runs `next dev`. The application is served at `http://localhost:3000`.
+   `npm run dev` is an orchestrated startup: it brings up the local Supabase stack, regenerates the database types, runs the environment-sync step, and hands off to `next dev`, served at `http://localhost:3000`. Environment sync ships as a decision point — a `TODO(you)` in [`scripts/dev.mjs`](scripts/dev.mjs) where you implement the `vercel env pull` policy for your setup; until then the app runs on the local defaults in [`src/lib/env.ts`](src/lib/env.ts).
 
 ## Commands
 
@@ -207,15 +207,23 @@ These are advisory; run them while building a component.
 
 The template ships clean. It contains no demonstration application, and `src/components/**` is empty, so the design-system governance gates have nothing to act on yet. They activate automatically on the first component that is added — the infrastructure does not need to be completed, it is ready to be filled with product code. A demonstration of development with this template will be built in a separate repository.
 
+A few files ship as deliberate decision points rather than finished code. Each is marked with a `TODO(you)` comment and cites the ADR that frames the choice, because the right answer depends on your project rather than on the template:
+
+- the log-classification policy in [`src/lib/logger.ts`](src/lib/logger.ts) (ADR 0019);
+- the query-key factory in [`src/lib/query/keys.ts`](src/lib/query/keys.ts) (ADR 0025);
+- the environment-sync policy in [`scripts/dev.mjs`](scripts/dev.mjs) (ADR 0023);
+- the composition-signature amplifier in [`scripts/component-signature.mjs`](scripts/component-signature.mjs) (ADR 0059).
+
+The template runs without them, so fill each one when you reach the decision it represents.
+
 ## Documentation
 
 These are the authoritative sources, all of which live in the repository:
 
 - [`CLAUDE.md`](CLAUDE.md) — the agent's standing instruction, generated from the accepted ADRs.
 - [`docs/decisions/`](docs/decisions/) — the ADR corpus (MADR format) and the constraints registry.
-- [`docs/design-system-ai-tooling-plan.md`](docs/design-system-ai-tooling-plan.md) — the rationale for the design-system governance layer.
-- [`docs/bootstrap-plan.md`](docs/bootstrap-plan.md) — the bootstrap sequencing and tracked deviations.
-- [`docs/ai-infrastructure-showcase-plan.md`](docs/ai-infrastructure-showcase-plan.md) — the plan for a separate showcase site about this infrastructure.
+- [`docs/design-system/`](docs/design-system/) — the design-system governance process docs (the Defect Log and the migration procedures).
+- [`docs/deviations.md`](docs/deviations.md) — the deviation journal: temporary, on-the-record departures from an accepted ADR during bootstrap.
 
 A companion overview set goes deeper, with three documents that build on one another:
 
@@ -224,8 +232,6 @@ A companion overview set goes deeper, with three documents that build on one ano
 | 01  | [Problems and advantages](docs/01-problems-and-advantages.md) | The problems the approach solves and the advantages that follow                   | Explanation |
 | 02  | [Defense mechanisms](docs/02-defense-mechanisms.md)           | The control mechanisms: hooks, deterministic gates, code generation, CI           | Reference   |
 | 03  | [Methodology](docs/03-methodology.md)                         | How work is carried out: the ADR lifecycle, human and agent roles, feedback loops | Explanation |
-
-The same set in Russian, the source drafts for these translations, lives under [`docs/ru/`](docs/ru/).
 
 ## License
 

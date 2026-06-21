@@ -109,7 +109,7 @@ This is evolutionary architecture in practice: the set of fitness functions is n
 
 ## Managed deviations (lean bootstrap)
 
-The methodology allows _temporary_ deviations from an accepted ADR, but only explicitly and on the record. While the template has no product code, the heavy suites — Playwright e2e with migration replay, and the Storybook test-runner smoke — run **locally** rather than in CI, for speed. Each deviation is recorded in [`bootstrap-plan.md`](bootstrap-plan.md) with a concrete return condition (before the first `dev → main` promotion) and is **not** a change to an ADR: the recorded decision remains the target state.
+The methodology allows _temporary_ deviations from an accepted ADR, but only explicitly and on the record. While the template has no product code, the heavy suites — Playwright e2e with migration replay, and the Storybook test-runner smoke — run **locally** rather than in CI, for speed. Each deviation is recorded in the [deviation journal](deviations.md) with a concrete return condition (before the first `dev → main` promotion) and is **not** a change to an ADR: the recorded decision remains the target state.
 
 A deviation is admissible only if it departs from an _accepted_ ADR, is temporary, and names a concrete return trigger. A permanent change requires a superseding ADR.
 

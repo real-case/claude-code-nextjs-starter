@@ -6,9 +6,8 @@ vocabularies, state registries, composition graph) and beside each component
 (`*.design-intent.ts`). This directory holds the **process** docs — the parts that are
 journals and procedures rather than code.
 
-The whole layer's design rationale is in
-[`docs/design-system-ai-tooling-plan.md`](../design-system-ai-tooling-plan.md) and the
-decisions in ADRs **0058–0064** ([`docs/decisions/`](../decisions/)).
+The whole layer's design rationale and decisions are recorded in ADRs **0058–0064**
+([`docs/decisions/`](../decisions/)).
 
 | Doc                              | ADR         | What it is                                                                                                            |
 | -------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------- |

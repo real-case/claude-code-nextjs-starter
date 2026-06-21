@@ -218,21 +218,21 @@ jobs:
         run: npm run check:commits -- --verbose # ADR 0072
 
 
-  # ── e2e job: temporarily removed during bootstrap (2026-06-11) ──────────────
-  # ADR 0007/0010 put the Playwright e2e in the CI gate, and a full working job
-  # existed here (Supabase stack startup → migration replay → gen:types drift
-  # check → auth/RLS e2e). It was removed for now because the Supabase image
-  # pulls (~3–4 min/run) dominate CI turnaround during bootstrap while there are
-  # no real feature components yet. This is a deliberate, temporary deviation
-  # tracked in docs/bootstrap-plan.md, NOT an ADR change — e2e-in-CI remains the
-  # target end-state.
+  # ── e2e job: deferred during bootstrap ──────────────────────────────────────
+  # ADR 0007/0010 commit the Playwright e2e to the CI gate (Supabase stack
+  # startup → migration replay → gen:types drift check → auth/RLS e2e). The job
+  # is not wired in yet because the Supabase image pulls (~3–4 min/run) dominate
+  # CI turnaround during bootstrap while there are no real feature components and
+  # no migrations to exercise yet. This is a deliberate, temporary deviation
+  # tracked in docs/deviations.md (DEV-001), NOT an ADR change — e2e-in-CI remains
+  # the target end-state.
   #
   # The specs still run locally on every change: `npm run test:e2e` (needs a
   # local Supabase stack: `npx supabase start`).
   #
-  # Re-enable before the first dev→main production promotion (ADR 0011): recover
-  # the exact job from this PR's git history (feat/phase-7-supabase, the commits
-  # before this removal) — it is correct and CI-verified up to the e2e step.
+  # Re-enable before the first dev→main production promotion (ADR 0011): author
+  # the job (Supabase startup → migration replay → gen:types drift → auth/RLS
+  # e2e) — there is no prior job in this repo's history to recover.
 
   # ── Storybook test-runner smoke: local-only during bootstrap (Phase 10) ─────
   # ADR 0037 puts a `@storybook/test-runner` smoke pass over the *statically built*
@@ -241,7 +241,7 @@ jobs:
   # it adds a Storybook build + serve + a second browser run, while the Vitest addon
   # (browser-mode story tests + a11y + merged coverage, ADR 0037/0039/0041) already runs in
   # the quality gate above and is the load-bearing engine. This is a deliberate,
-  # temporary deviation tracked in docs/bootstrap-plan.md, NOT an ADR change.
+  # temporary deviation tracked in docs/deviations.md (DEV-002), NOT an ADR change.
   #
   # It runs LOCALLY on demand: `npm run build-storybook`, serve `storybook-static`
   # (or `npm run storybook`), then `npm run test:storybook`.

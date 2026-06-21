@@ -2,10 +2,10 @@
 # See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
 # Default owner for everything in the repository.
-*                 @UrchinStriped
+*                 @real-case
 
 # Governance surfaces — architectural decisions and the agent's configuration.
-/docs/decisions/  @UrchinStriped
-/.claude/         @UrchinStriped
-/CLAUDE.md        @UrchinStriped
-/.github/         @UrchinStriped
+/docs/decisions/  @real-case
+/.claude/         @real-case
+/CLAUDE.md        @real-case
+/.github/         @real-case

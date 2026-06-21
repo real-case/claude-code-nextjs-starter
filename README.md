@@ -1,11 +1,11 @@
 # claude-code-nextjs-starter
 
-[![CI](https://github.com/UrchinStriped/claude-code-nextjs-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/UrchinStriped/claude-code-nextjs-starter/actions/workflows/ci.yml)
+[![CI](https://github.com/real-case/claude-code-nextjs-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/real-case/claude-code-nextjs-starter/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node >=24](https://img.shields.io/badge/node-%3E%3D24-339933?logo=node.js&logoColor=white)](.nvmrc)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)](https://nextjs.org)
 [![Built for Claude Code](https://img.shields.io/badge/built%20for-Claude%20Code-d97757)](https://claude.com/claude-code)
-[![Use this template](https://img.shields.io/badge/Use%20this%20template-2ea44f?logo=github&logoColor=white)](https://github.com/UrchinStriped/claude-code-nextjs-starter/generate)
+[![Use this template](https://img.shields.io/badge/Use%20this%20template-2ea44f?logo=github&logoColor=white)](https://github.com/real-case/claude-code-nextjs-starter/generate)
 
 **Deterministic guardrails for agentic development.** A Next.js 16 + Supabase starter, wired end-to-end for Claude Code: ADR-governed decisions, machine-checkable gates, and edit-time hooks that keep a probabilistic AI agent inside the bounds the project defines.
 

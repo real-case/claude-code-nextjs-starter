@@ -227,6 +227,13 @@ so nothing below is flagged as still-proposed._
   production deploys from `main`, every PR gets a preview URL (0009).
 - Commits follow Conventional Commits (commitlint); the machine-readable history feeds the
   AI changelog draft at the `dev`→`main` release (0072, 0050).
+- Versioning is template-adapted SemVer (0080): the number signals migration cost for an
+  upstream-tracking adopter, not an npm contract — a superseding ADR / structural change /
+  removed-or-renamed gate · script · skill / dropped Node · Next major is MAJOR; an additive
+  accepted ADR is MINOR; in-range dependency bumps and doc fixes are PATCH; stay on `0.x`
+  until the governance surface is stable enough for `1.0.0`. A release promotes `dev`→`main`,
+  bumps `package.json`, carries the human-edited `CHANGELOG.md` entry (0050), and is marked
+  by an annotated `vX.Y.Z` tag + GitHub Release.
 - Tests are colocated (`src/**/*.test.tsx`), e2e lives in `e2e/`; coverage is
   risk-weighted — auth/RLS/critical flows get e2e first (0007).
 - Every exported component in `src/components/**` ships colocated CSF 3 stories
@@ -309,6 +316,9 @@ so nothing below is flagged as still-proposed._
 - Runtime theme switching is deferred (0079): the template ships only the `.dark` value layer
   and the `dark` variant — no theme toggle or provider; a consuming project records its own ADR
   to add one.
+- The template is never published to npm — `private: true` is retained permanently; the
+  release artifacts are the git tag + GitHub Release + `CHANGELOG.md`, not an npm package
+  (0080).
 - The agent never approves its own visual baseline (Chromatic UI, human-only) and is never
   shown its own implementation during API approval — the proof is Figma pixels it does not
   control (0063, 0047). Controlled-vocabulary entries are human-authored; a rename/merge/split

@@ -83,3 +83,4 @@ Architecture Decision Records for this project, in [MADR](https://adr.github.io/
 | [0077](0077-skills-and-review-subagents-structural-layer.md) | Skills and review-subagents as the structural (recall) layer | accepted | 2026-06-20 |
 | [0078](0078-self-testing-gates-and-debt-escape-hatch.md) | Self-testing gates and the technical-debt escape-hatch gate | accepted | 2026-06-20 |
 | [0079](0079-runtime-theme-switching-deferred.md) | Runtime theme switching deferred; ship the `.dark` value layer only | accepted | 2026-06-20 |
+| [0080](0080-versioning-and-release-policy.md) | Versioning and release policy: template-adapted SemVer with dev→main tagged releases | accepted | 2026-06-21 |

@@ -23,7 +23,7 @@ concurrency:
 jobs:
   # secrets.* cannot be used directly in `if:`, so surface a boolean output instead.
   guard:
-    name: "[AI] Has AI_API_KEY?"
+    name: "[AI] AI_API_KEY existence check"
     runs-on: ubuntu-latest
     outputs:
       has_key: ${{ steps.k.outputs.has_key }}

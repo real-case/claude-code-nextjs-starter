@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   guard:
-    name: "[AI] Failed run + has key?"
+    name: "[AI] Key existence and run success check"
     if: github.event.workflow_run.conclusion == 'failure'
     runs-on: ubuntu-latest
     outputs:

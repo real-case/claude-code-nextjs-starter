@@ -23,7 +23,7 @@ concurrency:
 jobs:
   # secrets.* cannot be used directly in `if:`, so surface a boolean output instead.
   guard:
-    name: "[AI] AI_API_KEY existence check"
+    name: "[AI] Preflight"
     runs-on: ubuntu-latest
     outputs:
       has_key: ${{ steps.k.outputs.has_key }}
@@ -32,7 +32,7 @@ jobs:
         run: echo "has_key=${{ secrets.AI_API_KEY != '' }}" >> "$GITHUB_OUTPUT"
 
   review:
-    name: "[AI] Advisory general + security review"
+    name: "[AI] Review"
     needs: guard
     if: needs.guard.outputs.has_key == 'true'
     runs-on: ubuntu-latest
@@ -46,7 +46,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - name: "[AI] Advisory general review"
+      - name: "[AI] General review"
         run: node scripts/ai/pr-review.mjs
         env:
           AI_API_KEY: ${{ secrets.AI_API_KEY }}
@@ -58,7 +58,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           DIFF_BASE: ${{ github.event.pull_request.base.ref }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: "[AI] Advisory security review"
+      - name: "[AI] Security review"
         run: node scripts/ai/security-review.mjs
         env:
           AI_API_KEY: ${{ secrets.AI_API_KEY }}
@@ -69,7 +69,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   changelog:
-    name: "[AI] Draft changelog"
+    name: "[AI] Changelog"
     needs: guard
     if: needs.guard.outputs.has_key == 'true' && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest

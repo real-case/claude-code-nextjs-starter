@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   guard:
-    name: "[AI] Key existence and run success check"
+    name: "[AI] Preflight"
     if: github.event.workflow_run.conclusion == 'failure'
     runs-on: ubuntu-latest
     outputs:
@@ -28,7 +28,7 @@ jobs:
         run: echo "has_key=${{ secrets.AI_API_KEY != '' }}" >> "$GITHUB_OUTPUT"
 
   triage:
-    name: "[AI] CI-failure triage"
+    name: "[AI] Triage"
     needs: guard
     if: needs.guard.outputs.has_key == 'true'
     runs-on: ubuntu-latest
@@ -40,11 +40,11 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - name: "[AI] Fetch the failing run's log"
+      - name: "[AI] Fetch failure log"
         run: gh run view ${{ github.event.workflow_run.id }} --log-failed > ci-failure.log || true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: "[AI] CI-failure triage"
+      - name: "[AI] Classify failure"
         run: node scripts/ai/ci-triage.mjs
         env:
           AI_API_KEY: ${{ secrets.AI_API_KEY }}
